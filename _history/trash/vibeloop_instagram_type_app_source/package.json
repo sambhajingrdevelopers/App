@@ -1,0 +1,13 @@
+{
+  "name": "vibeloop-instagram-type-app",
+  "private": true,
+  "workspaces": [
+    "apps/mobile",
+    "apps/admin-web"
+  ],
+  "scripts": {
+    "mobile": "npm --workspace apps/mobile run start",
+    "admin": "npm --workspace apps/admin-web run dev",
+    "backend": "cd backend && python main.py"
+  }
+}
