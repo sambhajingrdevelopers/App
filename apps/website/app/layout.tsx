@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'VibeLoop - Premium Social Media Platform',
-  description: 'Instagram and TikTok type premium social media website with reels, stories, feed, chat, creator tools and admin-ready backend.'
+  description: 'Premium Instagram and TikTok type social media website.'
 };
 
 export default function RootLayout({
