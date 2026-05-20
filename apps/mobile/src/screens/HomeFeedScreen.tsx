@@ -1,21 +1,76 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { SafeAreaView, ScrollView, View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors } from '../theme/colors';
+import { stories, posts } from '../data/mock';
+import StoryBubble from '../components/StoryBubble';
+import PostCard from '../components/PostCard';
 
 export default function HomeFeedScreen({ navigation }: any) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home Feed</Text>
-      <Text style={styles.subtitle}>Posts, stories, likes, comments and shares.</Text>
+    <SafeAreaView style={styles.safe}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.logo}>VibeLoop</Text>
 
-    </View>
+          <View style={styles.headerActions}>
+            <Pressable onPress={() => navigation.navigate('Notifications')}>
+              <Text style={styles.icon}>♡</Text>
+            </Pressable>
+
+            <Pressable onPress={() => navigation.navigate('Messages')}>
+              <Text style={styles.icon}>✉</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.stories}>
+          {stories.map((story) => (
+            <StoryBubble key={story.id} story={story} />
+          ))}
+        </ScrollView>
+
+        {posts.map((post) => (
+          <PostCard
+            key={post.id}
+            post={post}
+            onOpen={() => navigation.navigate('PostDetail')}
+          />
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  title: { color: colors.text, fontSize: 30, fontWeight: '800', marginBottom: 10, textAlign: 'center' },
-  subtitle: { color: colors.muted, fontSize: 16, textAlign: 'center', marginBottom: 24 },
-  button: { backgroundColor: colors.primary, paddingHorizontal: 22, paddingVertical: 14, borderRadius: 18 },
-  buttonText: { color: colors.text, fontWeight: '700' }
+  safe: {
+    flex: 1,
+    backgroundColor: colors.background
+  },
+  container: {
+    flex: 1,
+    padding: 16
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18
+  },
+  logo: {
+    color: colors.text,
+    fontSize: 34,
+    fontWeight: '900',
+    flex: 1
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 16
+  },
+  icon: {
+    color: colors.text,
+    fontSize: 28,
+    fontWeight: '900'
+  },
+  stories: {
+    marginBottom: 20
+  }
 });
