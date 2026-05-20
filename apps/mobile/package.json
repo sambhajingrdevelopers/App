@@ -5,22 +5,24 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "expo export --platform web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "latest",
     "@react-navigation/bottom-tabs": "latest",
     "@react-navigation/native": "latest",
     "@react-navigation/native-stack": "latest",
     "expo": "latest",
-    "expo-status-bar": "latest",
     "react": "latest",
+    "react-dom": "latest",
     "react-native": "latest",
     "react-native-safe-area-context": "latest",
-    "react-native-screens": "latest"
+    "react-native-screens": "latest",
+    "react-native-web": "latest"
   },
   "devDependencies": {
+    "@babel/core": "latest",
     "typescript": "latest"
   }
 }
