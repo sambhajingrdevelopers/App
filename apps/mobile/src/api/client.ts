@@ -1,8 +1,19 @@
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
+export const API_BASE_URL =
+  (process.env.EXPO_PUBLIC_API_URL || 'http://43.205.145.63:8003').replace(/\/$/, '');
+
+async function handleResponse(res: Response) {
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.detail || data?.message || 'API request failed');
+  }
+
+  return data;
+}
 
 export async function apiGet(path: string) {
   const res = await fetch(`${API_BASE_URL}${path}`);
-  return res.json();
+  return handleResponse(res);
 }
 
 export async function apiPost(path: string, body: unknown) {
@@ -11,5 +22,6 @@ export async function apiPost(path: string, body: unknown) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-  return res.json();
+
+  return handleResponse(res);
 }
