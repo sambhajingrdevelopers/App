@@ -9,8 +9,7 @@
     "platforms": ["ios", "android", "web"],
     "web": {
       "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
+      "output": "static"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
