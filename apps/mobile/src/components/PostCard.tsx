@@ -1,8 +1,17 @@
 import React from 'react';
-import { Pressable, View, Text, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Post } from '../types/social';
 import { colors } from '../theme/colors';
+import { screen } from '../utils/responsive';
 
-export default function PostCard({ post, onOpen }: any) {
+type Props = {
+  post: Post;
+  onOpen?: () => void;
+};
+
+export default function PostCard({ post, onOpen }: Props) {
+  const mediaHeight = screen.isLarge ? 420 : 330;
+
   return (
     <Pressable style={styles.card} onPress={onOpen}>
       <View style={styles.top}>
@@ -10,29 +19,45 @@ export default function PostCard({ post, onOpen }: any) {
           <Text style={styles.avatarText}>{post.name[0]}</Text>
         </View>
 
-        <View style={{ flex: 1 }}>
-          <Text style={styles.username}>@{post.user}</Text>
-          <Text style={styles.location}>{post.location}</Text>
+        <View style={styles.userBlock}>
+          <View style={styles.nameRow}>
+            <Text style={styles.username}>@{post.user}</Text>
+            {post.verified && <Text style={styles.verified}>✓</Text>}
+          </View>
+
+          <Text style={styles.location}>
+            {post.location} • {post.createdAt || 'Now'}
+          </Text>
         </View>
 
         <Text style={styles.menu}>•••</Text>
       </View>
 
-      <View style={[styles.media, { backgroundColor: post.color }]}>
-        <View style={styles.glow1} />
-        <View style={styles.glow2} />
-        <Text style={styles.mediaText}>VibeLoop Post</Text>
+      <View style={[styles.media, { height: mediaHeight, backgroundColor: post.color }]}>
+        <View style={styles.glowTop} />
+        <View style={styles.glowBottom} />
+
+        <View style={styles.mediaCenter}>
+          <Text style={styles.mediaTitle}>VibeLoop</Text>
+          <Text style={styles.mediaSubtitle}>Premium Social Post</Text>
+        </View>
       </View>
 
       <View style={styles.actions}>
         <Text style={styles.action}>♡</Text>
         <Text style={styles.action}>💬</Text>
         <Text style={styles.action}>↗</Text>
-        <View style={{ flex: 1 }} />
+
+        <View style={styles.actionSpacer} />
+
         <Text style={styles.action}>🔖</Text>
       </View>
 
-      <Text style={styles.likes}>{post.likes} likes</Text>
+      <View style={styles.metricsRow}>
+        <Text style={styles.metric}>{post.likes} likes</Text>
+        <Text style={styles.metricMuted}>{post.shares || '0'} shares</Text>
+        <Text style={styles.metricMuted}>{post.saves || '0'} saves</Text>
+      </View>
 
       <Text style={styles.caption}>
         <Text style={styles.username}>@{post.user} </Text>
@@ -47,94 +72,132 @@ export default function PostCard({ post, onOpen }: any) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
-    borderRadius: 28,
+    borderRadius: 30,
     padding: 14,
-    marginBottom: 18,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: colors.border
+    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOpacity: 0.22,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 }
   },
   top: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 13
   },
   avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10
+    marginRight: 11
   },
   avatarText: {
     color: colors.white,
     fontWeight: '900',
     fontSize: 18
   },
+  userBlock: {
+    flex: 1
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
+  },
   username: {
     color: colors.text,
-    fontWeight: '800'
+    fontWeight: '900'
+  },
+  verified: {
+    color: colors.accent,
+    fontWeight: '900'
   },
   location: {
     color: colors.muted,
     fontSize: 12,
-    marginTop: 2
+    marginTop: 3
   },
   menu: {
     color: colors.text,
-    fontSize: 18
+    fontSize: 18,
+    letterSpacing: 2
   },
   media: {
-    height: 330,
-    borderRadius: 24,
+    borderRadius: 26,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  glow1: {
+  glowTop: {
     position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    width: 190,
+    height: 190,
+    borderRadius: 95,
+    backgroundColor: 'rgba(255,255,255,0.20)',
     top: 20,
     left: 20
   },
-  glow2: {
+  glowBottom: {
     position: 'absolute',
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-    bottom: -40,
-    right: -40
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: 'rgba(0,0,0,0.20)',
+    bottom: -60,
+    right: -60
   },
-  mediaText: {
+  mediaCenter: {
+    alignItems: 'center'
+  },
+  mediaTitle: {
     color: colors.white,
-    fontSize: 28,
-    fontWeight: '900'
+    fontSize: 34,
+    fontWeight: '900',
+    letterSpacing: -1
+  },
+  mediaSubtitle: {
+    color: colors.white,
+    opacity: 0.88,
+    fontWeight: '800',
+    marginTop: 6
   },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    gap: 16
+    paddingVertical: 13,
+    gap: 17
   },
   action: {
     color: colors.text,
     fontSize: 24
   },
-  likes: {
+  actionSpacer: {
+    flex: 1
+  },
+  metricsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 7
+  },
+  metric: {
     color: colors.text,
-    fontWeight: '800',
-    marginBottom: 6
+    fontWeight: '900'
+  },
+  metricMuted: {
+    color: colors.muted,
+    fontWeight: '700'
   },
   caption: {
     color: colors.text,
-    lineHeight: 21
+    lineHeight: 22
   },
   comments: {
     color: colors.muted,
-    marginTop: 8
+    marginTop: 9,
+    fontWeight: '700'
   }
 });
