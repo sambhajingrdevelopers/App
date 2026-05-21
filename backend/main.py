@@ -73,3 +73,12 @@ except ImportError:
     from routes.creators import router as creators_router
 
 app.include_router(creators_router)
+
+
+# VibeLoop chat/message routes
+try:
+    from .routes.chats import router as chats_router
+except ImportError:
+    from routes.chats import router as chats_router
+
+app.include_router(chats_router)
