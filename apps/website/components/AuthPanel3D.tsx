@@ -67,6 +67,11 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
       <div className="zParticle p2" />
       <div className="zParticle p3" />
       <div className="zParticle p4" />
+      <div className="zLightningBolt boltOne">ϟ</div>
+      <div className="zLightningBolt boltTwo">ϟ</div>
+      <div className="zLightningBolt boltThree">ϟ</div>
+      <div className="zSlideBeam" />
+
 
       <section className={`zAuthShell ${isRegister ? 'zRegisterMode' : 'zLoginMode'}`}>
         <div className="zAnimatedBorder" />
