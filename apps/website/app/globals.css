@@ -5166,3 +5166,178 @@ main {
     flex-direction: column;
   }
 }
+
+/* Ads Manager */
+.adsHero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 26px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(255,45,149,0.16), transparent 34%),
+    rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.adsHero span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adsHero h2 {
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin: 16px 0 10px;
+}
+
+.adsHero p {
+  margin: 0;
+  color: #a1a1aa;
+}
+
+.adsHero button,
+.adsPanel button,
+.adsActions button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.adsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.adsPanel {
+  padding: 22px;
+  border-radius: 32px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+}
+
+.adsPanel h3 {
+  margin: 0 0 16px;
+  font-size: 24px;
+}
+
+.adsPanel label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.adsPanel input,
+.adsPanel select {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 14px;
+  outline: 0;
+  color: white;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+}
+
+.adsSummary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.adsSummary div {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.adsSummary b,
+.adsSummary span {
+  display: block;
+}
+
+.adsSummary b {
+  font-size: 34px;
+}
+
+.adsSummary span {
+  color: #a1a1aa;
+  margin-top: 5px;
+}
+
+.adsList {
+  display: grid;
+  gap: 14px;
+}
+
+.adsItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.adsItemMain b,
+.adsItemMain span {
+  display: block;
+}
+
+.adsItemMain span {
+  color: #a1a1aa;
+  margin-top: 5px;
+}
+
+.adsActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adsActions button:nth-child(2) {
+  background: rgba(255,255,255,0.08);
+}
+
+.adsActions button:nth-child(3) {
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+@media (max-width: 900px) {
+  .adsHero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adsGrid,
+  .adsItem {
+    grid-template-columns: 1fr;
+  }
+
+  .adsSummary {
+    grid-template-columns: 1fr;
+  }
+}
