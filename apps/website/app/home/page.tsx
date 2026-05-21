@@ -1,26 +1,10 @@
 import AuthGuard from '../../components/AuthGuard';
-import Navbar from '../../components/Navbar';
-import HeroSection from '../../components/HeroSection';
-import FeedSection from '../../components/FeedSection';
-import ReelsSection from '../../components/ReelsSection';
-import ExploreSection from '../../components/ExploreSection';
-import CreatorSection from '../../components/CreatorSection';
-import BusinessSection from '../../components/BusinessSection';
-import ContactSection from '../../components/ContactSection';
+import SocialHomeApp from '../../components/SocialHomeApp';
 
 export default function HomePage() {
   return (
     <AuthGuard>
-      <main>
-        <Navbar />
-        <HeroSection />
-        <FeedSection />
-        <ReelsSection />
-        <ExploreSection />
-        <CreatorSection />
-        <BusinessSection />
-        <ContactSection />
-      </main>
+      <SocialHomeApp />
     </AuthGuard>
   );
 }

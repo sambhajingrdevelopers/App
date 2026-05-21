@@ -2043,3 +2043,438 @@ main {
     transform: rotate(360deg);
   }
 }
+
+/* Real VibeLoop Social Home App */
+.vlApp {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 340px;
+  gap: 20px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at top left, rgba(255,45,149,0.16), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(0,212,255,0.13), transparent 34%),
+    #070711;
+}
+
+.vlSidebar,
+.vlRightbar,
+.vlMain {
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(18,18,30,0.78);
+  backdrop-filter: blur(18px);
+}
+
+.vlSidebar {
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+}
+
+.vlBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 28px;
+}
+
+.vlBrand div {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+  box-shadow: 0 18px 48px rgba(255,45,149,0.35);
+}
+
+.vlMenu {
+  display: grid;
+  gap: 10px;
+}
+
+.vlMenu a {
+  padding: 14px 16px;
+  border-radius: 18px;
+  color: #a1a1aa;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vlMenu a.active,
+.vlMenu a:hover {
+  color: white;
+  background: rgba(255,255,255,0.08);
+}
+
+.vlLogout {
+  margin-top: auto;
+  border: 0;
+  border-radius: 18px;
+  padding: 14px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.vlMain {
+  padding: 20px;
+  min-width: 0;
+}
+
+.vlTopbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.vlTopbar h1 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 48px);
+  letter-spacing: -2px;
+}
+
+.vlTopbar p {
+  color: #a1a1aa;
+  margin: 6px 0 0;
+}
+
+.vlSearch {
+  min-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.vlSearch input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: white;
+  background: transparent;
+}
+
+.vlStories {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.vlStory {
+  min-width: 74px;
+  text-align: center;
+  color: #a1a1aa;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.vlStory div,
+.vlAvatar,
+.vlProfileAvatar,
+.vlCreator div {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+  margin: 0 auto 6px;
+}
+
+.vlComposer {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 26px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+  margin-bottom: 18px;
+}
+
+.vlComposer textarea {
+  min-height: 58px;
+  max-height: 120px;
+  resize: vertical;
+  border: 0;
+  outline: 0;
+  color: white;
+  background: transparent;
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.vlComposer button,
+.vlPostHeader button,
+.vlCreator button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.vlPostList {
+  display: grid;
+  gap: 18px;
+}
+
+.vlPostCard {
+  padding: 16px;
+  border-radius: 30px;
+  background: rgba(25,25,39,0.9);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.26);
+}
+
+.vlPostHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.vlPostHeader > div:nth-child(2) {
+  flex: 1;
+}
+
+.vlPostHeader span {
+  display: block;
+  color: #a1a1aa;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.vlAvatar {
+  margin: 0;
+}
+
+.vlAvatar.blue,
+.vlPostMedia.blue {
+  background: linear-gradient(135deg, #00d4ff, #2563eb);
+}
+
+.vlAvatar.purple,
+.vlPostMedia.purple {
+  background: linear-gradient(135deg, #7c3aed, #ff2d95);
+}
+
+.vlPostMedia {
+  min-height: 360px;
+  border-radius: 26px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.24), transparent 28%),
+    linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.vlPostMedia h2 {
+  font-size: clamp(28px, 4vw, 46px);
+  margin: 0;
+}
+
+.vlPostMedia p {
+  max-width: 520px;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.6;
+}
+
+.vlPostActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 14px;
+  color: #a1a1aa;
+  font-weight: 900;
+}
+
+.vlRightbar {
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.vlProfileMini,
+.vlPanel {
+  padding: 18px;
+  border-radius: 26px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+  margin-bottom: 16px;
+}
+
+.vlProfileMini {
+  text-align: center;
+}
+
+.vlProfileAvatar {
+  width: 82px;
+  height: 82px;
+  font-size: 34px;
+}
+
+.vlProfileMini h3 {
+  margin: 10px 0 4px;
+}
+
+.vlProfileMini p {
+  color: #a1a1aa;
+  margin: 0 0 16px;
+}
+
+.vlMiniStats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.vlMiniStats b,
+.vlMiniStats span {
+  display: block;
+}
+
+.vlMiniStats span {
+  color: #a1a1aa;
+  font-size: 12px;
+}
+
+.vlPanel h3 {
+  margin: 0 0 14px;
+}
+
+.vlTrend,
+.vlCreator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.045);
+  margin-bottom: 10px;
+}
+
+.vlTrend div {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.vlTrend span,
+.vlCreator span {
+  flex: 1;
+  font-weight: 800;
+}
+
+.vlTrend b {
+  color: #00d4ff;
+}
+
+.vlCreator div {
+  width: 42px;
+  height: 42px;
+  margin: 0;
+}
+
+.vlCreator button {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+@media (max-width: 1160px) {
+  .vlApp {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+
+  .vlRightbar {
+    display: none;
+  }
+
+  .vlBrand span,
+  .vlMenu a {
+    font-size: 0;
+  }
+
+  .vlMenu a::first-letter {
+    font-size: 24px;
+  }
+
+  .vlSidebar {
+    align-items: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .vlApp {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .vlSidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-radius: 24px;
+  }
+
+  .vlBrand span,
+  .vlMenu a,
+  .vlLogout {
+    display: none;
+  }
+
+  .vlMenu {
+    display: flex;
+  }
+
+  .vlTopbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vlSearch {
+    min-width: 0;
+  }
+
+  .vlComposer {
+    grid-template-columns: 1fr;
+  }
+
+  .vlComposer .vlAvatar {
+    display: none;
+  }
+
+  .vlPostMedia {
+    min-height: 280px;
+  }
+}
