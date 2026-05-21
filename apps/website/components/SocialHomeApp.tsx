@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+type Comment = {
+  id: number;
+  text: string;
+  user: string;
+};
+
 type Post = {
   id: number | string;
   user: string;
@@ -14,6 +20,10 @@ type Post = {
   color: string;
   mediaUrl?: string;
   mediaType?: 'image' | 'video';
+  liked?: boolean;
+  saved?: boolean;
+  commentList?: Comment[];
+  isOwn?: boolean;
 };
 
 export default function SocialHomeApp() {
@@ -24,22 +34,33 @@ export default function SocialHomeApp() {
   const [mediaType, setMediaType] = useState<'image' | 'video' | ''>('');
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState('loading');
+  const [activeCommentPost, setActiveCommentPost] = useState<number | string | null>(null);
+  const [commentText, setCommentText] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  function saveOwnPosts(nextPosts: Post[]) {
+    const ownPosts = nextPosts.filter((post) => post.isOwn);
+    localStorage.setItem('vibeloop_posts', JSON.stringify(ownPosts));
+  }
 
   async function loadFeed() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/feed', {
-        cache: 'no-store'
-      });
-
+      const response = await fetch('/api/feed', { cache: 'no-store' });
       const data = await response.json();
 
       const savedPosts = JSON.parse(localStorage.getItem('vibeloop_posts') || '[]');
 
+      const backendPosts = (data.posts || []).map((post: Post) => ({
+        ...post,
+        liked: false,
+        saved: false,
+        commentList: []
+      }));
+
       setStories(data.stories || []);
-      setPosts([...(savedPosts || []), ...(data.posts || [])]);
+      setPosts([...(savedPosts || []), ...backendPosts]);
       setSource(data.source || 'fallback');
     } catch {
       const savedPosts = JSON.parse(localStorage.getItem('vibeloop_posts') || '[]');
@@ -90,14 +111,16 @@ export default function SocialHomeApp() {
       comments: '0',
       color: 'pink',
       mediaUrl,
-      mediaType: mediaType || undefined
+      mediaType: mediaType || undefined,
+      liked: false,
+      saved: false,
+      commentList: [],
+      isOwn: true
     };
 
-    const oldSavedPosts = JSON.parse(localStorage.getItem('vibeloop_posts') || '[]');
-    const updatedSavedPosts = [newPost, ...oldSavedPosts];
-
-    localStorage.setItem('vibeloop_posts', JSON.stringify(updatedSavedPosts));
-    setPosts([newPost, ...posts]);
+    const updatedPosts = [newPost, ...posts];
+    setPosts(updatedPosts);
+    saveOwnPosts(updatedPosts);
 
     setCaption('');
     setMediaUrl('');
@@ -109,6 +132,77 @@ export default function SocialHomeApp() {
     setMediaUrl('');
     setMediaType('');
     if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
+  function toggleLike(postId: number | string) {
+    const updatedPosts = posts.map((post) => {
+      if (post.id !== postId) return post;
+
+      const currentLikes = Number(String(post.likes).replace(/[^0-9]/g, '')) || 0;
+      const nextLiked = !post.liked;
+
+      return {
+        ...post,
+        liked: nextLiked,
+        likes: String(nextLiked ? currentLikes + 1 : Math.max(currentLikes - 1, 0))
+      };
+    });
+
+    setPosts(updatedPosts);
+    saveOwnPosts(updatedPosts);
+  }
+
+  function toggleSave(postId: number | string) {
+    const updatedPosts = posts.map((post) =>
+      post.id === postId ? { ...post, saved: !post.saved } : post
+    );
+
+    setPosts(updatedPosts);
+    saveOwnPosts(updatedPosts);
+  }
+
+  function addComment(postId: number | string) {
+    if (!commentText.trim()) return;
+
+    const updatedPosts = posts.map((post) => {
+      if (post.id !== postId) return post;
+
+      const nextComments = [
+        ...(post.commentList || []),
+        {
+          id: Date.now(),
+          user: '@you',
+          text: commentText
+        }
+      ];
+
+      return {
+        ...post,
+        commentList: nextComments,
+        comments: String(nextComments.length)
+      };
+    });
+
+    setPosts(updatedPosts);
+    saveOwnPosts(updatedPosts);
+    setCommentText('');
+  }
+
+  function deletePost(postId: number | string) {
+    const updatedPosts = posts.filter((post) => post.id !== postId);
+    setPosts(updatedPosts);
+    saveOwnPosts(updatedPosts);
+  }
+
+  async function sharePost(post: Post) {
+    const text = `Check this VibeLoop post: ${post.title}`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Post link copied.');
+    } catch {
+      alert(text);
+    }
   }
 
   return (
@@ -233,7 +327,14 @@ export default function SocialHomeApp() {
                       <b>{post.user} ✓</b>
                       <span>{post.location}</span>
                     </div>
-                    <button type="button">•••</button>
+
+                    {post.isOwn ? (
+                      <button type="button" onClick={() => deletePost(post.id)}>
+                        Delete
+                      </button>
+                    ) : (
+                      <button type="button">•••</button>
+                    )}
                   </div>
 
                   {post.mediaUrl ? (
@@ -258,11 +359,62 @@ export default function SocialHomeApp() {
                   )}
 
                   <div className="vlPostActions">
-                    <span>♡ {post.likes}</span>
-                    <span>💬 {post.comments}</span>
-                    <span>↗ Share</span>
-                    <span>🔖 Save</span>
+                    <button
+                      type="button"
+                      className={post.liked ? 'active' : ''}
+                      onClick={() => toggleLike(post.id)}
+                    >
+                      {post.liked ? '♥' : '♡'} {post.likes}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveCommentPost(activeCommentPost === post.id ? null : post.id)
+                      }
+                    >
+                      💬 {post.comments}
+                    </button>
+
+                    <button type="button" onClick={() => sharePost(post)}>
+                      ↗ Share
+                    </button>
+
+                    <button
+                      type="button"
+                      className={post.saved ? 'active' : ''}
+                      onClick={() => toggleSave(post.id)}
+                    >
+                      {post.saved ? '🔖 Saved' : '🔖 Save'}
+                    </button>
                   </div>
+
+                  {activeCommentPost === post.id && (
+                    <div className="vlCommentsBox">
+                      <div className="vlCommentList">
+                        {(post.commentList || []).length ? (
+                          (post.commentList || []).map((comment) => (
+                            <p key={comment.id}>
+                              <b>{comment.user}</b> {comment.text}
+                            </p>
+                          ))
+                        ) : (
+                          <p className="muted">No comments yet. Add first comment.</p>
+                        )}
+                      </div>
+
+                      <div className="vlCommentInput">
+                        <input
+                          placeholder="Write a comment..."
+                          value={commentText}
+                          onChange={(event) => setCommentText(event.target.value)}
+                        />
+                        <button type="button" onClick={() => addComment(post.id)}>
+                          Send
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
@@ -278,7 +430,7 @@ export default function SocialHomeApp() {
 
           <div className="vlMiniStats">
             <div>
-              <b>248</b>
+              <b>{posts.length}</b>
               <span>Posts</span>
             </div>
             <div>
