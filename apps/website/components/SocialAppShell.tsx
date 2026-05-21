@@ -13,6 +13,7 @@ type ActivePage =
   | 'saved'
   | 'profile'
   | 'settings'
+  | 'analytics'
   | 'admin';
 
 type Props = {
@@ -31,7 +32,8 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
   { key: 'saved', label: '🔖 Saved', href: '/saved' },
   { key: 'profile', label: '◉ Profile', href: '/profile' },
-  { key: 'settings', label: '⚙ Settings', href: '/settings' }
+  { key: 'settings', label: '⚙ Settings', href: '/settings' },
+  { key: 'analytics', label: '📊 Analytics', href: '/analytics' }
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {
