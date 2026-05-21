@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import AdminNavLink from './AdminNavLink';
 
 type ActivePage =
   | 'home'
@@ -26,8 +27,7 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'messages', label: '✉ Messages', href: '/messages' },
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
   { key: 'profile', label: '◉ Profile', href: '/profile' },
-  { key: 'settings', label: '⚙ Settings', href: '/settings' },
-  { key: 'admin', label: '▣ Admin', href: '/admin' }
+  { key: 'settings', label: '⚙ Settings', href: '/settings' }
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {
@@ -49,6 +49,8 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
               {item.label}
             </a>
           ))}
+
+          <AdminNavLink active={active === 'admin'} />
         </nav>
 
         <button
@@ -88,39 +90,31 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
       <aside className="vlRightbar">
         <div className="vlProfileMini">
           <div className="vlProfileAvatar">V</div>
-          <h3>Admin Control</h3>
-          <p>@vibeloop_admin</p>
+          <h3>{active === 'admin' ? 'Admin Control' : 'VibeLoop Creator'}</h3>
+          <p>{active === 'admin' ? '@vibeloop_admin' : '@you'}</p>
 
           <div className="vlMiniStats">
             <div>
-              <b>Live</b>
-              <span>Status</span>
+              <b>{active === 'admin' ? 'Live' : '248'}</b>
+              <span>{active === 'admin' ? 'Status' : 'Posts'}</span>
             </div>
             <div>
-              <b>99%</b>
-              <span>Health</span>
+              <b>{active === 'admin' ? '99%' : '52.8K'}</b>
+              <span>{active === 'admin' ? 'Health' : 'Followers'}</span>
             </div>
           </div>
         </div>
 
         <div className="vlPanel">
-          <h3>System Modules</h3>
-          {['User Control', 'Post Review', 'Reports', 'Ads Manager'].map((item, index) => (
+          <h3>{active === 'admin' ? 'System Modules' : 'Trending Reels'}</h3>
+          {(active === 'admin'
+            ? ['User Control', 'Post Review', 'Reports', 'Ads Manager']
+            : ['Fashion Drop', 'Office Story', 'Creator Life']
+          ).map((item, index) => (
             <div className="vlTrend" key={item}>
-              <div>▣</div>
+              <div>{active === 'admin' ? '▣' : '▶'}</div>
               <span>{item}</span>
               <b>{index + 1}</b>
-            </div>
-          ))}
-        </div>
-
-        <div className="vlPanel">
-          <h3>Quick Actions</h3>
-          {['Verify Creator', 'Review Report', 'Create Ad'].map((name) => (
-            <div className="vlCreator" key={name}>
-              <div>{name[0]}</div>
-              <span>{name}</span>
-              <button type="button">Open</button>
             </div>
           ))}
         </div>

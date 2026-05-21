@@ -4,13 +4,14 @@ const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
 
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const body = await request.json();
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/admin/verification/${context.params.id}/status`,
+      `${BACKEND_URL}/api/v1/admin/verification/${params.id}/status`,
       {
         method: 'POST',
         headers: {

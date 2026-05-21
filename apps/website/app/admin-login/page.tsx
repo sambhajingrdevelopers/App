@@ -1,4 +1,4 @@
-import AdminLoginPanel from '../components/AdminLoginPanel';
+import AdminLoginPanel from '../../components/AdminLoginPanel';
 
 export default function AdminLoginPage() {
   return <AdminLoginPanel />;
