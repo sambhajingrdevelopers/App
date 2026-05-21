@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import AdminNavLink from './AdminNavLink';
 
 type ActivePage =
@@ -31,6 +31,25 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {
+  const [profile, setProfile] = useState({
+    displayName: 'VibeLoop Creator',
+    username: '@you',
+    bio: 'Digital creator • Reels • Stories • Brand collaborations'
+  });
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('vibeloop_profile');
+      if (saved) {
+        setProfile(JSON.parse(saved));
+      }
+    } catch {
+      // keep default profile
+    }
+  }, []);
+
+  const initial = profile.displayName?.[0]?.toUpperCase() || 'V';
+
   return (
     <main className="vlApp">
       <aside className="vlSidebar">
@@ -89,9 +108,9 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
 
       <aside className="vlRightbar">
         <div className="vlProfileMini">
-          <div className="vlProfileAvatar">V</div>
-          <h3>{active === 'admin' ? 'Admin Control' : 'VibeLoop Creator'}</h3>
-          <p>{active === 'admin' ? '@vibeloop_admin' : '@you'}</p>
+          <div className="vlProfileAvatar">{active === 'admin' ? 'A' : initial}</div>
+          <h3>{active === 'admin' ? 'Admin Control' : profile.displayName}</h3>
+          <p>{active === 'admin' ? '@vibeloop_admin' : profile.username}</p>
 
           <div className="vlMiniStats">
             <div>

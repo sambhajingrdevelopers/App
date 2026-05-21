@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
@@ -9,6 +9,22 @@ export default function SettingsPage() {
   const [username, setUsername] = useState('@you');
   const [bio, setBio] = useState('Digital creator • Reels • Stories • Brand collaborations');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('vibeloop_profile');
+
+      if (saved) {
+        const profile = JSON.parse(saved);
+        setDisplayName(profile.displayName || 'VibeLoop Creator');
+        setUsername(profile.username || '@you');
+        setBio(profile.bio || 'Digital creator • Reels • Stories • Brand collaborations');
+      }
+    } catch {
+      // keep default profile
+    }
+  }, []);
+
 
   function saveSettings() {
     localStorage.setItem(

@@ -3851,3 +3851,13 @@ main {
     padding: 34px;
   }
 }
+
+.vlEditProfileLink {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 12px 18px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+  box-shadow: 0 18px 45px rgba(0,212,255,0.18);
+}

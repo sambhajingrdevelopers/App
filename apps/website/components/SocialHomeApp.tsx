@@ -40,6 +40,11 @@ export default function SocialHomeApp() {
   const [activeCommentPost, setActiveCommentPost] = useState<number | string | null>(null);
   const [commentText, setCommentText] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [profile, setProfile] = useState({
+    displayName: 'You',
+    username: '@you',
+    bio: 'Digital creator'
+  });
 
   function saveOwnPosts(nextPosts: Post[]) {
     const ownPosts = nextPosts.filter((post) => post.isOwn);
@@ -76,6 +81,15 @@ export default function SocialHomeApp() {
 
   useEffect(() => {
     loadFeed();
+
+    try {
+      const savedProfile = localStorage.getItem('vibeloop_profile');
+      if (savedProfile) {
+        setProfile(JSON.parse(savedProfile));
+      }
+    } catch {
+      // keep default profile
+    }
   }, []);
 
   async function handleMediaSelect(event: any) {
@@ -131,8 +145,8 @@ export default function SocialHomeApp() {
 
     const newPost: Post = {
       id: Date.now(),
-      user: '@you',
-      name: 'You',
+      user: profile.username || '@you',
+      name: profile.displayName || 'You',
       location: 'VibeLoop',
       title: mediaType === 'video' ? 'New Creator Reel' : 'New Creator Post',
       caption: caption || 'Shared a new media post.',
@@ -220,7 +234,7 @@ export default function SocialHomeApp() {
         ...(post.commentList || []),
         {
           id: Date.now(),
-          user: '@you',
+          user: profile.username || '@you',
           text: commentText
         }
       ];
@@ -331,7 +345,7 @@ export default function SocialHomeApp() {
             </div>
 
             <div className="vlComposer advanced">
-              <div className="vlAvatar">Y</div>
+              <div className="vlAvatar">{profile.displayName?.[0]?.toUpperCase() || "Y"}</div>
 
               <div className="vlComposerBody">
                 <textarea
@@ -488,9 +502,9 @@ export default function SocialHomeApp() {
 
       <aside className="vlRightbar">
         <div className="vlProfileMini">
-          <div className="vlProfileAvatar">V</div>
-          <h3>VibeLoop Creator</h3>
-          <p>@you</p>
+          <div className="vlProfileAvatar">{profile.displayName?.[0]?.toUpperCase() || "V"}</div>
+          <h3>{profile.displayName || "VibeLoop Creator"}</h3>
+          <p>{profile.username || "@you"}</p>
 
           <div className="vlMiniStats">
             <div>
