@@ -203,3 +203,12 @@ except ImportError:
     from .routes.admin_moderation import router as admin_moderation_router
 
 app.include_router(admin_moderation_router)
+
+
+# VibeLoop wallet routes
+try:
+    from routes.wallet import router as wallet_router
+except ImportError:
+    from .routes.wallet import router as wallet_router
+
+app.include_router(wallet_router)
