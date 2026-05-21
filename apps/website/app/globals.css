@@ -3598,3 +3598,65 @@ main {
     flex-direction: column;
   }
 }
+
+.adminSearchRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.adminSearchRow input {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.10);
+  outline: 0;
+  color: white;
+  border-radius: 999px;
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.06);
+}
+
+.adminSearchRow button,
+.adminActionButtons button {
+  border: 0;
+  color: white;
+  border-radius: 999px;
+  padding: 12px 15px;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.adminActionMessage {
+  margin-bottom: 18px;
+  padding: 15px 16px;
+  border-radius: 20px;
+  color: #dffaff;
+  font-weight: 900;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+}
+
+.adminTableActionRow {
+  align-items: flex-start;
+}
+
+.adminActionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.adminActionButtons button:nth-child(2) {
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+@media (max-width: 640px) {
+  .adminSearchRow {
+    flex-direction: column;
+  }
+
+  .adminSearchRow button,
+  .adminActionButtons button {
+    width: 100%;
+  }
+}
