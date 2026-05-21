@@ -212,3 +212,12 @@ except ImportError:
     from .routes.wallet import router as wallet_router
 
 app.include_router(wallet_router)
+
+
+# VibeLoop dynamic profile routes
+try:
+    from routes.dynamic_profile import router as dynamic_profile_router
+except ImportError:
+    from .routes.dynamic_profile import router as dynamic_profile_router
+
+app.include_router(dynamic_profile_router)
