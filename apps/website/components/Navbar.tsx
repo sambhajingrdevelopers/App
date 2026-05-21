@@ -14,7 +14,7 @@ export default function Navbar() {
         <a href="#business">Business</a>
       </div>
 
-      <a className="navButton" href="#contact">Start Project</a>
+      <a className="navButton" href="/login">Start Project</a>
     </nav>
   );
 }
