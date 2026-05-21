@@ -3361,3 +3361,240 @@ main {
     flex-direction: column;
   }
 }
+
+/* Admin Dashboard */
+.adminHero {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.adminHero > div,
+.adminLiveCard,
+.adminStatCard,
+.adminPanel {
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+}
+
+.adminHero > div {
+  border-radius: 30px;
+  padding: 26px;
+}
+
+.adminHero span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adminHero h2 {
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin: 18px 0 10px;
+}
+
+.adminHero p {
+  margin: 0;
+  color: #a1a1aa;
+  line-height: 1.65;
+}
+
+.adminLiveCard {
+  border-radius: 30px;
+  padding: 24px;
+  display: grid;
+  align-content: center;
+}
+
+.adminLiveCard b,
+.adminLiveCard p {
+  color: #a1a1aa;
+}
+
+.adminLiveCard strong {
+  display: block;
+  font-size: 34px;
+  margin: 10px 0;
+  color: #00eaff;
+}
+
+.adminStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.adminStatCard {
+  border-radius: 26px;
+  padding: 20px;
+}
+
+.adminStatCard span {
+  color: #a1a1aa;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.adminStatCard strong {
+  display: block;
+  font-size: 34px;
+  margin: 8px 0;
+}
+
+.adminStatCard p {
+  margin: 0;
+  color: #00eaff;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.adminGridTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.adminPanel {
+  border-radius: 30px;
+  padding: 20px;
+}
+
+.adminPanelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.adminPanelHead h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.adminPanelHead button,
+.adminTableRow button {
+  border: 0;
+  color: white;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.adminTable {
+  display: grid;
+  gap: 10px;
+}
+
+.adminTableRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.adminTableRow b,
+.adminTableRow span {
+  display: block;
+}
+
+.adminTableRow span {
+  color: #a1a1aa;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.adminTableRow em {
+  font-style: normal;
+  color: #00eaff;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(0,238,255,0.08);
+}
+
+.adminEmpty {
+  padding: 18px;
+  border-radius: 20px;
+  color: #a1a1aa;
+  background: rgba(255,255,255,0.045);
+}
+
+.adminCampaign {
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 12px;
+}
+
+.adminCampaign b,
+.adminCampaign span {
+  display: block;
+}
+
+.adminCampaign span {
+  color: #a1a1aa;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.adminProgress {
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.08);
+}
+
+.adminProgress span {
+  display: block;
+  width: 72%;
+  height: 100%;
+  background: linear-gradient(135deg, #ff2d95, #00d4ff);
+}
+
+.adminProgress.small span {
+  width: 46%;
+}
+
+@media (max-width: 980px) {
+  .adminHero,
+  .adminGridTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .adminStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .adminStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminTableRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

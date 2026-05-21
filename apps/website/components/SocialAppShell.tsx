@@ -2,21 +2,32 @@
 
 import type { ReactNode } from 'react';
 
+type ActivePage =
+  | 'home'
+  | 'explore'
+  | 'reels'
+  | 'messages'
+  | 'notifications'
+  | 'profile'
+  | 'settings'
+  | 'admin';
+
 type Props = {
-  active: 'home' | 'explore' | 'reels' | 'messages' | 'notifications' | 'profile' | 'settings';
+  active: ActivePage;
   title: string;
   subtitle: string;
   children: ReactNode;
 };
 
-const menu = [
+const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'home', label: '⌂ Home', href: '/home' },
   { key: 'explore', label: '⌕ Explore', href: '/explore' },
   { key: 'reels', label: '▶ Reels', href: '/reels' },
   { key: 'messages', label: '✉ Messages', href: '/messages' },
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
   { key: 'profile', label: '◉ Profile', href: '/profile' },
-  { key: 'settings', label: '⚙ Settings', href: '/settings' }
+  { key: 'settings', label: '⚙ Settings', href: '/settings' },
+  { key: 'admin', label: '▣ Admin', href: '/admin' }
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {
@@ -38,7 +49,6 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
               {item.label}
             </a>
           ))}
-          <a href="/settings">⚙ Settings</a>
         </nav>
 
         <button
@@ -72,39 +82,39 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
       <aside className="vlRightbar">
         <div className="vlProfileMini">
           <div className="vlProfileAvatar">V</div>
-          <h3>VibeLoop Creator</h3>
-          <p>@you</p>
+          <h3>Admin Control</h3>
+          <p>@vibeloop_admin</p>
 
           <div className="vlMiniStats">
             <div>
-              <b>248</b>
-              <span>Posts</span>
+              <b>Live</b>
+              <span>Status</span>
             </div>
             <div>
-              <b>52.8K</b>
-              <span>Followers</span>
+              <b>99%</b>
+              <span>Health</span>
             </div>
           </div>
         </div>
 
         <div className="vlPanel">
-          <h3>Trending Reels</h3>
-          {['Fashion Drop', 'Office Story', 'Creator Life'].map((item, index) => (
+          <h3>System Modules</h3>
+          {['User Control', 'Post Review', 'Reports', 'Ads Manager'].map((item, index) => (
             <div className="vlTrend" key={item}>
-              <div>▶</div>
+              <div>▣</div>
               <span>{item}</span>
-              <b>{index + 1}.{index + 2}M</b>
+              <b>{index + 1}</b>
             </div>
           ))}
         </div>
 
         <div className="vlPanel">
-          <h3>Suggested Creators</h3>
-          {['Mira Creates', 'Travel Dev', 'Urban Snap'].map((name) => (
+          <h3>Quick Actions</h3>
+          {['Verify Creator', 'Review Report', 'Create Ad'].map((name) => (
             <div className="vlCreator" key={name}>
               <div>{name[0]}</div>
               <span>{name}</span>
-              <button type="button">Follow</button>
+              <button type="button">Open</button>
             </div>
           ))}
         </div>
