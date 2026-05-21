@@ -1,48 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const stories = ['You', 'Mira', 'Dev', 'Sara', 'Aarav', 'Zayn', 'Riya'];
-
-const initialPosts = [
-  {
-    id: 1,
-    user: '@mira.creates',
-    name: 'Mira',
-    location: 'Mumbai',
-    title: 'Creator Studio Setup',
-    caption: 'A premium creator workspace built for posts, reels, stories and audience growth.',
-    likes: '12.8K',
-    comments: '342',
-    color: 'pink'
-  },
-  {
-    id: 2,
-    user: '@travel.dev',
-    name: 'Dev',
-    location: 'Pune Hills',
-    title: 'Travel Reel Moment',
-    caption: 'Discover short-form creator content with a clean and immersive reels experience.',
-    likes: '8.4K',
-    comments: '119',
-    color: 'blue'
-  },
-  {
-    id: 3,
-    user: '@urban.snap',
-    name: 'Sara',
-    location: 'Bengaluru',
-    title: 'Urban Creator Drop',
-    caption: 'A premium post interface designed for creator engagement and brand discovery.',
-    likes: '21.1K',
-    comments: '901',
-    color: 'purple'
-  }
-];
+type Post = {
+  id: number | string;
+  user: string;
+  name: string;
+  location: string;
+  title: string;
+  caption: string;
+  likes: string;
+  comments: string;
+  color: string;
+};
 
 export default function SocialHomeApp() {
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [stories, setStories] = useState<string[]>([]);
   const [caption, setCaption] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [source, setSource] = useState('loading');
+
+  async function loadFeed() {
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/feed', {
+        cache: 'no-store'
+      });
+
+      const data = await response.json();
+
+      setStories(data.stories || []);
+      setPosts(data.posts || []);
+      setSource(data.source || 'fallback');
+    } catch {
+      setSource('fallback');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadFeed();
+  }, []);
 
   function createPost() {
     if (!caption.trim()) return;
@@ -74,12 +75,12 @@ export default function SocialHomeApp() {
         </div>
 
         <nav className="vlMenu">
-          <a className="active">⌂ Home</a>
-          <a>⌕ Explore</a>
-          <a>▶ Reels</a>
-          <a>✉ Messages</a>
+          <a className="active" href="/home">⌂ Home</a>
+          <a href="/explore">⌕ Explore</a>
+          <a href="/reels">▶ Reels</a>
+          <a href="/messages">✉ Messages</a>
           <a>♡ Notifications</a>
-          <a>◉ Profile</a>
+          <a href="/profile">◉ Profile</a>
           <a>⚙ Settings</a>
         </nav>
 
@@ -99,7 +100,10 @@ export default function SocialHomeApp() {
         <header className="vlTopbar">
           <div>
             <h1>Home Feed</h1>
-            <p>Discover creators, reels, stories and trending content.</p>
+            <p>
+              Discover creators, reels, stories and trending content.
+              <span className="vlSourceBadge"> {source === 'backend' ? 'Live Backend' : 'Fallback Ready'}</span>
+            </p>
           </div>
 
           <div className="vlSearch">
@@ -108,51 +112,61 @@ export default function SocialHomeApp() {
           </div>
         </header>
 
-        <div className="vlStories">
-          {stories.map((story) => (
-            <div className="vlStory" key={story}>
-              <div>{story[0]}</div>
-              <span>{story}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="vlComposer">
-          <div className="vlAvatar">Y</div>
-          <textarea
-            placeholder="Share something with your audience..."
-            value={caption}
-            onChange={(event) => setCaption(event.target.value)}
-          />
-          <button type="button" onClick={createPost}>Post</button>
-        </div>
-
-        <div className="vlPostList">
-          {posts.map((post) => (
-            <article className="vlPostCard" key={post.id}>
-              <div className="vlPostHeader">
-                <div className={`vlAvatar ${post.color}`}>{post.name[0]}</div>
-                <div>
-                  <b>{post.user} ✓</b>
-                  <span>{post.location}</span>
+        {loading ? (
+          <div className="vlFeedLoader">
+            <div />
+            <h2>Loading VibeLoop feed...</h2>
+            <p>Connecting to creator network.</p>
+          </div>
+        ) : (
+          <>
+            <div className="vlStories">
+              {stories.map((story) => (
+                <div className="vlStory" key={story}>
+                  <div>{story[0]}</div>
+                  <span>{story}</span>
                 </div>
-                <button type="button">•••</button>
-              </div>
+              ))}
+            </div>
 
-              <div className={`vlPostMedia ${post.color}`}>
-                <h2>{post.title}</h2>
-                <p>{post.caption}</p>
-              </div>
+            <div className="vlComposer">
+              <div className="vlAvatar">Y</div>
+              <textarea
+                placeholder="Share something with your audience..."
+                value={caption}
+                onChange={(event) => setCaption(event.target.value)}
+              />
+              <button type="button" onClick={createPost}>Post</button>
+            </div>
 
-              <div className="vlPostActions">
-                <span>♡ {post.likes}</span>
-                <span>💬 {post.comments}</span>
-                <span>↗ Share</span>
-                <span>🔖 Save</span>
-              </div>
-            </article>
-          ))}
-        </div>
+            <div className="vlPostList">
+              {posts.map((post) => (
+                <article className="vlPostCard" key={post.id}>
+                  <div className="vlPostHeader">
+                    <div className={`vlAvatar ${post.color}`}>{post.name[0]}</div>
+                    <div>
+                      <b>{post.user} ✓</b>
+                      <span>{post.location}</span>
+                    </div>
+                    <button type="button">•••</button>
+                  </div>
+
+                  <div className={`vlPostMedia ${post.color}`}>
+                    <h2>{post.title}</h2>
+                    <p>{post.caption}</p>
+                  </div>
+
+                  <div className="vlPostActions">
+                    <span>♡ {post.likes}</span>
+                    <span>💬 {post.comments}</span>
+                    <span>↗ Share</span>
+                    <span>🔖 Save</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       <aside className="vlRightbar">
