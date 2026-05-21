@@ -176,3 +176,12 @@ def _vibeloop_auto_load_routes():
 
 
 _vibeloop_auto_load_routes()
+
+
+# VibeLoop safety/report/block routes
+try:
+    from routes.safety import router as safety_router
+except ImportError:
+    from .routes.safety import router as safety_router
+
+app.include_router(safety_router)

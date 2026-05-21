@@ -321,6 +321,7 @@ export default function SocialHomeApp() {
           <a href="/profile">◉ Profile</a>
           <a href="/settings">⚙ Settings</a>
           <a href="/analytics">📊 Analytics</a>
+          <a href="/safety">🛡 Safety</a>
           <AdminNavLink />
         </nav>
 

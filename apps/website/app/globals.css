@@ -4847,3 +4847,151 @@ main {
     gap: 8px;
   }
 }
+
+/* Safety Center */
+.safetyHero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 26px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(255,45,149,0.16), transparent 34%),
+    rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.safetyHero span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.safetyHero h2 {
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin: 16px 0 10px;
+}
+
+.safetyHero p {
+  margin: 0;
+  color: #a1a1aa;
+}
+
+.safetyHero button,
+.safetyPanel button,
+.safetyItem button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.safetyGridTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.safetyPanel {
+  padding: 22px;
+  border-radius: 32px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+}
+
+.safetyPanel h3 {
+  margin: 0 0 16px;
+  font-size: 24px;
+}
+
+.safetyPanel label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.safetyPanel input,
+.safetyPanel select,
+.safetyPanel textarea {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 14px;
+  outline: 0;
+  color: white;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+}
+
+.safetyPanel textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.safetyList {
+  display: grid;
+  gap: 12px;
+}
+
+.safetyItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding: 15px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.safetyItem b,
+.safetyItem span,
+.safetyItem p {
+  display: block;
+}
+
+.safetyItem span,
+.safetyItem p {
+  color: #a1a1aa;
+  margin: 4px 0 0;
+}
+
+.safetyItem em {
+  font-style: normal;
+  color: #00eaff;
+  font-weight: 900;
+}
+
+@media (max-width: 900px) {
+  .safetyHero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .safetyGridTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .safetyItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
