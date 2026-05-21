@@ -322,6 +322,7 @@ export default function SocialHomeApp() {
           <a href="/settings">⚙ Settings</a>
           <a href="/analytics">📊 Analytics</a>
           <a href="/safety">🛡 Safety</a>
+          <a href="/verification">✓ Verification</a>
           <AdminNavLink />
         </nav>
 
