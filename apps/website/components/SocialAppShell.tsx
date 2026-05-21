@@ -6,6 +6,7 @@ import AdminNavLink from './AdminNavLink';
 type ActivePage =
   | 'home'
   | 'explore'
+  | 'stories'
   | 'reels'
   | 'messages'
   | 'notifications'
@@ -23,6 +24,7 @@ type Props = {
 const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'home', label: '⌂ Home', href: '/home' },
   { key: 'explore', label: '⌕ Explore', href: '/explore' },
+  { key: 'stories', label: '◎ Stories', href: '/stories' },
   { key: 'reels', label: '▶ Reels', href: '/reels' },
   { key: 'messages', label: '✉ Messages', href: '/messages' },
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
@@ -31,6 +33,7 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {
+  const [topSearch, setTopSearch] = useState('');
   const [profile, setProfile] = useState({
     displayName: 'VibeLoop Creator',
     username: '@you',
@@ -99,7 +102,16 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
 
           <div className="vlSearch">
             <span>⌕</span>
-            <input placeholder="Search creators, reels, hashtags..." />
+            <input
+              placeholder="Search creators, reels, hashtags..."
+              value={topSearch}
+              onChange={(event) => setTopSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && topSearch.trim()) {
+                  window.location.href = `/search?q=${encodeURIComponent(topSearch)}`;
+                }
+              }}
+            />
           </div>
         </header>
 

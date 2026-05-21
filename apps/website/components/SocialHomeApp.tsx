@@ -37,6 +37,7 @@ export default function SocialHomeApp() {
   const [uploadStatus, setUploadStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState('loading');
+  const [topSearch, setTopSearch] = useState('');
   const [activeCommentPost, setActiveCommentPost] = useState<number | string | null>(null);
   const [commentText, setCommentText] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -289,6 +290,7 @@ export default function SocialHomeApp() {
         <nav className="vlMenu">
           <a className="active" href="/home">⌂ Home</a>
           <a href="/explore">⌕ Explore</a>
+          <a href="/stories">◎ Stories</a>
           <a href="/reels">▶ Reels</a>
           <a href="/messages">✉ Messages</a>
           <a href="/notifications">♡ Notifications</a>
@@ -323,7 +325,16 @@ export default function SocialHomeApp() {
 
           <div className="vlSearch">
             <span>⌕</span>
-            <input placeholder="Search creators, reels, hashtags..." />
+            <input
+              placeholder="Search creators, reels, hashtags..."
+              value={topSearch}
+              onChange={(event) => setTopSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && topSearch.trim()) {
+                  window.location.href = `/search?q=${encodeURIComponent(topSearch)}`;
+                }
+              }}
+            />
           </div>
         </header>
 

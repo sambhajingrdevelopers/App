@@ -4247,3 +4247,379 @@ main {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Real Stories page */
+.vlStoryComposer {
+  padding: 20px;
+  border-radius: 30px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.vlStoryComposer h2 {
+  margin: 0 0 6px;
+  font-size: 28px;
+}
+
+.vlStoryComposer p {
+  margin: 0 0 16px;
+  color: #a1a1aa;
+}
+
+.vlStoryComposer textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  border: 1px solid rgba(255,255,255,0.10);
+  outline: 0;
+  color: white;
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+}
+
+.vlStoryPreview {
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #000;
+  margin-bottom: 12px;
+}
+
+.vlStoryPreview img,
+.vlStoryPreview video {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+}
+
+.vlStoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.vlStoryCard {
+  overflow: hidden;
+  border-radius: 30px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.24);
+}
+
+.vlStoryMedia {
+  aspect-ratio: 9 / 16;
+  position: relative;
+  background: linear-gradient(135deg, #ff2d95, #00d4ff);
+}
+
+.vlStoryMedia img,
+.vlStoryMedia video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vlStoryFallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 64px;
+  font-weight: 900;
+}
+
+.vlStoryCardInfo {
+  padding: 14px;
+}
+
+.vlStoryCardInfo b,
+.vlStoryCardInfo span,
+.vlStoryCardInfo small {
+  display: block;
+}
+
+.vlStoryCardInfo span,
+.vlStoryCardInfo small {
+  color: #a1a1aa;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.vlStoryCardInfo p {
+  color: #f8fafc;
+  line-height: 1.45;
+  margin: 10px 0;
+}
+
+@media (max-width: 1100px) {
+  .vlStoriesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 780px) {
+  .vlStoriesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .vlStoriesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Global Search Page */
+.vlSearchPageBox {
+  padding: 22px;
+  border-radius: 30px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.vlSearchPageBox h2 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 4vw, 48px);
+}
+
+.vlSearchPageBox p {
+  margin: 0 0 18px;
+  color: #a1a1aa;
+  line-height: 1.6;
+}
+
+.vlSearchPageInput {
+  display: flex;
+  gap: 10px;
+}
+
+.vlSearchPageInput input {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.10);
+  outline: 0;
+  color: white;
+  border-radius: 999px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.06);
+}
+
+.vlSearchPageInput button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 18px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.vlSearchGroup {
+  margin-bottom: 24px;
+}
+
+.vlSearchGroup h3 {
+  color: #00eaff;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.vlSearchResults {
+  display: grid;
+  gap: 12px;
+}
+
+.vlSearchResultCard {
+  display: grid;
+  grid-template-columns: 54px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 15px;
+  border-radius: 24px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.vlSearchResultCard > div {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.vlSearchResultCard b,
+.vlSearchResultCard span,
+.vlSearchResultCard small {
+  display: block;
+}
+
+.vlSearchResultCard span {
+  color: #a1a1aa;
+  margin-top: 4px;
+}
+
+.vlSearchResultCard small {
+  color: #00eaff;
+  font-weight: 900;
+  margin-top: 5px;
+}
+
+.vlSearchResultCard em {
+  font-style: normal;
+  color: white;
+  font-weight: 900;
+}
+
+@media (max-width: 620px) {
+  .vlSearchPageInput {
+    flex-direction: column;
+  }
+
+  .vlSearchPageInput button {
+    width: 100%;
+  }
+
+  .vlSearchResultCard {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .vlSearchResultCard em {
+    display: none;
+  }
+}
+
+/* Global Search Page */
+.vlSearchPageBox {
+  padding: 22px;
+  border-radius: 30px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.vlSearchPageBox h2 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 4vw, 48px);
+}
+
+.vlSearchPageBox p {
+  margin: 0 0 18px;
+  color: #a1a1aa;
+  line-height: 1.6;
+}
+
+.vlSearchPageInput {
+  display: flex;
+  gap: 10px;
+}
+
+.vlSearchPageInput input {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.10);
+  outline: 0;
+  color: white;
+  border-radius: 999px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.06);
+}
+
+.vlSearchPageInput button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 18px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.vlSearchGroup {
+  margin-bottom: 24px;
+}
+
+.vlSearchGroup h3 {
+  color: #00eaff;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.vlSearchResults {
+  display: grid;
+  gap: 12px;
+}
+
+.vlSearchResultCard {
+  display: grid;
+  grid-template-columns: 54px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 15px;
+  border-radius: 24px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.vlSearchResultCard > div {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.vlSearchResultCard b,
+.vlSearchResultCard span,
+.vlSearchResultCard small {
+  display: block;
+}
+
+.vlSearchResultCard span {
+  color: #a1a1aa;
+  margin-top: 4px;
+}
+
+.vlSearchResultCard small {
+  color: #00eaff;
+  font-weight: 900;
+  margin-top: 5px;
+}
+
+.vlSearchResultCard em {
+  font-style: normal;
+  color: white;
+  font-weight: 900;
+}
+
+@media (max-width: 620px) {
+  .vlSearchPageInput {
+    flex-direction: column;
+  }
+
+  .vlSearchPageInput button {
+    width: 100%;
+  }
+
+  .vlSearchResultCard {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .vlSearchResultCard em {
+    display: none;
+  }
+}
