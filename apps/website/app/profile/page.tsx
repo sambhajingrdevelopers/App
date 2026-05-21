@@ -8,7 +8,9 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState({
     displayName: 'VibeLoop Creator',
     username: '@you',
-    bio: 'Digital creator • Reels • Stories • Brand collaborations'
+    bio: 'Digital creator • Reels • Stories • Brand collaborations',
+    avatarUrl: '',
+    bannerUrl: ''
   });
 
   const [postsCount, setPostsCount] = useState(248);
@@ -19,7 +21,10 @@ export default function ProfilePage() {
       const savedPosts = localStorage.getItem('vibeloop_posts');
 
       if (savedProfile) {
-        setProfile(JSON.parse(savedProfile));
+        setProfile({
+          ...profile,
+          ...JSON.parse(savedProfile)
+        });
       }
 
       if (savedPosts) {
@@ -40,10 +45,22 @@ export default function ProfilePage() {
         subtitle="Manage your creator identity and social presence."
       >
         <div className="vlProfilePage">
-          <div className="vlProfileBanner" />
+          <div
+            className="vlProfileBanner"
+            style={{
+              backgroundImage: profile.bannerUrl ? `url(${profile.bannerUrl})` : undefined
+            }}
+          />
 
           <div className="vlProfileInfo">
-            <div className="vlProfileAvatar big">{initial}</div>
+            <div
+              className="vlProfileAvatar big"
+              style={{
+                backgroundImage: profile.avatarUrl ? `url(${profile.avatarUrl})` : undefined
+              }}
+            >
+              {!profile.avatarUrl && initial}
+            </div>
 
             <div>
               <h2>{profile.displayName}</h2>

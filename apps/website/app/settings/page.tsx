@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
@@ -8,7 +8,11 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState('VibeLoop Creator');
   const [username, setUsername] = useState('@you');
   const [bio, setBio] = useState('Digital creator • Reels • Stories • Brand collaborations');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [bannerUrl, setBannerUrl] = useState('');
   const [message, setMessage] = useState('');
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const bannerInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     try {
@@ -19,12 +23,53 @@ export default function SettingsPage() {
         setDisplayName(profile.displayName || 'VibeLoop Creator');
         setUsername(profile.username || '@you');
         setBio(profile.bio || 'Digital creator • Reels • Stories • Brand collaborations');
+        setAvatarUrl(profile.avatarUrl || '');
+        setBannerUrl(profile.bannerUrl || '');
       }
     } catch {
       // keep default profile
     }
   }, []);
 
+  async function uploadImage(file: File, type: 'avatar' | 'banner') {
+    if (!file.type.startsWith('image/')) {
+      setMessage('Please upload only image files.');
+      return;
+    }
+
+    setMessage('Uploading image...');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result?.message || 'Upload failed');
+      }
+
+      if (type === 'avatar') setAvatarUrl(result.mediaUrl);
+      if (type === 'banner') setBannerUrl(result.mediaUrl);
+
+      setMessage('Image uploaded successfully.');
+    } catch {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (type === 'avatar') setAvatarUrl(String(reader.result));
+        if (type === 'banner') setBannerUrl(String(reader.result));
+        setMessage('Server upload failed. Local preview saved.');
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
 
   function saveSettings() {
     localStorage.setItem(
@@ -32,7 +77,9 @@ export default function SettingsPage() {
       JSON.stringify({
         displayName,
         username,
-        bio
+        bio,
+        avatarUrl,
+        bannerUrl
       })
     );
 
@@ -54,7 +101,58 @@ export default function SettingsPage() {
         <div className="vlSettingsGrid">
           <section className="vlSettingsCard">
             <h2>Profile Settings</h2>
-            <p>Update your creator identity and public profile details.</p>
+            <p>Update your creator identity, profile photo and cover banner.</p>
+
+            <div className="vlProfileImageSettings">
+              <div
+                className="vlSettingsBanner"
+                style={{
+                  backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined
+                }}
+              />
+
+              <div className="vlSettingsAvatarWrap">
+                <div
+                  className="vlSettingsAvatar"
+                  style={{
+                    backgroundImage: avatarUrl ? `url(${avatarUrl})` : undefined
+                  }}
+                >
+                  {!avatarUrl && (displayName?.[0]?.toUpperCase() || 'V')}
+                </div>
+
+                <div className="vlImageButtons">
+                  <button type="button" onClick={() => avatarInputRef.current?.click()}>
+                    Upload Profile Photo
+                  </button>
+                  <button type="button" onClick={() => bannerInputRef.current?.click()}>
+                    Upload Cover Banner
+                  </button>
+                </div>
+              </div>
+
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) uploadImage(file, 'avatar');
+                }}
+              />
+
+              <input
+                ref={bannerInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) uploadImage(file, 'banner');
+                }}
+              />
+            </div>
 
             <label>
               Display Name

@@ -3861,3 +3861,84 @@ main {
   background: linear-gradient(135deg, #00d4ff, #7c3aed);
   box-shadow: 0 18px 45px rgba(0,212,255,0.18);
 }
+
+/* Profile image and cover upload */
+.vlProfileImageSettings {
+  margin-bottom: 18px;
+}
+
+.vlSettingsBanner {
+  height: 160px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.22), transparent 30%),
+    linear-gradient(135deg, #ff2d95, #00d4ff);
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.vlSettingsAvatarWrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: -42px;
+  padding: 0 14px;
+}
+
+.vlSettingsAvatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 38px;
+  font-weight: 900;
+  background:
+    linear-gradient(135deg, #ff2d95, #7c3aed);
+  background-size: cover;
+  background-position: center;
+  border: 6px solid #191927;
+}
+
+.vlImageButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.vlImageButtons button {
+  padding: 10px 13px;
+  font-size: 12px;
+}
+
+.vlProfileBanner {
+  background-size: cover;
+  background-position: center;
+}
+
+.vlProfileAvatar.big,
+.vlProfileAvatar,
+.vlAvatar,
+.vlStory div {
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 620px) {
+  .vlSettingsAvatarWrap {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .vlImageButtons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .vlImageButtons button {
+    width: 100%;
+  }
+}
