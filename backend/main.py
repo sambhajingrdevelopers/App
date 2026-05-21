@@ -64,3 +64,12 @@ except ImportError:
     from routes.admin import router as admin_router
 
 app.include_router(admin_router)
+
+
+# VibeLoop creators/follow routes
+try:
+    from .routes.creators import router as creators_router
+except ImportError:
+    from routes.creators import router as creators_router
+
+app.include_router(creators_router)

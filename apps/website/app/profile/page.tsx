@@ -14,6 +14,7 @@ export default function ProfilePage() {
   });
 
   const [postsCount, setPostsCount] = useState(248);
+  const [followingCount, setFollowingCount] = useState(320);
 
   useEffect(() => {
     async function loadProfile() {
@@ -53,6 +54,20 @@ export default function ProfilePage() {
       } catch {
         // keep default count
       }
+
+      try {
+        const response = await fetch('/api/creators', { cache: 'no-store' });
+        const data = await response.json();
+
+        if (typeof data.followingCount === 'number') {
+          setFollowingCount(data.followingCount);
+          localStorage.setItem('vibeloop_following_count', String(data.followingCount));
+        }
+      } catch {
+        const savedFollowing = localStorage.getItem('vibeloop_following_count');
+        if (savedFollowing) setFollowingCount(Number(savedFollowing));
+      }
+
     }
 
     loadProfile();
@@ -105,7 +120,7 @@ export default function ProfilePage() {
               <span>Followers</span>
             </div>
             <div>
-              <b>320</b>
+              <b>{followingCount}</b>
               <span>Following</span>
             </div>
             <div>
