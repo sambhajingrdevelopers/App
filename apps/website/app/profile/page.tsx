@@ -16,23 +16,46 @@ export default function ProfilePage() {
   const [postsCount, setPostsCount] = useState(248);
 
   useEffect(() => {
-    try {
-      const savedProfile = localStorage.getItem('vibeloop_profile');
-      const savedPosts = localStorage.getItem('vibeloop_posts');
+    async function loadProfile() {
+      try {
+        const response = await fetch('/api/profile', { cache: 'no-store' });
+        const result = await response.json();
 
-      if (savedProfile) {
-        setProfile({
-          ...profile,
-          ...JSON.parse(savedProfile)
-        });
+        if (result.profile) {
+          setProfile((current) => ({
+            ...current,
+            ...result.profile
+          }));
+
+          localStorage.setItem('vibeloop_profile', JSON.stringify(result.profile));
+        }
+      } catch {
+        try {
+          const savedProfile = localStorage.getItem('vibeloop_profile');
+
+          if (savedProfile) {
+            setProfile((current) => ({
+              ...current,
+              ...JSON.parse(savedProfile)
+            }));
+          }
+        } catch {
+          // keep default profile
+        }
       }
 
-      if (savedPosts) {
-        setPostsCount(JSON.parse(savedPosts).length);
+      try {
+        const savedPosts = localStorage.getItem('vibeloop_posts');
+
+        if (savedPosts) {
+          setPostsCount(JSON.parse(savedPosts).length);
+        }
+      } catch {
+        // keep default count
       }
-    } catch {
-      // keep default profile
     }
+
+    loadProfile();
   }, []);
 
   const initial = profile.displayName?.[0]?.toUpperCase() || 'V';

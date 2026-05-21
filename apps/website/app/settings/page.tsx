@@ -15,20 +15,38 @@ export default function SettingsPage() {
   const bannerInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('vibeloop_profile');
+    async function loadProfile() {
+      try {
+        const response = await fetch('/api/profile', { cache: 'no-store' });
+        const result = await response.json();
+        const profile = result.profile || {};
 
-      if (saved) {
-        const profile = JSON.parse(saved);
         setDisplayName(profile.displayName || 'VibeLoop Creator');
         setUsername(profile.username || '@you');
         setBio(profile.bio || 'Digital creator • Reels • Stories • Brand collaborations');
         setAvatarUrl(profile.avatarUrl || '');
         setBannerUrl(profile.bannerUrl || '');
+
+        localStorage.setItem('vibeloop_profile', JSON.stringify(profile));
+      } catch {
+        try {
+          const saved = localStorage.getItem('vibeloop_profile');
+
+          if (saved) {
+            const profile = JSON.parse(saved);
+            setDisplayName(profile.displayName || 'VibeLoop Creator');
+            setUsername(profile.username || '@you');
+            setBio(profile.bio || 'Digital creator • Reels • Stories • Brand collaborations');
+            setAvatarUrl(profile.avatarUrl || '');
+            setBannerUrl(profile.bannerUrl || '');
+          }
+        } catch {
+          // keep default profile
+        }
       }
-    } catch {
-      // keep default profile
     }
+
+    loadProfile();
   }, []);
 
   async function uploadImage(file: File, type: 'avatar' | 'banner') {
@@ -71,19 +89,38 @@ export default function SettingsPage() {
     }
   }
 
-  function saveSettings() {
-    localStorage.setItem(
-      'vibeloop_profile',
-      JSON.stringify({
-        displayName,
-        username,
-        bio,
-        avatarUrl,
-        bannerUrl
-      })
-    );
+  async function saveSettings() {
+    const profile = {
+      displayName,
+      username,
+      bio,
+      avatarUrl,
+      bannerUrl
+    };
 
-    setMessage('Settings saved successfully.');
+    localStorage.setItem('vibeloop_profile', JSON.stringify(profile));
+    setMessage('Saving profile to backend...');
+
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(profile)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result?.message || 'Backend save failed');
+      }
+
+      localStorage.setItem('vibeloop_profile', JSON.stringify(result.profile || profile));
+      setMessage('Profile saved to EC2 backend successfully.');
+    } catch {
+      setMessage('Backend save failed. Profile saved locally.');
+    }
   }
 
   function clearLocalPosts() {
