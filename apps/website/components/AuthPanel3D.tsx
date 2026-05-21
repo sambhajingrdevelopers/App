@@ -27,12 +27,7 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName,
-          email,
-          username,
-          password
-        })
+        body: JSON.stringify({ fullName, email, username, password })
       });
 
       const result = await response.json();
@@ -42,7 +37,7 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
       }
 
       if (isRegister) {
-        setStatus('Account created successfully. Now login.');
+        setStatus('Account created successfully. Please login now.');
         setMode('login');
         setPassword('');
       } else {
@@ -61,21 +56,40 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
 
   return (
     <main className="zAuthScene">
+      <div className="zNoise" />
+      <div className="zGridFloor" />
       <div className="zAuthBgLine zLineOne" />
       <div className="zAuthBgLine zLineTwo" />
       <div className="zAuthOrb zOrbOne" />
       <div className="zAuthOrb zOrbTwo" />
 
+      <div className="zParticle p1" />
+      <div className="zParticle p2" />
+      <div className="zParticle p3" />
+      <div className="zParticle p4" />
+
       <section className={`zAuthShell ${isRegister ? 'zRegisterMode' : 'zLoginMode'}`}>
+        <div className="zAnimatedBorder" />
         <div className="zGlassSurface" />
+        <div className="zScanLine" />
 
         <div className="zWelcomeSide">
-          <div className="zLogo3d">V</div>
-          <h1>{isRegister ? 'WELCOME!' : 'WELCOME BACK!'}</h1>
+          <div className="zLogoWrap">
+            <div className="zLogoRing" />
+            <div className="zLogo3d">V</div>
+          </div>
+
+          <div className="zLiveBadge">
+            <span />
+            Secure Creator Access
+          </div>
+
+          <h1>{isRegister ? 'CREATE YOUR WORLD!' : 'WELCOME BACK!'}</h1>
+
           <p>
             {isRegister
-              ? 'Create your VibeLoop account and start your creator journey.'
-              : 'Login to continue your feed, reels, profile and creator tools.'}
+              ? 'Join VibeLoop and start building your creator profile, reels, stories and community.'
+              : 'Enter your creator dashboard, social feed, reels, messages and growth tools.'}
           </p>
 
           <div className="zMiniStats">
@@ -84,8 +98,8 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
               <span>Creators</span>
             </div>
             <div>
-              <b>24/7</b>
-              <span>Live</span>
+              <b>1M+</b>
+              <span>Media Scale</span>
             </div>
           </div>
         </div>
@@ -117,6 +131,9 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
             </div>
 
             <h2>{isRegister ? 'Register' : 'Login'}</h2>
+            <p className="zFormSub">
+              {isRegister ? 'Create your creator identity' : 'Access your VibeLoop account'}
+            </p>
 
             <form className="zForm" onSubmit={(event) => event.preventDefault()}>
               {isRegister && (
@@ -188,7 +205,7 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
                 onClick={handleAuth}
                 disabled={loading}
               >
-                {loading ? 'Please wait...' : isRegister ? 'Register' : 'Login'}
+                {loading ? 'Please wait...' : isRegister ? 'Create Account' : 'Login'}
               </button>
             </form>
 
