@@ -156,7 +156,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
 
         <div className="dpActions">
           {p.isOwn ? (
-            <a href="/settings">Edit Profile</a>
+            <a href="/edit-profile">Edit Profile</a>
           ) : (
             <button type="button" onClick={followProfile}>
               {p.isFollowing ? 'Following' : 'Follow'}

@@ -6149,3 +6149,182 @@ main {
   margin-top: 5px;
   font-weight: 900;
 }
+
+/* Edit Profile */
+.editProfileHero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 26px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(0,238,255,0.16), transparent 34%),
+    rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.editProfileHero span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.editProfileHero h2 {
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin: 16px 0 10px;
+}
+
+.editProfileHero p {
+  margin: 0;
+  color: #a1a1aa;
+}
+
+.editProfileHero a,
+.editProfilePanel button,
+.editProfileUploadRow button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.editProfilePreview {
+  overflow: hidden;
+  border-radius: 34px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.editProfileBanner {
+  height: 220px;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.22), transparent 30%),
+    linear-gradient(135deg, #ff2d95, #00d4ff, #7c3aed);
+  background-size: cover;
+  background-position: center;
+}
+
+.editProfilePreviewInfo {
+  display: flex;
+  gap: 18px;
+  align-items: end;
+  padding: 0 22px 22px;
+  margin-top: -58px;
+}
+
+.editProfileAvatar {
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 48px;
+  font-weight: 950;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+  background-size: cover;
+  background-position: center;
+  border: 7px solid #0b0b12;
+}
+
+.editProfilePreviewInfo h3 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.editProfilePreviewInfo p {
+  margin: 4px 0;
+  color: #00eaff;
+  font-weight: 900;
+}
+
+.editProfilePreviewInfo span {
+  color: #dbeafe;
+}
+
+.editProfileGrid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 18px;
+}
+
+.editProfilePanel {
+  padding: 22px;
+  border-radius: 32px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+}
+
+.editProfilePanel h3 {
+  margin: 0 0 16px;
+  font-size: 24px;
+}
+
+.editProfilePanel label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.editProfilePanel input,
+.editProfilePanel select,
+.editProfilePanel textarea {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 14px;
+  outline: 0;
+  color: white;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+}
+
+.editProfilePanel textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.editProfileUploadRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.editProfileUploadRow button:last-child {
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+@media (max-width: 900px) {
+  .editProfileHero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .editProfileGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .editProfilePreviewInfo {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

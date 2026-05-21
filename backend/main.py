@@ -221,3 +221,21 @@ except ImportError:
     from .routes.dynamic_profile import router as dynamic_profile_router
 
 app.include_router(dynamic_profile_router)
+
+
+# VibeLoop profile follow routes
+try:
+    from routes.profile_follow import router as profile_follow_router
+except ImportError:
+    from .routes.profile_follow import router as profile_follow_router
+
+app.include_router(profile_follow_router)
+
+
+# VibeLoop profile settings routes
+try:
+    from routes.profile_settings import router as profile_settings_router
+except ImportError:
+    from .routes.profile_settings import router as profile_settings_router
+
+app.include_router(profile_settings_router)
