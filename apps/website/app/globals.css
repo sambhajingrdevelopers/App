@@ -3115,3 +3115,107 @@ main {
   font-size: 13px;
   font-weight: 900;
 }
+
+/* Notifications page */
+.vlNotificationStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.vlNotificationStats div {
+  padding: 20px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(0, 212, 255, 0.14), transparent 34%),
+    rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.vlNotificationStats b {
+  display: block;
+  font-size: 32px;
+}
+
+.vlNotificationStats span {
+  color: #a1a1aa;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.vlNotificationList {
+  display: grid;
+  gap: 14px;
+}
+
+.vlNotificationCard {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 26px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.24);
+}
+
+.vlNotificationIcon {
+  width: 58px;
+  height: 58px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  color: white;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.vlNotificationCard.comment .vlNotificationIcon,
+.vlNotificationCard.system .vlNotificationIcon {
+  background: linear-gradient(135deg, #00d4ff, #2563eb);
+}
+
+.vlNotificationCard h3 {
+  margin: 0 0 6px;
+}
+
+.vlNotificationCard p {
+  margin: 0;
+  color: #a1a1aa;
+  line-height: 1.45;
+}
+
+.vlNotificationCard span {
+  display: block;
+  margin-top: 7px;
+  color: #00eaff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.vlNotificationCard button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+@media (max-width: 720px) {
+  .vlNotificationStats {
+    grid-template-columns: 1fr;
+  }
+
+  .vlNotificationCard {
+    grid-template-columns: 50px 1fr;
+  }
+
+  .vlNotificationCard button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

@@ -1,10 +1,12 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 type Props = {
-  active: 'home' | 'explore' | 'reels' | 'messages' | 'profile';
+  active: 'home' | 'explore' | 'reels' | 'messages' | 'notifications' | 'profile';
   title: string;
   subtitle: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const menu = [
@@ -12,6 +14,7 @@ const menu = [
   { key: 'explore', label: '⌕ Explore', href: '/explore' },
   { key: 'reels', label: '▶ Reels', href: '/reels' },
   { key: 'messages', label: '✉ Messages', href: '/messages' },
+  { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
   { key: 'profile', label: '◉ Profile', href: '/profile' }
 ];
 
@@ -34,7 +37,6 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
               {item.label}
             </a>
           ))}
-          <a>♡ Notifications</a>
           <a>⚙ Settings</a>
         </nav>
 
