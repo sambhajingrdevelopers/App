@@ -185,3 +185,21 @@ except ImportError:
     from .routes.safety import router as safety_router
 
 app.include_router(safety_router)
+
+
+# VibeLoop public verification request routes
+try:
+    from routes.verification_public import router as verification_public_router
+except ImportError:
+    from .routes.verification_public import router as verification_public_router
+
+app.include_router(verification_public_router)
+
+
+# VibeLoop admin moderation routes
+try:
+    from routes.admin_moderation import router as admin_moderation_router
+except ImportError:
+    from .routes.admin_moderation import router as admin_moderation_router
+
+app.include_router(admin_moderation_router)
