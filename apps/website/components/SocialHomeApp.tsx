@@ -97,7 +97,7 @@ export default function SocialHomeApp() {
     reader.readAsDataURL(file);
   }
 
-  function createPost() {
+  async function createPost() {
     if (!caption.trim() && !mediaUrl) return;
 
     const newPost: Post = {
@@ -118,9 +118,27 @@ export default function SocialHomeApp() {
       isOwn: true
     };
 
-    const updatedPosts = [newPost, ...posts];
-    setPosts(updatedPosts);
-    saveOwnPosts(updatedPosts);
+    try {
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPost)
+      });
+
+      const result = await response.json();
+
+      const finalPost = result?.backendReady && result?.post
+        ? { ...newPost, ...result.post, isOwn: true }
+        : newPost;
+
+      const updatedPosts = [finalPost, ...posts];
+      setPosts(updatedPosts);
+      saveOwnPosts(updatedPosts);
+    } catch {
+      const updatedPosts = [newPost, ...posts];
+      setPosts(updatedPosts);
+      saveOwnPosts(updatedPosts);
+    }
 
     setCaption('');
     setMediaUrl('');
@@ -188,10 +206,20 @@ export default function SocialHomeApp() {
     setCommentText('');
   }
 
-  function deletePost(postId: number | string) {
+  async function deletePost(postId: number | string) {
     const updatedPosts = posts.filter((post) => post.id !== postId);
     setPosts(updatedPosts);
     saveOwnPosts(updatedPosts);
+
+    try {
+      await fetch('/api/posts/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: postId })
+      });
+    } catch {
+      // Local delete already completed.
+    }
   }
 
   async function sharePost(post: Post) {
