@@ -4623,3 +4623,15 @@ main {
     display: none;
   }
 }
+
+/* Saved Posts */
+.vlSavedGrid {
+  display: grid;
+  gap: 18px;
+}
+
+@media (min-width: 1180px) {
+  .vlSavedGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

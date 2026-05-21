@@ -317,6 +317,7 @@ export default function SocialHomeApp() {
           <a href="/reels">▶ Reels</a>
           <a href="/messages">✉ Messages</a>
           <a href="/notifications">♡ Notifications</a>
+          <a href="/saved">🔖 Saved</a>
           <a href="/profile">◉ Profile</a>
           <a href="/settings">⚙ Settings</a>
           <AdminNavLink />

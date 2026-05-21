@@ -10,6 +10,7 @@ type ActivePage =
   | 'reels'
   | 'messages'
   | 'notifications'
+  | 'saved'
   | 'profile'
   | 'settings'
   | 'admin';
@@ -28,6 +29,7 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'reels', label: '▶ Reels', href: '/reels' },
   { key: 'messages', label: '✉ Messages', href: '/messages' },
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
+  { key: 'saved', label: '🔖 Saved', href: '/saved' },
   { key: 'profile', label: '◉ Profile', href: '/profile' },
   { key: 'settings', label: '⚙ Settings', href: '/settings' }
 ];
