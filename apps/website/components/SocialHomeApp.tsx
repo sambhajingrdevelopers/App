@@ -278,7 +278,7 @@ export default function SocialHomeApp() {
           <a href="/messages">✉ Messages</a>
           <a href="/notifications">♡ Notifications</a>
           <a href="/profile">◉ Profile</a>
-          <a>⚙ Settings</a>
+          <a href="/settings">⚙ Settings</a>
         </nav>
 
         <button

@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 
 type Props = {
-  active: 'home' | 'explore' | 'reels' | 'messages' | 'notifications' | 'profile';
+  active: 'home' | 'explore' | 'reels' | 'messages' | 'notifications' | 'profile' | 'settings';
   title: string;
   subtitle: string;
   children: ReactNode;
@@ -15,7 +15,8 @@ const menu = [
   { key: 'reels', label: '▶ Reels', href: '/reels' },
   { key: 'messages', label: '✉ Messages', href: '/messages' },
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
-  { key: 'profile', label: '◉ Profile', href: '/profile' }
+  { key: 'profile', label: '◉ Profile', href: '/profile' },
+  { key: 'settings', label: '⚙ Settings', href: '/settings' }
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {
@@ -37,7 +38,7 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
               {item.label}
             </a>
           ))}
-          <a>⚙ Settings</a>
+          <a href="/settings">⚙ Settings</a>
         </nav>
 
         <button
