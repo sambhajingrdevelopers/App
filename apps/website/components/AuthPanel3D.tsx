@@ -51,7 +51,7 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
         localStorage.setItem('vibeloop_user', JSON.stringify(result.data || {}));
         setStatus('Login successful. Opening platform...');
         setTimeout(() => {
-          window.location.href = '/#feed';
+          window.location.href = '/home';
         }, 900);
       }
     } catch (error: any) {
