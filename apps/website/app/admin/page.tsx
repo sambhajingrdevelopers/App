@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import AuthGuard from '../../components/AuthGuard';
+import AdminGuard from '../../components/AdminGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
 export default function AdminPage() {
@@ -139,7 +139,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <AuthGuard>
+    <AdminGuard>
       <SocialAppShell
         active="admin"
         title="Admin Dashboard"
@@ -300,6 +300,6 @@ export default function AdminPage() {
           </div>
         </section>
       </SocialAppShell>
-    </AuthGuard>
+    </AdminGuard>
   );
 }

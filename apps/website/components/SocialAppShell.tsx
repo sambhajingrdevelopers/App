@@ -54,7 +54,13 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
         <button
           className="vlLogout"
           type="button"
-          onClick={() => {
+          onClick={async () => {
+            if (active === 'admin') {
+              await fetch('/api/admin/logout', { method: 'POST' });
+              window.location.href = '/admin-login';
+              return;
+            }
+
             localStorage.removeItem('vibeloop_user');
             window.location.href = '/login';
           }}
