@@ -1,3 +1,5 @@
+import LogoutButton from './LogoutButton';
+
 export default function Navbar() {
   return (
     <nav className="nav">
@@ -14,7 +16,7 @@ export default function Navbar() {
         <a href="#business">Business</a>
       </div>
 
-      <a className="navButton" href="/login">Start Project</a>
+      <LogoutButton />
     </nav>
   );
 }

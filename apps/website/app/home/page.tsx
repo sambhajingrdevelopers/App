@@ -1,3 +1,4 @@
+import AuthGuard from '../../components/AuthGuard';
 import Navbar from '../../components/Navbar';
 import HeroSection from '../../components/HeroSection';
 import FeedSection from '../../components/FeedSection';
@@ -9,15 +10,17 @@ import ContactSection from '../../components/ContactSection';
 
 export default function HomePage() {
   return (
-    <main>
-      <Navbar />
-      <HeroSection />
-      <FeedSection />
-      <ReelsSection />
-      <ExploreSection />
-      <CreatorSection />
-      <BusinessSection />
-      <ContactSection />
-    </main>
+    <AuthGuard>
+      <main>
+        <Navbar />
+        <HeroSection />
+        <FeedSection />
+        <ReelsSection />
+        <ExploreSection />
+        <CreatorSection />
+        <BusinessSection />
+        <ContactSection />
+      </main>
+    </AuthGuard>
   );
 }
