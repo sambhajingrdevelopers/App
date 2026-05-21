@@ -26,9 +26,7 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
 
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fullName,
           email,
@@ -62,140 +60,155 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
   }
 
   return (
-    <section className="authScene">
-      <div className="authGlow authGlowOne" />
-      <div className="authGlow authGlowTwo" />
+    <main className="zAuthScene">
+      <div className="zAuthBgLine zLineOne" />
+      <div className="zAuthBgLine zLineTwo" />
+      <div className="zAuthOrb zOrbOne" />
+      <div className="zAuthOrb zOrbTwo" />
 
-      <div className={`authCard3d ${isRegister ? 'registerMode' : 'loginMode'}`}>
-        <div className="authWelcomePanel">
-          <div className="authBrandMark">V</div>
+      <section className={`zAuthShell ${isRegister ? 'zRegisterMode' : 'zLoginMode'}`}>
+        <div className="zGlassSurface" />
 
-          <h1>{isRegister ? 'Join VibeLoop' : 'Welcome Back'}</h1>
-
+        <div className="zWelcomeSide">
+          <div className="zLogo3d">V</div>
+          <h1>{isRegister ? 'WELCOME!' : 'WELCOME BACK!'}</h1>
           <p>
             {isRegister
-              ? 'Create your profile, share moments, post reels and grow your creator identity.'
-              : 'Login to continue your creator journey, feed, reels, chats and profile.'}
+              ? 'Create your VibeLoop account and start your creator journey.'
+              : 'Login to continue your feed, reels, profile and creator tools.'}
           </p>
 
-          <div className="authStats">
+          <div className="zMiniStats">
             <div>
               <b>50K+</b>
               <span>Creators</span>
             </div>
             <div>
               <b>24/7</b>
-              <span>Live platform</span>
+              <span>Live</span>
             </div>
           </div>
         </div>
 
-        <div className="authFormPanel">
-          <div className="authTabs">
-            <button
-              className={!isRegister ? 'active' : ''}
-              onClick={() => setMode('login')}
-              type="button"
-            >
-              Login
-            </button>
+        <div className="zFormSide">
+          <div className="zFormBox">
+            <div className="zModeSwitch">
+              <button
+                type="button"
+                className={!isRegister ? 'active' : ''}
+                onClick={() => {
+                  setMode('login');
+                  setStatus('');
+                }}
+              >
+                Login
+              </button>
 
-            <button
-              className={isRegister ? 'active' : ''}
-              onClick={() => setMode('register')}
-              type="button"
-            >
-              Register
-            </button>
-          </div>
+              <button
+                type="button"
+                className={isRegister ? 'active' : ''}
+                onClick={() => {
+                  setMode('register');
+                  setStatus('');
+                }}
+              >
+                Register
+              </button>
+            </div>
 
-          <h2>{isRegister ? 'Create Account' : 'Secure Login'}</h2>
+            <h2>{isRegister ? 'Register' : 'Login'}</h2>
 
-          <form className="authForm" onSubmit={(event) => event.preventDefault()}>
-            {isRegister && (
-              <label>
-                Full Name
-                <input
-                  type="text"
-                  placeholder="Enter your name"
-                  value={fullName}
-                  onChange={(event) => setFullName(event.target.value)}
-                />
-              </label>
-            )}
-
-            <label>
-              Email
-              <input
-                type="email"
-                placeholder="creator@vibeloop.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </label>
-
-            {isRegister && (
-              <label>
-                Username
-                <input
-                  type="text"
-                  placeholder="yourusername"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                />
-              </label>
-            )}
-
-            <label>
-              Password
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </label>
-
-            {!isRegister && (
-              <div className="authMiniRow">
-                <label className="rememberRow">
-                  <input type="checkbox" />
-                  Remember me
+            <form className="zForm" onSubmit={(event) => event.preventDefault()}>
+              {isRegister && (
+                <label>
+                  <span>Full Name</span>
+                  <div className="zInputWrap">
+                    <input
+                      type="text"
+                      placeholder="Enter full name"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
+                    />
+                    <i>👤</i>
+                  </div>
                 </label>
-                <a href="#">Forgot password?</a>
-              </div>
-            )}
+              )}
 
-            <button
-              className="authSubmit"
-              type="button"
-              onClick={handleAuth}
-              disabled={loading}
-            >
-              {loading
-                ? 'Please wait...'
-                : isRegister
-                  ? 'Create VibeLoop Account'
-                  : 'Login to VibeLoop'}
-            </button>
-          </form>
+              <label>
+                <span>Email</span>
+                <div className="zInputWrap">
+                  <input
+                    type="email"
+                    placeholder="creator@vibeloop.com"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                  />
+                  <i>✉</i>
+                </div>
+              </label>
 
-          {!!status && <p className="authStatus">{status}</p>}
+              {isRegister && (
+                <label>
+                  <span>Username</span>
+                  <div className="zInputWrap">
+                    <input
+                      type="text"
+                      placeholder="yourusername"
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <i>@</i>
+                  </div>
+                </label>
+              )}
 
-          <p className="authSwitch">
-            {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button
-              type="button"
-              onClick={() => {
-                setStatus('');
-                setMode(isRegister ? 'login' : 'register');
-              }}
-            >
-              {isRegister ? 'Login' : 'Register'}
-            </button>
-          </p>
+              <label>
+                <span>Password</span>
+                <div className="zInputWrap">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
+                  <i>🔒</i>
+                </div>
+              </label>
+
+              {!isRegister && (
+                <div className="zForgotRow">
+                  <span />
+                  <a href="#">Forgot Password?</a>
+                </div>
+              )}
+
+              <button
+                type="button"
+                className="zSubmit"
+                onClick={handleAuth}
+                disabled={loading}
+              >
+                {loading ? 'Please wait...' : isRegister ? 'Register' : 'Login'}
+              </button>
+            </form>
+
+            {!!status && <div className="zStatus">{status}</div>}
+
+            <p className="zSwitchText">
+              {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(isRegister ? 'login' : 'register');
+                  setStatus('');
+                }}
+              >
+                {isRegister ? 'Sign in' : 'Sign up'}
+              </button>
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
