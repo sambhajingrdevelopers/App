@@ -198,12 +198,14 @@ export default function SocialHomeApp() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
-  function toggleLike(postId: number | string) {
+  async function toggleLike(postId: number | string) {
+    let nextLiked = false;
+
     const updatedPosts = posts.map((post) => {
       if (post.id !== postId) return post;
 
       const currentLikes = Number(String(post.likes).replace(/[^0-9]/g, '')) || 0;
-      const nextLiked = !post.liked;
+      nextLiked = !post.liked;
 
       return {
         ...post,
@@ -214,9 +216,30 @@ export default function SocialHomeApp() {
 
     setPosts(updatedPosts);
     saveOwnPosts(updatedPosts);
+
+    try {
+      const response = await fetch(`/api/posts/${encodeURIComponent(String(postId))}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ liked: nextLiked })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success && result.post) {
+        const syncedPosts = updatedPosts.map((post) =>
+          post.id === postId ? { ...post, ...result.post } : post
+        );
+
+        setPosts(syncedPosts);
+        saveOwnPosts(syncedPosts);
+      }
+    } catch {
+      // UI already updated locally.
+    }
   }
 
-  function toggleSave(postId: number | string) {
+  async function toggleSave(postId: number | string) {
     const updatedPosts = posts.map((post) =>
       post.id === postId ? { ...post, saved: !post.saved } : post
     );

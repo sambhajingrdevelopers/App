@@ -100,3 +100,30 @@ except ImportError:
     from routes.notifications import router as notifications_router
 
 app.include_router(notifications_router)
+
+
+# VibeLoop stories routes
+try:
+    from .routes.stories import router as stories_router
+except ImportError:
+    from routes.stories import router as stories_router
+
+app.include_router(stories_router)
+
+
+# VibeLoop global search routes
+try:
+    from .routes.search import router as search_router
+except ImportError:
+    from routes.search import router as search_router
+
+app.include_router(search_router)
+
+
+# VibeLoop post interaction routes
+try:
+    from .routes.post_actions import router as post_actions_router
+except ImportError:
+    from routes.post_actions import router as post_actions_router
+
+app.include_router(post_actions_router)
