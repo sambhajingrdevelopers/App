@@ -55,3 +55,12 @@ except ImportError:
     from routes.media import router as media_router
 
 app.include_router(media_router)
+
+
+# VibeLoop admin routes
+try:
+    from .routes.admin import router as admin_router
+except ImportError:
+    from routes.admin import router as admin_router
+
+app.include_router(admin_router)

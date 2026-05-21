@@ -4,71 +4,19 @@ import { useEffect, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
-type AdminPost = {
-  id: string | number;
-  user: string;
-  title: string;
-  caption: string;
-  likes: string;
-  comments: string;
-};
-
-const reports = [
-  {
-    id: 'RPT-101',
-    user: '@unknown.user',
-    reason: 'Spam content',
-    status: 'Pending'
-  },
-  {
-    id: 'RPT-102',
-    user: '@fake.brand',
-    reason: 'Fake business account',
-    status: 'Review'
-  },
-  {
-    id: 'RPT-103',
-    user: '@reel.copy',
-    reason: 'Copyright issue',
-    status: 'Pending'
-  }
-];
-
-const verification = [
-  {
-    id: 'VR-301',
-    user: '@mira.creates',
-    category: 'Digital Creator',
-    status: 'Pending'
-  },
-  {
-    id: 'VR-302',
-    user: '@travel.dev',
-    category: 'Travel Creator',
-    status: 'Approved'
-  },
-  {
-    id: 'VR-303',
-    user: '@styleloop',
-    category: 'Fashion Brand',
-    status: 'Pending'
-  }
-];
-
 export default function AdminPage() {
-  const [posts, setPosts] = useState<AdminPost[]>([]);
+  const [data, setData] = useState<any>(null);
   const [source, setSource] = useState('loading');
 
   useEffect(() => {
     async function loadAdminData() {
       try {
-        const response = await fetch('/api/feed', { cache: 'no-store' });
-        const data = await response.json();
+        const response = await fetch('/api/admin/overview', { cache: 'no-store' });
+        const result = await response.json();
 
-        setPosts(data.posts || []);
-        setSource(data.source || 'fallback');
+        setData(result);
+        setSource(result.source || 'fallback');
       } catch {
-        setPosts([]);
         setSource('fallback');
       }
     }
@@ -76,13 +24,19 @@ export default function AdminPage() {
     loadAdminData();
   }, []);
 
+  const analytics = data?.analytics || {};
+  const users = data?.users || [];
+  const reports = data?.reports || [];
+  const verification = data?.verification || [];
+  const ads = data?.ads || [];
+
   const stats = [
-    { label: 'Total Users', value: '52.8K', hint: '+12% this week' },
-    { label: 'Total Posts', value: String(posts.length), hint: source === 'backend' ? 'Backend live' : 'Fallback mode' },
-    { label: 'Reports', value: String(reports.length), hint: 'Needs review' },
-    { label: 'Verification', value: String(verification.length), hint: 'Creator requests' },
-    { label: 'Ads Revenue', value: '₹48,920', hint: 'This month' },
-    { label: 'System Health', value: '99%', hint: 'Stable' }
+    { label: 'Total Users', value: String(analytics.totalUsers || 0), hint: 'Registered users' },
+    { label: 'Reports', value: String(analytics.totalReports || 0), hint: `${analytics.pendingReports || 0} pending` },
+    { label: 'Verification', value: String(analytics.verificationRequests || 0), hint: `${analytics.pendingVerification || 0} pending` },
+    { label: 'Ads Revenue', value: analytics.adsRevenue || '₹0', hint: 'This month' },
+    { label: 'System Health', value: analytics.systemHealth || '0%', hint: 'Backend health' },
+    { label: 'API Source', value: source === 'backend' ? 'Live' : 'Fallback', hint: 'Admin data source' }
   ];
 
   return (
@@ -121,24 +75,20 @@ export default function AdminPage() {
         <section className="adminGridTwo">
           <div className="adminPanel">
             <div className="adminPanelHead">
-              <h3>Post Management</h3>
+              <h3>User Management</h3>
               <button type="button">View All</button>
             </div>
 
             <div className="adminTable">
-              {posts.slice(0, 5).map((post) => (
-                <div className="adminTableRow" key={post.id}>
+              {users.map((user: any) => (
+                <div className="adminTableRow" key={user.id}>
                   <div>
-                    <b>{post.title || 'Creator Post'}</b>
-                    <span>{post.user} • {post.caption?.slice(0, 45) || 'No caption'}...</span>
+                    <b>{user.name}</b>
+                    <span>{user.username} • {user.role} • {user.email}</span>
                   </div>
-                  <button type="button">Review</button>
+                  <em>{user.status}</em>
                 </div>
               ))}
-
-              {!posts.length && (
-                <div className="adminEmpty">No posts loaded yet.</div>
-              )}
             </div>
           </div>
 
@@ -149,10 +99,10 @@ export default function AdminPage() {
             </div>
 
             <div className="adminTable">
-              {reports.map((report) => (
+              {reports.map((report: any) => (
                 <div className="adminTableRow" key={report.id}>
                   <div>
-                    <b>{report.user}</b>
+                    <b>{report.username}</b>
                     <span>{report.id} • {report.reason}</span>
                   </div>
                   <em>{report.status}</em>
@@ -170,10 +120,10 @@ export default function AdminPage() {
             </div>
 
             <div className="adminTable">
-              {verification.map((item) => (
+              {verification.map((item: any) => (
                 <div className="adminTableRow" key={item.id}>
                   <div>
-                    <b>{item.user}</b>
+                    <b>{item.username}</b>
                     <span>{item.category} • {item.id}</span>
                   </div>
                   <em>{item.status}</em>
@@ -188,21 +138,17 @@ export default function AdminPage() {
               <button type="button">Create</button>
             </div>
 
-            <div className="adminCampaign">
-              <div>
-                <b>Creator Boost Campaign</b>
-                <span>Running • ₹12,500 budget</span>
+            {ads.map((ad: any) => (
+              <div className="adminCampaign" key={ad.id}>
+                <div>
+                  <b>{ad.title}</b>
+                  <span>{ad.status} • {ad.budget} budget</span>
+                </div>
+                <div className="adminProgress">
+                  <span style={{ width: `${ad.progress || 50}%` }} />
+                </div>
               </div>
-              <div className="adminProgress"><span /></div>
-            </div>
-
-            <div className="adminCampaign">
-              <div>
-                <b>Reels Discovery Campaign</b>
-                <span>Scheduled • ₹8,000 budget</span>
-              </div>
-              <div className="adminProgress small"><span /></div>
-            </div>
+            ))}
           </div>
         </section>
       </SocialAppShell>
