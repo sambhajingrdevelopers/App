@@ -32,6 +32,8 @@ export default function SocialHomeApp() {
   const [caption, setCaption] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [mediaType, setMediaType] = useState<'image' | 'video' | ''>('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState('loading');
   const [activeCommentPost, setActiveCommentPost] = useState<number | string | null>(null);
@@ -75,7 +77,7 @@ export default function SocialHomeApp() {
     loadFeed();
   }, []);
 
-  function handleMediaSelect(event: any) {
+  async function handleMediaSelect(event: any) {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -87,14 +89,40 @@ export default function SocialHomeApp() {
       return;
     }
 
-    const reader = new FileReader();
+    setUploading(true);
+    setUploadStatus('Uploading media to server...');
 
-    reader.onload = () => {
-      setMediaUrl(String(reader.result));
-      setMediaType(isVideo ? 'video' : 'image');
-    };
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
 
-    reader.readAsDataURL(file);
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result?.message || 'Server upload failed');
+      }
+
+      setMediaUrl(result.mediaUrl);
+      setMediaType(result.mediaType || (isVideo ? 'video' : 'image'));
+      setUploadStatus('Media uploaded to EC2 server.');
+    } catch {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setMediaUrl(String(reader.result));
+        setMediaType(isVideo ? 'video' : 'image');
+        setUploadStatus('Server upload failed. Local preview enabled.');
+      };
+
+      reader.readAsDataURL(file);
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function createPost() {
@@ -143,12 +171,14 @@ export default function SocialHomeApp() {
     setCaption('');
     setMediaUrl('');
     setMediaType('');
+    setUploadStatus('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   function removePreview() {
     setMediaUrl('');
     setMediaType('');
+    setUploadStatus('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
@@ -307,6 +337,10 @@ export default function SocialHomeApp() {
                   value={caption}
                   onChange={(event) => setCaption(event.target.value)}
                 />
+
+                {(uploading || uploadStatus) && (
+                  <p className="vlUploadStatus">{uploading ? 'Uploading...' : uploadStatus}</p>
+                )}
 
                 {mediaUrl && (
                   <div className="vlMediaPreview">

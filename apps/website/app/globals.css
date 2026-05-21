@@ -3108,3 +3108,10 @@ main {
     flex-direction: column;
   }
 }
+
+.vlUploadStatus {
+  margin: 8px 0 0;
+  color: #00eaff;
+  font-size: 13px;
+  font-weight: 900;
+}

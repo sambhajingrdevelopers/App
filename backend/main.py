@@ -1,3 +1,5 @@
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -38,3 +40,18 @@ except ImportError:
     from routes.posts import router as posts_router
 
 app.include_router(posts_router)
+
+
+# VibeLoop uploaded media static files
+UPLOADS_DIR = Path(__file__).resolve().parent / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+
+
+# VibeLoop media upload routes
+try:
+    from .routes.media import router as media_router
+except ImportError:
+    from routes.media import router as media_router
+
+app.include_router(media_router)
