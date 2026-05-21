@@ -211,7 +211,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
       {activeTab === 'posts' && (
         <section className="dpGrid">
           {posts.map((post) => (
-            <article className="dpPostCard" key={post.id}>
+            <a className="dpPostCard" href={`/post/${encodeURIComponent(String(post.id))}`} key={post.id}>
               {post.mediaUrl ? (
                 <div className="dpMedia">
                   {post.mediaType === 'video' ? (
@@ -231,7 +231,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
                 <b>{post.user}</b>
                 <span>♡ {post.likes} • 💬 {post.comments}</span>
               </div>
-            </article>
+            </a>
           ))}
 
           {!posts.length && <div className="adminEmpty">No posts found for this profile.</div>}

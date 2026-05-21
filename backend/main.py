@@ -239,3 +239,12 @@ except ImportError:
     from .routes.profile_settings import router as profile_settings_router
 
 app.include_router(profile_settings_router)
+
+
+# VibeLoop post detail routes
+try:
+    from routes.post_detail import router as post_detail_router
+except ImportError:
+    from .routes.post_detail import router as post_detail_router
+
+app.include_router(post_detail_router)
