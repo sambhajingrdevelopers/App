@@ -127,3 +127,52 @@ except ImportError:
     from routes.post_actions import router as post_actions_router
 
 app.include_router(post_actions_router)
+
+
+# VibeLoop saved posts routes
+try:
+    from .routes.saved_posts import router as saved_posts_router
+except ImportError:
+    from routes.saved_posts import router as saved_posts_router
+
+app.include_router(saved_posts_router)
+
+
+# VibeLoop analytics routes
+try:
+    from .routes.analytics import router as analytics_router
+except ImportError:
+    from routes.analytics import router as analytics_router
+
+app.include_router(analytics_router)
+
+
+# Auto route loader - keeps all backend route files active
+def _vibeloop_auto_load_routes():
+    import importlib
+    import pkgutil
+
+    try:
+        import routes
+    except Exception as exc:
+        print("Route package load skipped:", exc)
+        return
+
+    for module_info in pkgutil.iter_modules(routes.__path__):
+        module_name = module_info.name
+
+        if module_name.startswith("_"):
+            continue
+
+        try:
+            module = importlib.import_module(f"routes.{module_name}")
+            router = getattr(module, "router", None)
+
+            if router is not None:
+                app.include_router(router)
+                print(f"Loaded route module: routes.{module_name}")
+        except Exception as exc:
+            print(f"Skipped route module routes.{module_name}: {exc}")
+
+
+_vibeloop_auto_load_routes()
