@@ -12,6 +12,7 @@ export default function PostDetailPage() {
   const [comments, setComments] = useState<any[]>([]);
   const [text, setText] = useState('');
   const [message, setMessage] = useState('');
+  const [shareCount, setShareCount] = useState(0);
   const [source, setSource] = useState('loading');
 
   async function loadPost() {
@@ -29,6 +30,16 @@ export default function PostDetailPage() {
       setPost(data.post);
       setComments(data.comments || []);
       setSource(data.source || 'backend');
+
+      try {
+        const shareResponse = await fetch(`/api/posts/${encodeURIComponent(postId)}/share`, {
+          cache: 'no-store'
+        });
+        const shareData = await shareResponse.json();
+        setShareCount(shareData.shareCount || 0);
+      } catch {
+        setShareCount(0);
+      }
     } catch {
       setSource('not-found');
       setMessage('Post not found or backend not ready.');
@@ -38,6 +49,37 @@ export default function PostDetailPage() {
   useEffect(() => {
     if (postId) loadPost();
   }, [postId]);
+
+
+  async function sharePost() {
+    const postUrl = `${window.location.origin}/post/${encodeURIComponent(postId)}`;
+
+    try {
+      await navigator.clipboard.writeText(postUrl);
+    } catch {
+      // clipboard not available
+    }
+
+    setShareCount((count) => count + 1);
+
+    try {
+      const response = await fetch(`/api/posts/${encodeURIComponent(postId)}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sharedBy: '@you', platform: 'copy-link' })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setShareCount(data.shareCount || shareCount + 1);
+      }
+
+      setMessage('Post link copied and share saved.');
+    } catch {
+      setMessage('Post link copied locally.');
+    }
+  }
 
   async function addComment() {
     if (!text.trim()) {
@@ -150,6 +192,7 @@ export default function PostDetailPage() {
                 <span>♡ {post.likes} likes</span>
                 <span>💬 {comments.length} comments</span>
                 <span>🔖 {post.saved ? 'Saved' : 'Save'}</span>
+                <button type="button" onClick={sharePost}>↗ Share {shareCount}</button>
               </div>
             </article>
 

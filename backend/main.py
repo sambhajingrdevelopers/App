@@ -248,3 +248,12 @@ except ImportError:
     from .routes.post_detail import router as post_detail_router
 
 app.include_router(post_detail_router)
+
+
+# VibeLoop post share routes
+try:
+    from routes.post_share import router as post_share_router
+except ImportError:
+    from .routes.post_share import router as post_share_router
+
+app.include_router(post_share_router)
