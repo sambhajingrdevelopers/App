@@ -1,45 +1,86 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
-const notifications = [
-  {
-    type: 'like',
-    icon: '♡',
-    title: 'Mira liked your post',
-    desc: 'Your creator post is getting strong engagement.',
-    time: '2 min ago'
-  },
-  {
-    type: 'comment',
-    icon: '💬',
-    title: 'Dev commented on your reel',
-    desc: '“This reel style looks premium and powerful.”',
-    time: '18 min ago'
-  },
-  {
-    type: 'follow',
-    icon: '＋',
-    title: 'Sara started following you',
-    desc: 'You have a new creator follower.',
-    time: '1 hour ago'
-  },
-  {
-    type: 'save',
-    icon: '🔖',
-    title: 'Your post was saved 24 times',
-    desc: 'Saved posts help your profile reach more people.',
-    time: 'Today'
-  },
-  {
-    type: 'system',
-    icon: '⚡',
-    title: 'Creator growth alert',
-    desc: 'Your profile reach increased by 42% this week.',
-    time: 'Today'
-  }
-];
+type NotificationItem = {
+  id: string;
+  type: string;
+  icon: string;
+  title: string;
+  desc: string;
+  isRead: boolean;
+  createdAt?: string;
+};
 
 export default function NotificationsPage() {
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [source, setSource] = useState('loading');
+  const [message, setMessage] = useState('');
+
+  const unreadCount = useMemo(() => {
+    return notifications.filter((item) => !item.isRead).length;
+  }, [notifications]);
+
+  async function loadNotifications() {
+    try {
+      const response = await fetch('/api/notifications', { cache: 'no-store' });
+      const data = await response.json();
+
+      setNotifications(data.notifications || []);
+      setSource(data.source || 'fallback');
+    } catch {
+      setSource('fallback');
+    }
+  }
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
+
+  async function markRead(id: string) {
+    setNotifications((prev) =>
+      prev.map((item) => item.id === id ? { ...item, isRead: true } : item)
+    );
+
+    try {
+      const response = await fetch(`/api/notifications/${id}/read`, {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'Update failed');
+      }
+
+      setMessage('Notification marked as read.');
+    } catch {
+      setMessage('Backend update failed. UI updated locally.');
+    }
+  }
+
+  async function markAllRead() {
+    setNotifications((prev) => prev.map((item) => ({ ...item, isRead: true })));
+
+    try {
+      const response = await fetch('/api/notifications/read-all', {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data?.message || 'Update failed');
+      }
+
+      setMessage('All notifications marked as read.');
+    } catch {
+      setMessage('Backend update failed. UI updated locally.');
+    }
+  }
+
   return (
     <AuthGuard>
       <SocialAppShell
@@ -47,35 +88,56 @@ export default function NotificationsPage() {
         title="Notifications"
         subtitle="Track likes, comments, follows, saves and creator growth alerts."
       >
+        <div className="vlNotificationTopActions">
+          <span>{source === 'backend' ? 'Live Backend Notifications' : 'Fallback Notifications Ready'}</span>
+          <button type="button" onClick={loadNotifications}>Refresh</button>
+          <button type="button" onClick={markAllRead}>Mark All Read</button>
+        </div>
+
+        {message && <div className="vlSettingsMessage">{message}</div>}
+
         <div className="vlNotificationStats">
           <div>
-            <b>128</b>
-            <span>Today</span>
+            <b>{notifications.length}</b>
+            <span>Total</span>
           </div>
           <div>
-            <b>42%</b>
-            <span>Growth</span>
+            <b>{unreadCount}</b>
+            <span>Unread</span>
           </div>
           <div>
-            <b>18K</b>
-            <span>Reach</span>
+            <b>{source === 'backend' ? 'Live' : 'Fallback'}</b>
+            <span>Source</span>
           </div>
         </div>
 
         <div className="vlNotificationList">
           {notifications.map((item) => (
-            <article className={`vlNotificationCard ${item.type}`} key={item.title}>
+            <article
+              className={`vlNotificationCard ${item.type} ${item.isRead ? 'read' : 'unread'}`}
+              key={item.id}
+            >
               <div className="vlNotificationIcon">{item.icon}</div>
 
               <div>
                 <h3>{item.title}</h3>
                 <p>{item.desc}</p>
-                <span>{item.time}</span>
+                <span>{item.isRead ? 'Read' : 'Unread'}</span>
               </div>
 
-              <button type="button">View</button>
+              <button
+                type="button"
+                onClick={() => markRead(item.id)}
+                disabled={item.isRead}
+              >
+                {item.isRead ? 'Done' : 'Mark Read'}
+              </button>
             </article>
           ))}
+
+          {!notifications.length && (
+            <div className="adminEmpty">No notifications found.</div>
+          )}
         </div>
       </SocialAppShell>
     </AuthGuard>

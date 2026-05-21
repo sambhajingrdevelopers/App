@@ -4207,3 +4207,43 @@ main {
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.vlNotificationTopActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.vlNotificationTopActions span,
+.vlNotificationTopActions button {
+  border: 1px solid rgba(0,238,255,0.18);
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.vlNotificationTopActions button {
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.vlNotificationCard.unread {
+  border-color: rgba(0,238,255,0.28);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,0.24),
+    0 0 34px rgba(0,238,255,0.10);
+}
+
+.vlNotificationCard.read {
+  opacity: 0.72;
+}
+
+.vlNotificationCard button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

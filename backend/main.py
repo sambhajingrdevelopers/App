@@ -91,3 +91,12 @@ except ImportError:
     from routes.reels import router as reels_router
 
 app.include_router(reels_router)
+
+
+# VibeLoop notification routes
+try:
+    from .routes.notifications import router as notifications_router
+except ImportError:
+    from routes.notifications import router as notifications_router
+
+app.include_router(notifications_router)
