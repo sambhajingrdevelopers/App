@@ -13,7 +13,7 @@ function formatNumber(value: number) {
   return String(value || 0);
 }
 
-export default function DynamicProfile({ username = '@you', publicMode = false }: Props) {
+export default function DynamicProfile({ username = '@you' }: Props) {
   const [profile, setProfile] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [reels, setReels] = useState<any[]>([]);
@@ -21,6 +21,9 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
   const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'stories'>('posts');
   const [source, setSource] = useState('loading');
   const [message, setMessage] = useState('');
+  const [connectionModal, setConnectionModal] = useState<null | 'followers' | 'following'>(null);
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
 
   async function loadProfile() {
     try {
@@ -41,25 +44,72 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
     }
   }
 
+  async function loadConnections(type: 'followers' | 'following') {
+    setConnectionModal(type);
+
+    try {
+      const response = await fetch(
+        `/api/profile-connections?username=${encodeURIComponent(profile?.username || username)}`,
+        { cache: 'no-store' }
+      );
+
+      const data = await response.json();
+
+      setFollowers(data.followers || []);
+      setFollowing(data.following || []);
+    } catch {
+      setFollowers([]);
+      setFollowing([]);
+    }
+  }
+
   useEffect(() => {
     loadProfile();
   }, [username]);
 
   async function followProfile() {
-    if (!profile?.username) return;
+    if (!profile?.username || profile.isOwn) return;
+
+    const nextFollow = !profile.isFollowing;
 
     setProfile({
       ...profile,
-      isFollowing: !profile.isFollowing,
+      isFollowing: nextFollow,
       stats: {
         ...profile.stats,
-        followers: profile.isFollowing
-          ? Math.max((profile.stats?.followers || 0) - 1, 0)
-          : (profile.stats?.followers || 0) + 1
+        followers: nextFollow
+          ? (profile.stats?.followers || 0) + 1
+          : Math.max((profile.stats?.followers || 0) - 1, 0)
       }
     });
 
-    setMessage(profile.isFollowing ? 'Unfollowed profile.' : 'Following profile.');
+    try {
+      const response = await fetch('/api/profile-follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: profile.username, follow: nextFollow })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Follow update failed');
+      }
+
+      setProfile((current: any) => ({
+        ...current,
+        isFollowing: data.creator.isFollowing,
+        stats: {
+          ...current.stats,
+          followers: data.creator.followers,
+          following: data.followingCount
+        }
+      }));
+
+      setMessage(nextFollow ? 'Profile followed successfully.' : 'Profile unfollowed.');
+    } catch {
+      setMessage('Follow failed on backend. UI updated locally.');
+    }
   }
 
   const p = profile || {
@@ -73,6 +123,7 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
   };
 
   const initial = p.displayName?.[0]?.toUpperCase() || 'V';
+  const modalList = connectionModal === 'followers' ? followers : following;
 
   return (
     <div className="dpPage">
@@ -131,14 +182,14 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
           <b>{formatNumber(p.stats?.stories || 0)}</b>
           <span>Stories</span>
         </div>
-        <div>
+        <button type="button" onClick={() => loadConnections('followers')}>
           <b>{formatNumber(p.stats?.followers || 0)}</b>
           <span>Followers</span>
-        </div>
-        <div>
+        </button>
+        <button type="button" onClick={() => loadConnections('following')}>
           <b>{formatNumber(p.stats?.following || 0)}</b>
           <span>Following</span>
-        </div>
+        </button>
         <div>
           <b>{formatNumber(p.stats?.saved || 0)}</b>
           <span>Saved</span>
@@ -146,25 +197,13 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
       </section>
 
       <section className="dpTabs">
-        <button
-          type="button"
-          className={activeTab === 'posts' ? 'active' : ''}
-          onClick={() => setActiveTab('posts')}
-        >
+        <button type="button" className={activeTab === 'posts' ? 'active' : ''} onClick={() => setActiveTab('posts')}>
           Posts
         </button>
-        <button
-          type="button"
-          className={activeTab === 'reels' ? 'active' : ''}
-          onClick={() => setActiveTab('reels')}
-        >
+        <button type="button" className={activeTab === 'reels' ? 'active' : ''} onClick={() => setActiveTab('reels')}>
           Reels
         </button>
-        <button
-          type="button"
-          className={activeTab === 'stories' ? 'active' : ''}
-          onClick={() => setActiveTab('stories')}
-        >
+        <button type="button" className={activeTab === 'stories' ? 'active' : ''} onClick={() => setActiveTab('stories')}>
           Stories
         </button>
       </section>
@@ -203,11 +242,7 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
         <section className="dpGrid reels">
           {reels.map((reel) => (
             <article className="dpReelCard" key={reel.id}>
-              {reel.videoUrl ? (
-                <video src={reel.videoUrl} controls />
-              ) : (
-                <div className="dpPlay">▶</div>
-              )}
+              {reel.videoUrl ? <video src={reel.videoUrl} controls /> : <div className="dpPlay">▶</div>}
 
               <div>
                 <b>{reel.title}</b>
@@ -241,6 +276,36 @@ export default function DynamicProfile({ username = '@you', publicMode = false }
 
           {!stories.length && <div className="adminEmpty">No stories found for this profile.</div>}
         </section>
+      )}
+
+      {connectionModal && (
+        <div className="dpModalOverlay">
+          <section className="dpModal">
+            <div className="dpModalHead">
+              <h3>{connectionModal === 'followers' ? 'Followers' : 'Following'}</h3>
+              <button type="button" onClick={() => setConnectionModal(null)}>×</button>
+            </div>
+
+            <div className="dpConnectionList">
+              {modalList.map((item) => (
+                <a
+                  className="dpConnectionItem"
+                  href={`/u/${encodeURIComponent(String(item.username || '').replace('@', ''))}`}
+                  key={item.id}
+                >
+                  <div>{item.name?.[0] || 'C'}</div>
+                  <section>
+                    <b>{item.name}</b>
+                    <span>{item.username} • {item.category}</span>
+                    <small>{formatNumber(item.followers || 0)} followers</small>
+                  </section>
+                </a>
+              ))}
+
+              {!modalList.length && <div className="adminEmpty">No users found.</div>}
+            </div>
+          </section>
+        </div>
       )}
     </div>
   );
