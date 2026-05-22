@@ -3,23 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import AdminNavLink from './AdminNavLink';
 
-type ActivePage =
-  | 'home'
-  | 'search'
-  | 'create'
-  | 'reels'
-  | 'profile'
-  | 'messages'
-  | 'notifications'
-  | 'wallet'
-  | 'ads'
-  | 'verification'
-  | 'analytics'
-  | 'saved'
-  | 'safety'
-  | 'settings'
-  | 'admin'
-  | 'explore';
+type ActivePage = string;
 
 type Props = {
   active: ActivePage;
