@@ -302,3 +302,36 @@ except ImportError:
     from .routes.admin_users import router as admin_users_router
 
 app.include_router(admin_users_router)
+
+
+# VibeLoop auth security routes
+try:
+    from routes.auth_security import router as auth_security_router
+except ImportError:
+    from .routes.auth_security import router as auth_security_router
+
+app.include_router(auth_security_router)
+
+
+# VibeLoop admin API protection middleware
+@app.middleware("http")
+async def protect_admin_api_routes(request, call_next):
+    path = request.url.path
+
+    if path.startswith("/api/v1/admin"):
+        try:
+            from routes.auth_security import is_admin_request
+        except ImportError:
+            from .routes.auth_security import is_admin_request
+
+        if not is_admin_request(request):
+            from fastapi.responses import JSONResponse
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "success": False,
+                    "message": "Admin authorization required"
+                }
+            )
+
+    return await call_next(request)

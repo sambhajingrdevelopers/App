@@ -7805,3 +7805,88 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+/* Secure Admin Login */
+.adminLoginPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  color: white;
+  background:
+    radial-gradient(circle at top left, rgba(255,45,149,0.28), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(0,212,255,0.22), transparent 34%),
+    #07070d;
+}
+
+.adminLoginCard {
+  width: min(460px, 100%);
+  padding: 30px;
+  border-radius: 34px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.48);
+}
+
+.adminLoginBadge {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adminLoginCard h1 {
+  margin: 18px 0 10px;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.adminLoginCard p {
+  color: #a1a1aa;
+  line-height: 1.6;
+}
+
+.adminLoginMessage {
+  padding: 12px 14px;
+  border-radius: 18px;
+  color: #dbeafe;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.10);
+  margin: 16px 0;
+}
+
+.adminLoginCard label {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  color: #dbeafe;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.adminLoginCard input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px;
+  padding: 15px;
+  outline: 0;
+  color: white;
+  background: rgba(255,255,255,0.06);
+}
+
+.adminLoginCard button {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 15px 18px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+  margin-top: 10px;
+}
