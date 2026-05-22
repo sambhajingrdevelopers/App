@@ -363,3 +363,12 @@ except ImportError:
     from .routes.content_uploads import router as content_uploads_router
 
 app.include_router(content_uploads_router)
+
+
+# VibeLoop live content routes
+try:
+    from routes.live_content import router as live_content_router
+except ImportError:
+    from .routes.live_content import router as live_content_router
+
+app.include_router(live_content_router)
