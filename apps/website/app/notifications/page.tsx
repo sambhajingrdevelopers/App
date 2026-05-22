@@ -1,35 +1,33 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
-type NotificationItem = {
-  id: string;
-  type: string;
-  icon: string;
-  title: string;
-  desc: string;
-  isRead: boolean;
-  createdAt?: string;
-};
-
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [summary, setSummary] = useState<any>({ total: 0, unread: 0, read: 0 });
   const [source, setSource] = useState('loading');
   const [message, setMessage] = useState('');
 
-  const unreadCount = useMemo(() => {
-    return notifications.filter((item) => !item.isRead).length;
-  }, [notifications]);
-
   async function loadNotifications() {
     try {
-      const response = await fetch('/api/notifications', { cache: 'no-store' });
-      const data = await response.json();
+      const [listResponse, summaryResponse] = await Promise.all([
+        fetch('/api/notifications', { cache: 'no-store' }),
+        fetch('/api/notification-summary', { cache: 'no-store' })
+      ]);
 
-      setNotifications(data.notifications || []);
-      setSource(data.source || 'fallback');
+      const listData = await listResponse.json();
+      const summaryData = await summaryResponse.json();
+
+      setNotifications(listData.notifications || []);
+      setSummary(summaryData.summary || { total: 0, unread: 0, read: 0 });
+
+      setSource(
+        listData.source === 'backend' || summaryData.source === 'backend'
+          ? 'backend'
+          : 'fallback'
+      );
     } catch {
       setSource('fallback');
     }
@@ -41,43 +39,74 @@ export default function NotificationsPage() {
 
   async function markRead(id: string) {
     setNotifications((prev) =>
-      prev.map((item) => item.id === id ? { ...item, isRead: true } : item)
+      prev.map((item) =>
+        item.id === id ? { ...item, isRead: true } : item
+      )
     );
 
+    setSummary((prev: any) => ({
+      ...prev,
+      unread: Math.max((prev.unread || 0) - 1, 0),
+      read: (prev.read || 0) + 1
+    }));
+
     try {
-      const response = await fetch(`/api/notifications/${id}/read`, {
+      const response = await fetch(`/api/notifications/${encodeURIComponent(id)}/read`, {
         method: 'POST'
       });
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error(data?.message || 'Update failed');
+      if (response.ok && data.success) {
+        setNotifications((prev) =>
+          prev.map((item) =>
+            item.id === id ? data.notification : item
+          )
+        );
+
+        setSummary((prev: any) => ({
+          ...prev,
+          unread: data.unread || 0,
+          read: Math.max((prev.total || 0) - (data.unread || 0), 0)
+        }));
       }
 
       setMessage('Notification marked as read.');
     } catch {
-      setMessage('Backend update failed. UI updated locally.');
+      setMessage('Notification marked locally.');
     }
   }
 
   async function markAllRead() {
-    setNotifications((prev) => prev.map((item) => ({ ...item, isRead: true })));
+    setNotifications((prev) =>
+      prev.map((item) => ({ ...item, isRead: true }))
+    );
+
+    setSummary((prev: any) => ({
+      ...prev,
+      unread: 0,
+      read: prev.total || notifications.length
+    }));
 
     try {
-      const response = await fetch('/api/notifications/read-all', {
+      const response = await fetch('/api/notifications/mark-all-read', {
         method: 'POST'
       });
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        throw new Error(data?.message || 'Update failed');
+      if (response.ok && data.success) {
+        setNotifications(data.notifications || []);
+        setSummary((prev: any) => ({
+          ...prev,
+          unread: 0,
+          read: prev.total || data.notifications?.length || 0
+        }));
       }
 
       setMessage('All notifications marked as read.');
     } catch {
-      setMessage('Backend update failed. UI updated locally.');
+      setMessage('All notifications marked locally.');
     }
   }
 
@@ -86,59 +115,67 @@ export default function NotificationsPage() {
       <SocialAppShell
         active="notifications"
         title="Notifications"
-        subtitle="Track likes, comments, follows, saves and creator growth alerts."
+        subtitle="Track follows, likes, comments, wallet and account updates."
       >
-        <div className="vlNotificationTopActions">
-          <span>{source === 'backend' ? 'Live Backend Notifications' : 'Fallback Notifications Ready'}</span>
-          <button type="button" onClick={loadNotifications}>Refresh</button>
-          <button type="button" onClick={markAllRead}>Mark All Read</button>
-        </div>
+        <section className="notifHero">
+          <div>
+            <span>{source === 'backend' ? 'Live Backend Notifications' : 'Fallback Notifications Ready'}</span>
+            <h2>Notification center</h2>
+            <p>Manage all updates and unread alerts in one place.</p>
+          </div>
+
+          <div className="notifHeroActions">
+            <button type="button" onClick={loadNotifications}>Refresh</button>
+            <button type="button" onClick={markAllRead}>Mark All Read</button>
+          </div>
+        </section>
 
         {message && <div className="vlSettingsMessage">{message}</div>}
 
-        <div className="vlNotificationStats">
+        <section className="notifStats">
           <div>
-            <b>{notifications.length}</b>
+            <b>{summary.total || notifications.length}</b>
             <span>Total</span>
           </div>
           <div>
-            <b>{unreadCount}</b>
+            <b>{summary.unread || 0}</b>
             <span>Unread</span>
           </div>
           <div>
-            <b>{source === 'backend' ? 'Live' : 'Fallback'}</b>
-            <span>Source</span>
+            <b>{summary.read || 0}</b>
+            <span>Read</span>
           </div>
-        </div>
+        </section>
 
-        <div className="vlNotificationList">
+        <section className="notifList">
           {notifications.map((item) => (
-            <article
-              className={`vlNotificationCard ${item.type} ${item.isRead ? 'read' : 'unread'}`}
-              key={item.id}
-            >
-              <div className="vlNotificationIcon">{item.icon}</div>
-
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-                <span>{item.isRead ? 'Read' : 'Unread'}</span>
+            <article className={`notifItem ${item.isRead ? 'read' : 'unread'}`} key={item.id}>
+              <div className="notifIcon">
+                {item.type === 'follow' ? '👤' : item.type === 'like' ? '♡' : item.type === 'comment' ? '💬' : item.type === 'wallet' ? '💰' : '🔔'}
               </div>
 
-              <button
-                type="button"
-                onClick={() => markRead(item.id)}
-                disabled={item.isRead}
-              >
-                {item.isRead ? 'Done' : 'Mark Read'}
-              </button>
+              <div>
+                <b>{item.title}</b>
+                <p>{item.message}</p>
+                <span>{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Just now'}</span>
+              </div>
+
+              <div className="notifActions">
+                {!item.isRead && (
+                  <button type="button" onClick={() => markRead(item.id)}>
+                    Mark Read
+                  </button>
+                )}
+
+                {item.isRead && <em>Read</em>}
+              </div>
             </article>
           ))}
 
           {!notifications.length && (
-            <div className="adminEmpty">No notifications found.</div>
+            <div className="adminEmpty">No notifications yet.</div>
           )}
-        </div>
+        </section>
       </SocialAppShell>
     </AuthGuard>
   );

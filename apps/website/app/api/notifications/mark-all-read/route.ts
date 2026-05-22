@@ -2,14 +2,9 @@ import { NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
 
-export async function POST(
-  _request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST() {
   try {
-    const params = await context.params;
-
-    const response = await fetch(`${BACKEND_URL}/api/v1/notifications/${encodeURIComponent(params.id)}/read`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/notifications/mark-all-read`, {
       method: 'POST',
       cache: 'no-store'
     });
@@ -18,15 +13,15 @@ export async function POST(
 
     if (!response.ok || !data.success) {
       return NextResponse.json(
-        { success: false, message: data.message || 'Mark read failed' },
+        { success: false, message: data.message || 'Mark all read failed' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      notification: data.notification,
-      unread: data.unread || 0
+      unread: data.unread || 0,
+      notifications: data.notifications || []
     });
   } catch (error: any) {
     return NextResponse.json(
