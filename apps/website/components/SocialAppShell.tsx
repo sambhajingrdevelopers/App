@@ -85,6 +85,7 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
           ))}
 
           <AdminNavLink active={active === 'admin'} />
+          {active === 'admin' && <a href="/admin/audit">🛡 Audit</a>}
           {active === 'admin' && <a href="/admin/users">👥 Users</a>}
           {active === 'admin' && <a href="/admin/moderation">🧾 Moderation</a>}
         </nav>
