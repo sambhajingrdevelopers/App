@@ -8974,3 +8974,131 @@ main {
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+/* PWA Install + Offline */
+.pwaInstallPrompt {
+  position: fixed;
+  left: 18px;
+  right: 18px;
+  bottom: 106px;
+  z-index: 120;
+  display: grid;
+  grid-template-columns: 54px 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 26px;
+  color: white;
+  background:
+    radial-gradient(circle at top left, rgba(255,45,149,0.20), transparent 36%),
+    rgba(18,18,30,0.94);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45);
+  backdrop-filter: blur(20px);
+}
+
+.pwaInstallIcon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+  font-weight: 950;
+}
+
+.pwaInstallPrompt b,
+.pwaInstallPrompt span {
+  display: block;
+}
+
+.pwaInstallPrompt span {
+  color: #a1a1aa;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.pwaInstallPrompt button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 14px;
+  color: white;
+  cursor: pointer;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.pwaInstallPrompt button:last-child {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: rgba(255,255,255,0.10);
+}
+
+.offlinePage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: white;
+  background:
+    radial-gradient(circle at top left, rgba(255,45,149,0.24), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(0,212,255,0.18), transparent 34%),
+    #07070d;
+}
+
+.offlineCard {
+  width: min(480px, 100%);
+  text-align: center;
+  padding: 34px;
+  border-radius: 34px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.45);
+}
+
+.offlineLogo {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+  font-size: 36px;
+  font-weight: 950;
+}
+
+.offlineCard h1 {
+  margin: 0 0 12px;
+  font-size: 42px;
+  letter-spacing: -1.5px;
+}
+
+.offlineCard p {
+  color: #a1a1aa;
+  line-height: 1.6;
+}
+
+.offlineCard a {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+@media (max-width: 620px) {
+  .pwaInstallPrompt {
+    grid-template-columns: 48px 1fr;
+    bottom: 104px;
+  }
+
+  .pwaInstallPrompt button {
+    grid-column: span 1;
+  }
+}
