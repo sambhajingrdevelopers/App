@@ -372,3 +372,12 @@ except ImportError:
     from .routes.live_content import router as live_content_router
 
 app.include_router(live_content_router)
+
+
+# VibeLoop health routes
+try:
+    from routes.health_routes import router as health_routes_router
+except ImportError:
+    from .routes.health_routes import router as health_routes_router
+
+app.include_router(health_routes_router)
