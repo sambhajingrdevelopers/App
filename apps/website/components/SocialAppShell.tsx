@@ -18,6 +18,7 @@ type ActivePage =
   | 'verification'
   | 'ads'
   | 'wallet'
+  | 'create'
   | 'admin';
 
 type Props = {
@@ -41,7 +42,8 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'safety', label: '🛡 Safety', href: '/safety' },
   { key: 'verification', label: '✓ Verification', href: '/verification' },
   { key: 'ads', label: '📣 Ads', href: '/ads' },
-  { key: 'wallet', label: '💰 Wallet', href: '/wallet' }
+  { key: 'wallet', label: '💰 Wallet', href: '/wallet' },
+  { key: 'create', label: '＋ Create', href: '/create' }
 ];
 
 export default function SocialAppShell({ active, title, subtitle, children }: Props) {

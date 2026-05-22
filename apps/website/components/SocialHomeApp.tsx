@@ -325,6 +325,7 @@ export default function SocialHomeApp() {
           <a href="/verification">✓ Verification</a>
           <a href="/ads">📣 Ads</a>
           <a href="/wallet">💰 Wallet</a>
+          <a href="/create">＋ Create</a>
           <AdminNavLink />
         </nav>
 

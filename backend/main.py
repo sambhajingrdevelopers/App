@@ -354,3 +354,12 @@ except ImportError:
     from .routes.media_upload import router as media_upload_router
 
 app.include_router(media_upload_router)
+
+
+# VibeLoop content uploads routes
+try:
+    from routes.content_uploads import router as content_uploads_router
+except ImportError:
+    from .routes.content_uploads import router as content_uploads_router
+
+app.include_router(content_uploads_router)
