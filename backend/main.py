@@ -293,3 +293,12 @@ except ImportError:
     from .routes.global_search import router as global_search_router
 
 app.include_router(global_search_router)
+
+
+# VibeLoop admin user management routes
+try:
+    from routes.admin_users import router as admin_users_router
+except ImportError:
+    from .routes.admin_users import router as admin_users_router
+
+app.include_router(admin_users_router)

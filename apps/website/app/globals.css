@@ -7551,3 +7551,257 @@ main {
     width: max-content;
   }
 }
+
+/* Admin Users */
+.adminUsersHero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 26px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(0,238,255,0.16), transparent 34%),
+    rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+  margin-bottom: 18px;
+}
+
+.adminUsersHero span {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #00eaff;
+  background: rgba(0,238,255,0.08);
+  border: 1px solid rgba(0,238,255,0.18);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.adminUsersHero h2 {
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin: 16px 0 10px;
+}
+
+.adminUsersHero p {
+  margin: 0;
+  color: #a1a1aa;
+}
+
+.adminUsersHero button,
+.adminUsersToolbar button,
+.adminCreateUser button,
+.adminUserControls button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.adminUsersStats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.adminUsersStats div {
+  padding: 20px;
+  border-radius: 26px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.20);
+}
+
+.adminUsersStats b,
+.adminUsersStats span {
+  display: block;
+}
+
+.adminUsersStats b {
+  font-size: 34px;
+}
+
+.adminUsersStats span {
+  color: #a1a1aa;
+  margin-top: 4px;
+  font-weight: 900;
+}
+
+.adminUsersToolbar,
+.adminCreateUser {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 28px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.18);
+  margin-bottom: 18px;
+}
+
+.adminUsersToolbar {
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+}
+
+.adminUsersToolbar input,
+.adminCreateUser input,
+.adminCreateUser select,
+.adminUserControls select {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+  padding: 14px 16px;
+  outline: 0;
+  color: white;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+}
+
+.adminUsersToolbar label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #dbeafe;
+  font-weight: 900;
+}
+
+.adminCreateUser {
+  grid-template-columns: 1.1fr 1fr 1.2fr 0.8fr auto;
+  align-items: center;
+}
+
+.adminCreateUser h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 24px;
+}
+
+.adminUsersList {
+  display: grid;
+  gap: 14px;
+}
+
+.adminUserCard {
+  display: grid;
+  grid-template-columns: 62px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 28px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.18);
+}
+
+.adminUserCard.blocked {
+  border-color: rgba(251,113,133,0.28);
+}
+
+.adminUserCard.archived {
+  opacity: 0.68;
+}
+
+.adminUserAvatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 950;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.adminUserName {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.adminUserName b {
+  font-size: 18px;
+}
+
+.adminUserName span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #00eaff;
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(0,238,255,0.08);
+}
+
+.adminUserMain p {
+  margin: 5px 0 10px;
+  color: #a1a1aa;
+}
+
+.adminUserBadges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.adminUserBadges em {
+  font-style: normal;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.adminUserControls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.adminUserControls button:nth-child(3) {
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.adminUserControls button:nth-child(4) {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+@media (max-width: 1100px) {
+  .adminUsersStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .adminCreateUser,
+  .adminUsersToolbar,
+  .adminUserCard {
+    grid-template-columns: 1fr;
+  }
+
+  .adminUserControls {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .adminUsersHero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adminUsersStats {
+    grid-template-columns: 1fr;
+  }
+}
