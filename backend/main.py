@@ -335,3 +335,22 @@ async def protect_admin_api_routes(request, call_next):
             )
 
     return await call_next(request)
+
+
+# VibeLoop permanent media static hosting
+MEDIA_ROOT = Path(__file__).resolve().parent / "media"
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+
+try:
+    app.mount("/media", StaticFiles(directory=str(MEDIA_ROOT)), name="media")
+except RuntimeError:
+    pass
+
+
+# VibeLoop media upload routes
+try:
+    from routes.media_upload import router as media_upload_router
+except ImportError:
+    from .routes.media_upload import router as media_upload_router
+
+app.include_router(media_upload_router)
