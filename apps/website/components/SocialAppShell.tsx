@@ -5,20 +5,15 @@ import AdminNavLink from './AdminNavLink';
 
 type ActivePage =
   | 'home'
-  | 'explore'
-  | 'stories'
+  | 'search'
+  | 'create'
   | 'reels'
+  | 'profile'
   | 'messages'
   | 'notifications'
-  | 'saved'
-  | 'profile'
-  | 'settings'
-  | 'analytics'
-  | 'safety'
-  | 'verification'
-  | 'ads'
   | 'wallet'
-  | 'create'
+  | 'ads'
+  | 'verification'
   | 'admin';
 
 type Props = {
