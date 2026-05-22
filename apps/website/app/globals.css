@@ -8799,3 +8799,178 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile App-Like Bottom Navigation */
+.mobileBottomNav,
+.mobileQuickStack {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  body {
+    padding-bottom: 92px;
+  }
+
+  .mobileBottomNav {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 90;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    padding: 9px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top, rgba(255,255,255,0.10), transparent 40%),
+      rgba(14,14,24,0.92);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+    backdrop-filter: blur(20px);
+  }
+
+  .mobileBottomNav a {
+    min-height: 58px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 2px;
+    border-radius: 20px;
+    color: #a1a1aa;
+    text-decoration: none;
+    font-weight: 900;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+
+  .mobileBottomNav a span {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .mobileBottomNav a small {
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .mobileBottomNav a.active {
+    color: white;
+    background: rgba(255,255,255,0.09);
+  }
+
+  .mobileBottomNav a.special {
+    margin-top: -26px;
+  }
+
+  .mobileBottomNav a.special span {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    font-size: 30px;
+    background: linear-gradient(135deg, #ff2d95, #7c3aed);
+    box-shadow: 0 18px 45px rgba(255,45,149,0.38);
+  }
+
+  .mobileBottomNav a.special small {
+    color: white;
+    margin-top: 2px;
+  }
+
+  .mobileBottomNav a:active {
+    transform: scale(0.94);
+  }
+
+  .mobileQuickStack {
+    position: fixed;
+    right: 14px;
+    bottom: 104px;
+    z-index: 91;
+    display: grid;
+    gap: 10px;
+  }
+
+  .mobileQuickStack a {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    background: rgba(25,25,39,0.92);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.32);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobileQuickStack em {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: white;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 950;
+    background: #ff2d95;
+    border: 2px solid #0b0b12;
+  }
+
+  .vlSidebar,
+  .desktopSidebar,
+  aside[class*="sidebar"],
+  nav[class*="Sidebar"] {
+    max-width: 100%;
+  }
+
+  .vlShell,
+  .socialShell,
+  .appShell,
+  main {
+    max-width: 100%;
+  }
+
+  .liveHomeHero,
+  .createHero,
+  .dmHero,
+  .notifHero,
+  .walletHero,
+  .searchHero,
+  .dpBanner,
+  .editProfileHero,
+  .adminUsersHero,
+  .auditHero,
+  .mediaAdminHero {
+    border-radius: 24px;
+  }
+
+  .liveHomeHero h2,
+  .createHero h2,
+  .dmHero h2,
+  .notifHero h2,
+  .walletHero h2,
+  .searchHero h2,
+  .editProfileHero h2,
+  .adminUsersHero h2,
+  .auditHero h2,
+  .mediaAdminHero h2 {
+    letter-spacing: -1px;
+  }
+
+  input,
+  textarea,
+  select,
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
