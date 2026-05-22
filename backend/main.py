@@ -275,3 +275,21 @@ except ImportError:
     from .routes.reel_actions import router as reel_actions_router
 
 app.include_router(reel_actions_router)
+
+
+# VibeLoop story action routes
+try:
+    from routes.story_actions import router as story_actions_router
+except ImportError:
+    from .routes.story_actions import router as story_actions_router
+
+app.include_router(story_actions_router)
+
+
+# VibeLoop global search routes
+try:
+    from routes.global_search import router as global_search_router
+except ImportError:
+    from .routes.global_search import router as global_search_router
+
+app.include_router(global_search_router)

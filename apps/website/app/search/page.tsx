@@ -1,39 +1,23 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
-type SearchResult = {
-  type: string;
-  id: string;
-  title: string;
-  subtitle: string;
-  meta: string;
-  href: string;
-};
+type TabType = 'all' | 'creator' | 'post' | 'reel' | 'story';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [source, setSource] = useState('empty');
+  const [activeTab, setActiveTab] = useState<TabType>('all');
+  const [results, setResults] = useState<any[]>([]);
+  const [source, setSource] = useState('loading');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get('q') || '';
-    setQuery(q);
-
-    if (q.trim()) {
-      runSearch(q);
-    }
-  }, []);
-
-  async function runSearch(q = query) {
+  async function runSearch(value = query) {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(q)}`, {
+      const response = await fetch(`/api/search-all?q=${encodeURIComponent(value)}`, {
         cache: 'no-store'
       });
 
@@ -49,79 +33,94 @@ export default function SearchPage() {
     }
   }
 
-  const grouped = useMemo(() => {
-    return results.reduce((acc: any, item) => {
-      acc[item.type] = acc[item.type] || [];
-      acc[item.type].push(item);
-      return acc;
-    }, {});
-  }, [results]);
+  useEffect(() => {
+    runSearch('');
+  }, []);
+
+  const filteredResults =
+    activeTab === 'all'
+      ? results
+      : results.filter((item) => item.type === activeTab);
+
+  const counts = {
+    all: results.length,
+    creator: results.filter((item) => item.type === 'creator').length,
+    post: results.filter((item) => item.type === 'post').length,
+    reel: results.filter((item) => item.type === 'reel').length,
+    story: results.filter((item) => item.type === 'story').length
+  };
 
   return (
     <AuthGuard>
       <SocialAppShell
-        active="explore"
+        active="search"
         title="Search"
-        subtitle="Search creators, posts, reels and stories across VibeLoop."
+        subtitle="Search creators, posts, reels and stories."
       >
-        <section className="vlSearchPageBox">
+        <section className="searchHero">
           <div>
-            <h2>Global Search</h2>
-            <p>
-              Find creators, reels, stories and posts.
-              <span className="vlSourceBadge"> {source === 'backend' ? 'Live Backend' : 'Fallback Ready'}</span>
-            </p>
-          </div>
-
-          <div className="vlSearchPageInput">
-            <input
-              value={query}
-              placeholder="Search anything..."
-              onChange={(event) => setQuery(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') runSearch();
-              }}
-            />
-
-            <button type="button" onClick={() => runSearch()}>
-              {loading ? 'Searching...' : 'Search'}
-            </button>
+            <span>{source === 'backend' ? 'Live Backend Search' : 'Fallback Search Ready'}</span>
+            <h2>Global search engine</h2>
+            <p>Find creators, posts, reels and stories from one smart search.</p>
           </div>
         </section>
 
-        {loading && (
-          <div className="vlFeedLoader">
-            <div />
-            <h2>Searching VibeLoop...</h2>
-            <p>Checking creators, reels, stories and posts.</p>
-          </div>
-        )}
+        <section className="searchBox">
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') runSearch();
+            }}
+            placeholder="Search @mira, reels, posts, stories..."
+          />
 
-        {!loading && query && !results.length && (
-          <div className="adminEmpty">No results found for "{query}".</div>
-        )}
+          <button type="button" onClick={() => runSearch()}>
+            {loading ? 'Searching...' : 'Search'}
+          </button>
+        </section>
 
-        {!loading && Object.keys(grouped).map((type) => (
-          <section className="vlSearchGroup" key={type}>
-            <h3>{type.toUpperCase()}</h3>
+        <section className="searchTabs">
+          <button className={activeTab === 'all' ? 'active' : ''} onClick={() => setActiveTab('all')}>
+            All {counts.all}
+          </button>
+          <button className={activeTab === 'creator' ? 'active' : ''} onClick={() => setActiveTab('creator')}>
+            Creators {counts.creator}
+          </button>
+          <button className={activeTab === 'post' ? 'active' : ''} onClick={() => setActiveTab('post')}>
+            Posts {counts.post}
+          </button>
+          <button className={activeTab === 'reel' ? 'active' : ''} onClick={() => setActiveTab('reel')}>
+            Reels {counts.reel}
+          </button>
+          <button className={activeTab === 'story' ? 'active' : ''} onClick={() => setActiveTab('story')}>
+            Stories {counts.story}
+          </button>
+        </section>
 
-            <div className="vlSearchResults">
-              {grouped[type].map((item: SearchResult) => (
-                <a className="vlSearchResultCard" href={item.href} key={`${item.type}-${item.id}`}>
-                  <div>{item.type[0].toUpperCase()}</div>
+        <section className="searchResults">
+          {filteredResults.map((item) => (
+            <a className="searchResultCard" href={item.href} key={`${item.type}-${item.id}`}>
+              <div className={`searchResultIcon ${item.color || ''}`}>
+                {item.type === 'creator' ? '👤' : item.type === 'post' ? '▣' : item.type === 'reel' ? '▶' : '◎'}
+              </div>
 
-                  <section>
-                    <b>{item.title}</b>
-                    <span>{item.subtitle}</span>
-                    <small>{item.meta}</small>
-                  </section>
+              <div>
+                <b>{item.title}</b>
+                <p>{item.subtitle}</p>
+                <span>{item.meta}</span>
+              </div>
 
-                  <em>Open</em>
-                </a>
-              ))}
+              <em>{item.type}</em>
+            </a>
+          ))}
+
+          {!filteredResults.length && (
+            <div className="adminEmpty">
+              {loading ? 'Searching...' : 'No results found.'}
             </div>
-          </section>
-        ))}
+          )}
+        </section>
       </SocialAppShell>
     </AuthGuard>
   );
