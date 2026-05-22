@@ -257,3 +257,12 @@ except ImportError:
     from .routes.post_share import router as post_share_router
 
 app.include_router(post_share_router)
+
+
+# VibeLoop direct messages routes
+try:
+    from routes.direct_messages import router as direct_messages_router
+except ImportError:
+    from .routes.direct_messages import router as direct_messages_router
+
+app.include_router(direct_messages_router)

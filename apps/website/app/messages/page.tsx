@@ -1,104 +1,111 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
-type ChatMessage = {
-  id: string;
-  chatId: string;
-  sender: 'me' | 'them';
-  text: string;
-  createdAt?: string;
-};
-
-type Chat = {
-  id: string;
-  name: string;
-  username: string;
-  avatar: string;
-  lastMessage: string;
-  unread: number;
-  messages: ChatMessage[];
-};
-
 export default function MessagesPage() {
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [activeChatId, setActiveChatId] = useState('');
-  const [messageText, setMessageText] = useState('');
+  const [threads, setThreads] = useState<any[]>([]);
+  const [activeThread, setActiveThread] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [text, setText] = useState('');
+  const [unreadTotal, setUnreadTotal] = useState(0);
   const [source, setSource] = useState('loading');
-  const [status, setStatus] = useState('');
+  const [message, setMessage] = useState('');
 
-  async function loadChats() {
+  async function loadThreads() {
     try {
-      const response = await fetch('/api/chats', { cache: 'no-store' });
+      const response = await fetch('/api/messages/threads', { cache: 'no-store' });
       const data = await response.json();
 
-      setChats(data.chats || []);
+      setThreads(data.threads || []);
+      setUnreadTotal(data.unreadTotal || 0);
       setSource(data.source || 'fallback');
 
-      if (data.chats?.[0]?.id) {
-        setActiveChatId(data.chats[0].id);
+      if (!activeThread && data.threads?.length) {
+        openThread(data.threads[0]);
       }
     } catch {
       setSource('fallback');
     }
   }
 
-  useEffect(() => {
-    loadChats();
-  }, []);
-
-  const activeChat = useMemo(() => {
-    return chats.find((chat) => chat.id === activeChatId) || chats[0];
-  }, [chats, activeChatId]);
-
-  async function sendMessage() {
-    if (!messageText.trim() || !activeChat) return;
-
-    const tempMessage: ChatMessage = {
-      id: `LOCAL-${Date.now()}`,
-      chatId: activeChat.id,
-      sender: 'me',
-      text: messageText
-    };
-
-    const textToSend = messageText;
-    setMessageText('');
-
-    setChats((prev) =>
-      prev.map((chat) =>
-        chat.id === activeChat.id
-          ? {
-              ...chat,
-              lastMessage: textToSend,
-              unread: 0,
-              messages: [...(chat.messages || []), tempMessage]
-            }
-          : chat
-      )
-    );
+  async function openThread(thread: any) {
+    setActiveThread(thread);
+    setMessage('');
 
     try {
-      const response = await fetch('/api/chats/message', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId: activeChat.id,
-          text: textToSend,
-          sender: 'me'
-        })
+      const response = await fetch(`/api/messages/threads/${encodeURIComponent(thread.id)}`, {
+        cache: 'no-store'
       });
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data?.message || 'Message send failed');
+        throw new Error(data.message || 'Thread failed');
       }
 
-      setStatus('Message saved to backend.');
+      setMessages(data.messages || []);
+
+      await fetch(`/api/messages/threads/${encodeURIComponent(thread.id)}/read`, {
+        method: 'POST'
+      });
+
+      setThreads((prev) =>
+        prev.map((item) => item.id === thread.id ? { ...item, unread: 0 } : item)
+      );
+
+      setUnreadTotal((count) => Math.max(count - (thread.unread || 0), 0));
     } catch {
-      setStatus('Backend send failed. Message added locally.');
+      setMessage('Thread could not load.');
+    }
+  }
+
+  useEffect(() => {
+    loadThreads();
+  }, []);
+
+  async function sendMessage() {
+    if (!text.trim() || !activeThread) return;
+
+    const localText = text;
+    setText('');
+
+    const localMessage = {
+      id: Date.now(),
+      threadId: activeThread.id,
+      sender: '@you',
+      text: localText,
+      isMe: true,
+      createdAt: new Date().toISOString()
+    };
+
+    setMessages((prev) => [...prev, localMessage]);
+
+    try {
+      const response = await fetch(`/api/messages/threads/${encodeURIComponent(activeThread.id)}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: localText, sender: '@you' })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMessages((prev) =>
+          prev.map((item) => item.id === localMessage.id ? data.message : item)
+        );
+
+        setThreads((prev) =>
+          prev.map((item) => item.id === activeThread.id ? data.thread : item)
+        );
+
+        setActiveThread(data.thread);
+      }
+
+      setMessage('Message sent.');
+    } catch {
+      setMessage('Message sent locally.');
     }
   }
 
@@ -107,73 +114,85 @@ export default function MessagesPage() {
       <SocialAppShell
         active="messages"
         title="Messages"
-        subtitle="Creator conversations and direct messages."
+        subtitle="Real direct messages, inbox threads and unread status."
       >
-        <div className="vlMessagesStatus">
-          <span>{source === 'backend' ? 'Live Backend Chat' : 'Fallback Chat Ready'}</span>
-          {status && <b>{status}</b>}
-        </div>
-
-        <div className="vlChatBox">
-          <div className="vlChatList">
-            {chats.map((chat) => (
-              <button
-                type="button"
-                className={`vlChatItem ${activeChat?.id === chat.id ? 'active' : ''}`}
-                key={chat.id}
-                onClick={() => setActiveChatId(chat.id)}
-              >
-                <div className="vlAvatar">{chat.avatar || chat.name[0]}</div>
-
-                <div>
-                  <b>{chat.name}</b>
-                  <span>{chat.lastMessage}</span>
-                </div>
-
-                {!!chat.unread && <em>{chat.unread}</em>}
-              </button>
-            ))}
+        <section className="dmHero">
+          <div>
+            <span>{source === 'backend' ? 'Live Backend Messages' : 'Fallback Messages Ready'}</span>
+            <h2>Direct message center</h2>
+            <p>Chat with creators, brands and followers.</p>
           </div>
 
-          <div className="vlConversation">
-            {activeChat ? (
+          <div className="dmUnreadBadge">{unreadTotal} unread</div>
+        </section>
+
+        {message && <div className="vlSettingsMessage">{message}</div>}
+
+        <section className="dmLayout">
+          <aside className="dmThreads">
+            <div className="dmThreadsHead">
+              <h3>Inbox</h3>
+              <button type="button" onClick={loadThreads}>Refresh</button>
+            </div>
+
+            {threads.map((thread) => (
+              <button
+                type="button"
+                className={`dmThread ${activeThread?.id === thread.id ? 'active' : ''}`}
+                key={thread.id}
+                onClick={() => openThread(thread)}
+              >
+                <div>{thread.name?.[0] || 'C'}</div>
+                <section>
+                  <b>{thread.name}</b>
+                  <span>{thread.lastMessage}</span>
+                  <small>{thread.username}</small>
+                </section>
+
+                {thread.unread > 0 && <em>{thread.unread}</em>}
+              </button>
+            ))}
+
+            {!threads.length && <div className="adminEmpty">No messages yet.</div>}
+          </aside>
+
+          <main className="dmChat">
+            {activeThread ? (
               <>
-                <div className="vlConversationHead">
-                  <div className="vlAvatar">{activeChat.avatar || activeChat.name[0]}</div>
-                  <div>
-                    <h2>{activeChat.name}</h2>
-                    <p>{activeChat.username} • Online</p>
-                  </div>
+                <div className="dmChatHead">
+                  <div>{activeThread.name?.[0] || 'C'}</div>
+                  <section>
+                    <b>{activeThread.name}</b>
+                    <span>{activeThread.username}</span>
+                  </section>
                 </div>
 
-                <div className="vlChatMessages">
-                  {(activeChat.messages || []).map((message) => (
-                    <p
-                      className={`vlBubble ${message.sender === 'me' ? 'right' : 'left'}`}
-                      key={message.id}
-                    >
-                      {message.text}
-                    </p>
+                <div className="dmMessages">
+                  {messages.map((item) => (
+                    <article className={`dmBubble ${item.isMe ? 'me' : 'them'}`} key={item.id}>
+                      <p>{item.text}</p>
+                      <span>{item.createdAt ? new Date(item.createdAt).toLocaleTimeString() : 'Now'}</span>
+                    </article>
                   ))}
                 </div>
 
-                <div className="vlMessageInput">
+                <div className="dmComposer">
                   <input
-                    placeholder="Type message..."
-                    value={messageText}
-                    onChange={(event) => setMessageText(event.target.value)}
+                    value={text}
+                    onChange={(event) => setText(event.target.value)}
                     onKeyDown={(event) => {
                       if (event.key === 'Enter') sendMessage();
                     }}
+                    placeholder="Type your message..."
                   />
                   <button type="button" onClick={sendMessage}>Send</button>
                 </div>
               </>
             ) : (
-              <div className="adminEmpty">No chat selected.</div>
+              <div className="adminEmpty">Select any chat to start messaging.</div>
             )}
-          </div>
-        </div>
+          </main>
+        </section>
       </SocialAppShell>
     </AuthGuard>
   );
