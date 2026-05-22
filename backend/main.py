@@ -266,3 +266,12 @@ except ImportError:
     from .routes.direct_messages import router as direct_messages_router
 
 app.include_router(direct_messages_router)
+
+
+# VibeLoop reel action routes
+try:
+    from routes.reel_actions import router as reel_actions_router
+except ImportError:
+    from .routes.reel_actions import router as reel_actions_router
+
+app.include_router(reel_actions_router)

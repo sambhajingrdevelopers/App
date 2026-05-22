@@ -6953,3 +6953,223 @@ main {
     max-width: 92%;
   }
 }
+
+/* Reel Detail */
+.reelDetailLayout {
+  display: grid;
+  grid-template-columns: minmax(320px, 460px) 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.reelWatchCard,
+.reelSidePanel > div {
+  border-radius: 34px;
+  background: rgba(25,25,39,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 28px 75px rgba(0,0,0,0.24);
+  overflow: hidden;
+}
+
+.reelWatchCard {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  max-height: 780px;
+}
+
+.reelWatchCard video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.reelFallback {
+  width: 100%;
+  height: 100%;
+  padding: 28px;
+  display: grid;
+  place-content: end;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.22), transparent 30%),
+    linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.reelFallback.blue {
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.reelFallback.purple {
+  background: linear-gradient(135deg, #7c3aed, #ff2d95);
+}
+
+.reelFallback span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 70px;
+  opacity: 0.8;
+}
+
+.reelFallback h2 {
+  position: relative;
+  margin: 0 0 10px;
+  z-index: 2;
+  font-size: 38px;
+  letter-spacing: -1px;
+}
+
+.reelFallback p {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  color: rgba(255,255,255,0.86);
+}
+
+.reelOverlayInfo {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 4;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(0,0,0,0.38);
+  backdrop-filter: blur(12px);
+}
+
+.reelOverlayInfo b,
+.reelOverlayInfo span {
+  display: block;
+}
+
+.reelOverlayInfo span {
+  margin-top: 5px;
+  color: #dbeafe;
+}
+
+.reelSidePanel {
+  display: grid;
+  gap: 18px;
+}
+
+.reelInfoBox,
+.reelCommentBox {
+  padding: 22px;
+}
+
+.reelInfoBox h2 {
+  margin: 0 0 10px;
+  font-size: clamp(30px, 4vw, 52px);
+  letter-spacing: -1.5px;
+}
+
+.reelInfoBox p {
+  color: #dbeafe;
+  line-height: 1.6;
+}
+
+.reelMetrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.reelMetrics span {
+  padding: 9px 12px;
+  border-radius: 999px;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.reelActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reelActions button,
+.reelComposer button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff2d95, #7c3aed);
+}
+
+.reelActions button:last-child {
+  background: linear-gradient(135deg, #00d4ff, #7c3aed);
+}
+
+.reelCommentBox h3 {
+  margin: 0 0 14px;
+  font-size: 24px;
+}
+
+.reelComposer {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.reelComposer textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 20px;
+  padding: 14px;
+  outline: 0;
+  color: white;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+}
+
+.reelComments {
+  display: grid;
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.reelComments article {
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.reelComments b,
+.reelComments p,
+.reelComments span {
+  display: block;
+}
+
+.reelComments p {
+  margin: 6px 0;
+  color: #dbeafe;
+}
+
+.reelComments span {
+  color: #a1a1aa;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .reelDetailLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .reelWatchCard {
+    max-width: 440px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
