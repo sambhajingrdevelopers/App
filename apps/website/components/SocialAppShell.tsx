@@ -14,7 +14,12 @@ type ActivePage =
   | 'wallet'
   | 'ads'
   | 'verification'
-  | 'admin';
+  | 'analytics'
+  | 'saved'
+  | 'safety'
+  | 'settings'
+  | 'admin'
+  | 'explore';
 
 type Props = {
   active: ActivePage;
