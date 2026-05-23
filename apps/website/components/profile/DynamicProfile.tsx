@@ -112,6 +112,41 @@ export default function DynamicProfile({ username = '@you' }: Props) {
     }
   }
 
+  const [profileCounts, setProfileCounts] = useState({
+    posts: 0,
+    reels: 0,
+    stories: 0,
+    followers: 0
+  });
+
+  useEffect(() => {
+    async function loadProfileCounts() {
+      try {
+        const username = profile?.username || '@you';
+
+        const response = await fetch(
+          `/api/profile-counts?username=${encodeURIComponent(username)}`,
+          { cache: 'no-store' }
+        );
+
+        const data = await response.json();
+
+        if (data.success && data.counts) {
+          setProfileCounts({
+            posts: Number(data.counts.posts || 0),
+            reels: Number(data.counts.reels || 0),
+            stories: Number(data.counts.stories || 0),
+            followers: Number(data.counts.followers || 0)
+          });
+        }
+      } catch {
+        // keep fallback counts
+      }
+    }
+
+    loadProfileCounts();
+  }, [profile?.username]);
+
   const p = profile || {
     displayName: 'VibeLoop Creator',
     username: '@you',
@@ -171,19 +206,19 @@ export default function DynamicProfile({ username = '@you' }: Props) {
 
       <section className="dpStats">
         <div>
-          <b>{formatNumber(p.stats?.posts || 0)}</b>
+          <b>{formatNumber(profileCounts.posts)}</b>
           <span>Posts</span>
         </div>
         <div>
-          <b>{formatNumber(p.stats?.reels || 0)}</b>
+          <b>{formatNumber(profileCounts.reels)}</b>
           <span>Reels</span>
         </div>
         <div>
-          <b>{formatNumber(p.stats?.stories || 0)}</b>
+          <b>{formatNumber(profileCounts.stories)}</b>
           <span>Stories</span>
         </div>
         <button type="button" onClick={() => loadConnections('followers')}>
-          <b>{formatNumber(p.stats?.followers || 0)}</b>
+          <b>{formatNumber(profileCounts.followers)}</b>
           <span>Followers</span>
         </button>
         <button type="button" onClick={() => loadConnections('following')}>
