@@ -86,7 +86,7 @@ def story_detail(story_id: str):
 
     with connect_db() as conn:
         story = conn.execute(
-            "SELECT * FROM stories WHERE id = ?",
+            "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') AND id = ?",
             (story_id,)
         ).fetchone()
 
@@ -114,7 +114,7 @@ def story_view(story_id: str):
 
     with connect_db() as conn:
         story = conn.execute(
-            "SELECT * FROM stories WHERE id = ?",
+            "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') AND id = ?",
             (story_id,)
         ).fetchone()
 
@@ -133,7 +133,7 @@ def story_view(story_id: str):
         conn.commit()
 
         updated = conn.execute(
-            "SELECT * FROM stories WHERE id = ?",
+            "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') AND id = ?",
             (story_id,)
         ).fetchone()
 
@@ -177,7 +177,7 @@ def story_reply(story_id: str, payload: dict = Body(...)):
 
     with connect_db() as conn:
         story = conn.execute(
-            "SELECT * FROM stories WHERE id = ?",
+            "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') AND id = ?",
             (story_id,)
         ).fetchone()
 

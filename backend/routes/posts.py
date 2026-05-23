@@ -117,7 +117,7 @@ def get_db_posts():
 
     with connect_db() as conn:
         rows = conn.execute(
-            "SELECT * FROM posts ORDER BY created_at DESC"
+            "SELECT * FROM posts WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC"
         ).fetchall()
 
     return [row_to_post(row) for row in rows]
@@ -213,7 +213,7 @@ def delete_post(post_id: str):
     init_db()
 
     with connect_db() as conn:
-        conn.execute("DELETE FROM posts WHERE id = ?", (post_id,))
+        conn.execute("DELETE FROM posts WHERE (archived_at IS NULL OR archived_at = '') AND id = ?", (post_id,))
         conn.commit()
 
     return {

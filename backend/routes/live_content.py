@@ -93,17 +93,17 @@ def story_to_dict(row):
 def home_live_content():
     posts = safe_rows(
         "vibeloop_posts.db",
-        "SELECT * FROM posts ORDER BY created_at DESC LIMIT 50"
+        "SELECT * FROM posts WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 50"
     )
 
     stories = safe_rows(
         "vibeloop_stories.db",
-        "SELECT * FROM stories ORDER BY created_at DESC LIMIT 20"
+        "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 20"
     )
 
     reels = safe_rows(
         "vibeloop_reels.db",
-        "SELECT * FROM reels ORDER BY created_at DESC LIMIT 10"
+        "SELECT * FROM reels WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 10"
     )
 
     return {
@@ -118,7 +118,7 @@ def home_live_content():
 def reels_live_content():
     reels = safe_rows(
         "vibeloop_reels.db",
-        "SELECT * FROM reels ORDER BY created_at DESC LIMIT 80"
+        "SELECT * FROM reels WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 80"
     )
 
     return {
@@ -131,7 +131,7 @@ def reels_live_content():
 def stories_live_content():
     stories = safe_rows(
         "vibeloop_stories.db",
-        "SELECT * FROM stories ORDER BY created_at DESC LIMIT 80"
+        "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 80"
     )
 
     return {

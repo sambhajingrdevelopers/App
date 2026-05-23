@@ -69,7 +69,7 @@ def list_stories():
 
     with connect_db() as conn:
         rows = conn.execute(
-            "SELECT * FROM stories ORDER BY created_at DESC"
+            "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC"
         ).fetchall()
 
     return {

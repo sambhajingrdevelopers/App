@@ -53,7 +53,7 @@ def init_db():
 
 
 def get_post(conn, post_id):
-    return conn.execute("SELECT * FROM posts WHERE id = ?", (post_id,)).fetchone()
+    return conn.execute("SELECT * FROM posts WHERE (archived_at IS NULL OR archived_at = '') AND id = ?", (post_id,)).fetchone()
 
 
 def load_comments(row):

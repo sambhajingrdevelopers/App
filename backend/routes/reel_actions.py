@@ -97,7 +97,7 @@ def init_db():
 
 def get_reel(conn, reel_id):
     return conn.execute(
-        "SELECT * FROM reels WHERE id = ?",
+        "SELECT * FROM reels WHERE (archived_at IS NULL OR archived_at = '') AND id = ?",
         (reel_id,)
     ).fetchone()
 

@@ -66,7 +66,7 @@ def list_saved_posts():
 
     with connect_db() as conn:
         rows = conn.execute(
-            "SELECT * FROM posts WHERE saved = 1 ORDER BY created_at DESC"
+            "SELECT * FROM posts WHERE (archived_at IS NULL OR archived_at = '') AND saved = 1 ORDER BY created_at DESC"
         ).fetchall()
 
     return {

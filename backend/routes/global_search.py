@@ -95,17 +95,17 @@ def global_search(q: str = Query(default="")):
 
         posts = safe_rows(
             "vibeloop_posts.db",
-            "SELECT * FROM posts ORDER BY created_at DESC LIMIT 8"
+            "SELECT * FROM posts WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 8"
         )
 
         reels = safe_rows(
             "vibeloop_reels.db",
-            "SELECT * FROM reels ORDER BY created_at DESC LIMIT 8"
+            "SELECT * FROM reels WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 8"
         )
 
         stories = safe_rows(
             "vibeloop_stories.db",
-            "SELECT * FROM stories ORDER BY created_at DESC LIMIT 8"
+            "SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC LIMIT 8"
         )
     else:
         creators = safe_rows(

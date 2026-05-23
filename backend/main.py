@@ -408,3 +408,11 @@ except ImportError:
     from .routes.content_soft_delete import router as content_soft_delete_router
 
 app.include_router(content_soft_delete_router)
+
+# Ensure soft-delete archive columns exist
+try:
+    from routes.archive_schema_guard import ensure_archive_columns
+except ImportError:
+    from .routes.archive_schema_guard import ensure_archive_columns
+
+ensure_archive_columns()

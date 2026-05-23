@@ -170,7 +170,7 @@ def create_post(payload: dict = Body(...)):
         )
         conn.commit()
 
-        row = conn.execute("SELECT * FROM posts WHERE id = ?", (post_id,)).fetchone()
+        row = conn.execute("SELECT * FROM posts WHERE (archived_at IS NULL OR archived_at = '') AND id = ?", (post_id,)).fetchone()
 
     return {
         "success": True,
@@ -208,7 +208,7 @@ def create_reel(payload: dict = Body(...)):
         )
         conn.commit()
 
-        row = conn.execute("SELECT * FROM reels WHERE id = ?", (reel_id,)).fetchone()
+        row = conn.execute("SELECT * FROM reels WHERE (archived_at IS NULL OR archived_at = '') AND id = ?", (reel_id,)).fetchone()
 
     return {
         "success": True,
@@ -244,7 +244,7 @@ def create_story(payload: dict = Body(...)):
         )
         conn.commit()
 
-        row = conn.execute("SELECT * FROM stories WHERE id = ?", (story_id,)).fetchone()
+        row = conn.execute("SELECT * FROM stories WHERE (archived_at IS NULL OR archived_at = '') AND id = ?", (story_id,)).fetchone()
 
     return {
         "success": True,

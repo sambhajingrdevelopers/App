@@ -71,7 +71,7 @@ def list_reels():
     init_db()
 
     with connect_db() as conn:
-        rows = conn.execute("SELECT * FROM reels ORDER BY created_at DESC").fetchall()
+        rows = conn.execute("SELECT * FROM reels WHERE (archived_at IS NULL OR archived_at = '') ORDER BY created_at DESC").fetchall()
 
     return {
         "success": True,
