@@ -5,6 +5,7 @@ import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
 type ContentType = 'post' | 'reel' | 'story';
+type MediaType = 'image' | 'video';
 
 export default function CreatePage() {
   const [type, setType] = useState<ContentType>('post');
@@ -12,16 +13,31 @@ export default function CreatePage() {
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('VibeLoop');
   const [mediaUrl, setMediaUrl] = useState('');
-  const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
+  const [mediaType, setMediaType] = useState<MediaType>('image');
   const [message, setMessage] = useState('');
   const [uploading, setUploading] = useState(false);
   const [creating, setCreating] = useState(false);
 
+  const canPublish =
+    Boolean(title.trim() || caption.trim()) &&
+    (type === 'post' || Boolean(mediaUrl));
+
   async function uploadFile(file: File) {
     setUploading(true);
-    setMessage('Uploading media to EC2 permanent storage...');
+    setMessage('Uploading your media securely...');
 
     try {
+      const isVideo = file.type.startsWith('video/');
+      const isImage = file.type.startsWith('image/');
+
+      if (!isVideo && !isImage) {
+        throw new Error('Please upload an image or video file.');
+      }
+
+      if (type === 'reel' && !isVideo) {
+        throw new Error('Reels need a video file.');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
 
@@ -33,12 +49,12 @@ export default function CreatePage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Upload failed');
+        throw new Error(data.message || 'Upload failed.');
       }
 
       setMediaUrl(data.mediaUrl);
       setMediaType(data.mediaType === 'video' ? 'video' : 'image');
-      setMessage('Media uploaded permanently. Now publish content.');
+      setMessage('Media uploaded successfully. You can publish now.');
     } catch (error: any) {
       setMessage(error?.message || 'Upload failed.');
     } finally {
@@ -47,23 +63,23 @@ export default function CreatePage() {
   }
 
   async function publishContent() {
-    if (!caption.trim() && !title.trim()) {
-      setMessage('Add title or caption first.');
+    if (!title.trim() && !caption.trim()) {
+      setMessage('Add a title or caption first.');
       return;
     }
 
     if ((type === 'reel' || type === 'story') && !mediaUrl) {
-      setMessage(type === 'reel' ? 'Upload video for reel first.' : 'Upload image/video for story first.');
+      setMessage(type === 'reel' ? 'Upload a video for your reel first.' : 'Upload media for your story first.');
       return;
     }
 
     setCreating(true);
-    setMessage('Publishing content...');
+    setMessage('Publishing your content...');
 
     const payload = {
-      title: title || (type === 'post' ? 'New Post' : type === 'reel' ? 'New Reel' : 'New Story'),
-      caption,
-      location,
+      title: title.trim() || (type === 'post' ? 'New Post' : type === 'reel' ? 'New Reel' : 'New Story'),
+      caption: caption.trim(),
+      location: location.trim() || 'VibeLoop',
       mediaUrl,
       mediaType,
       username: '@you',
@@ -81,7 +97,7 @@ export default function CreatePage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Publish failed');
+        throw new Error(data.message || 'Publish failed.');
       }
 
       setMessage(`${type.toUpperCase()} published successfully.`);
@@ -100,21 +116,30 @@ export default function CreatePage() {
     }
   }
 
+  function selectType(nextType: ContentType) {
+    setType(nextType);
+    setMessage('');
+
+    if (nextType === 'reel' && mediaType === 'image' && mediaUrl) {
+      setMessage('Reels work best with video. Upload a video before publishing.');
+    }
+  }
+
   return (
     <AuthGuard>
       <SocialAppShell
         active="create"
         title="Create"
-        subtitle="Upload posts, reels and stories with permanent EC2 media URLs."
+        subtitle="Upload posts, reels and stories with secure media uploads."
       >
         <section className="createHero">
           <div>
-            <span>Permanent Upload Studio</span>
+            <span>Creator Studio</span>
             <h2>Create real social content</h2>
-            <p>Upload media once, save it permanently on EC2, then publish post, reel or story.</p>
+            <p>Upload media once, then publish your post, reel or story.</p>
           </div>
 
-          <button type="button" onClick={publishContent} disabled={creating}>
+          <button type="button" onClick={publishContent} disabled={creating || uploading || !canPublish}>
             {creating ? 'Publishing...' : 'Publish'}
           </button>
         </section>
@@ -122,13 +147,13 @@ export default function CreatePage() {
         {message && <div className="vlSettingsMessage">{message}</div>}
 
         <section className="createTabs">
-          <button type="button" className={type === 'post' ? 'active' : ''} onClick={() => setType('post')}>
+          <button type="button" className={type === 'post' ? 'active' : ''} onClick={() => selectType('post')}>
             Post
           </button>
-          <button type="button" className={type === 'reel' ? 'active' : ''} onClick={() => setType('reel')}>
+          <button type="button" className={type === 'reel' ? 'active' : ''} onClick={() => selectType('reel')}>
             Reel
           </button>
-          <button type="button" className={type === 'story' ? 'active' : ''} onClick={() => setType('story')}>
+          <button type="button" className={type === 'story' ? 'active' : ''} onClick={() => selectType('story')}>
             Story
           </button>
         </section>
@@ -139,27 +164,55 @@ export default function CreatePage() {
 
             <label>
               Title
-              <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Enter title..." />
+              <input
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder={type === 'post' ? 'Post title...' : type === 'reel' ? 'Reel title...' : 'Story title...'}
+              />
             </label>
 
             <label>
               Caption
-              <textarea value={caption} onChange={(event) => setCaption(event.target.value)} placeholder="Write caption..." />
+              <textarea
+                value={caption}
+                onChange={(event) => setCaption(event.target.value)}
+                placeholder="Write a caption..."
+              />
             </label>
 
             {type === 'post' && (
               <label>
                 Location
-                <input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Location..." />
+                <input
+                  value={location}
+                  onChange={(event) => setLocation(event.target.value)}
+                  placeholder="Location..."
+                />
               </label>
             )}
 
             <label>
-              Media URL
-              <input value={mediaUrl} onChange={(event) => setMediaUrl(event.target.value)} placeholder="Upload media or paste URL..." />
+              Media Link
+              <input
+                value={mediaUrl}
+                onChange={(event) => {
+                  setMediaUrl(event.target.value);
+                  if (event.target.value.match(/\.(mp4|mov|webm)(\?|$)/i)) {
+                    setMediaType('video');
+                  }
+                }}
+                placeholder="Upload media or paste a media link..."
+              />
             </label>
 
-            <button type="button" onClick={publishContent} disabled={creating}>
+            <div className="createPublishInfo">
+              <b>Publishing as @you</b>
+              <span>
+                Your new {type} will appear automatically in the live feed after publishing.
+              </span>
+            </div>
+
+            <button type="button" onClick={publishContent} disabled={creating || uploading || !canPublish}>
               {creating ? 'Publishing...' : `Publish ${type}`}
             </button>
           </div>
@@ -170,7 +223,7 @@ export default function CreatePage() {
             <label className="createUploader">
               <input
                 type="file"
-                accept={type === 'post' ? 'image/*,video/*' : type === 'reel' ? 'video/*' : 'image/*,video/*'}
+                accept={type === 'reel' ? 'video/*' : 'image/*,video/*'}
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   if (file) uploadFile(file);
@@ -179,7 +232,11 @@ export default function CreatePage() {
 
               <div>
                 <b>{uploading ? 'Uploading...' : 'Choose File'}</b>
-                <span>Image/video will be saved permanently on EC2.</span>
+                <span>
+                  {type === 'reel'
+                    ? 'Upload a video for your reel.'
+                    : 'Upload an image or video for your content.'}
+                </span>
               </div>
             </label>
 
@@ -193,7 +250,7 @@ export default function CreatePage() {
               ) : (
                 <div>
                   <b>No media selected</b>
-                  <span>Upload file to preview here.</span>
+                  <span>Upload a file to preview it here.</span>
                 </div>
               )}
             </div>
