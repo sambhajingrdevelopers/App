@@ -122,10 +122,10 @@ export default function EditProfilePage() {
           <div>
             <span>Creator Profile</span>
             <h2>Edit your profile</h2>
-            <p>Update your name, username, bio and profile visuals.</p>
+            <p>Update your name, username, bio, avatar and banner.</p>
           </div>
 
-          <button type="button" onClick={saveProfile} disabled={saving}>
+          <button type="button" onClick={saveProfile} disabled={saving || uploadingImage}>
             {saving ? 'Saving...' : 'Save'}
           </button>
         </section>
@@ -163,7 +163,7 @@ export default function EditProfilePage() {
               />
             </label>
 
-            <button type="button" onClick={saveProfile} disabled={saving}>
+            <button type="button" onClick={saveProfile} disabled={saving || uploadingImage}>
               {saving ? 'Saving Profile...' : 'Save Profile'}
             </button>
           </div>
@@ -233,7 +233,6 @@ export default function EditProfilePage() {
                 </div>
               )}
             </div>
-          </div>
           </div>
         </section>
       </SocialAppShell>
