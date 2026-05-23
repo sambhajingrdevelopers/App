@@ -13,6 +13,7 @@ export default function EditProfilePage() {
   const [bannerUrl, setBannerUrl] = useState('');
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -35,6 +36,43 @@ export default function EditProfilePage() {
 
     loadProfile();
   }, []);
+
+  async function uploadProfileImage(file: File, target: 'avatar' | 'banner') {
+    setUploadingImage(true);
+    setMessage(target === 'avatar' ? 'Uploading avatar...' : 'Uploading banner...');
+
+    try {
+      if (!file.type.startsWith('image/')) {
+        throw new Error('Please upload an image file.');
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Image upload failed.');
+      }
+
+      if (target === 'avatar') {
+        setAvatarUrl(data.mediaUrl);
+      } else {
+        setBannerUrl(data.mediaUrl);
+      }
+
+      setMessage('Image uploaded successfully. Save profile to apply changes.');
+    } catch (error: any) {
+      setMessage(error?.message || 'Image upload failed.');
+    } finally {
+      setUploadingImage(false);
+    }
+  }
 
   async function saveProfile() {
     setSaving(true);
@@ -133,12 +171,44 @@ export default function EditProfilePage() {
           <div className="createPanel">
             <h3>Profile Visuals</h3>
 
+            <label className="createUploader">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) uploadProfileImage(file, 'avatar');
+                }}
+              />
+
+              <div>
+                <b>{uploadingImage ? 'Uploading...' : 'Upload Avatar'}</b>
+                <span>Choose a profile photo from your device.</span>
+              </div>
+            </label>
+
+            <label className="createUploader">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) uploadProfileImage(file, 'banner');
+                }}
+              />
+
+              <div>
+                <b>{uploadingImage ? 'Uploading...' : 'Upload Banner'}</b>
+                <span>Choose a cover/banner image from your device.</span>
+              </div>
+            </label>
+
             <label>
               Avatar Image URL
               <input
                 value={avatarUrl}
                 onChange={(event) => setAvatarUrl(event.target.value)}
-                placeholder="Paste avatar image URL"
+                placeholder="Avatar image URL"
               />
             </label>
 
@@ -147,7 +217,7 @@ export default function EditProfilePage() {
               <input
                 value={bannerUrl}
                 onChange={(event) => setBannerUrl(event.target.value)}
-                placeholder="Paste banner image URL"
+                placeholder="Banner image URL"
               />
             </label>
 
@@ -159,10 +229,11 @@ export default function EditProfilePage() {
               ) : (
                 <div>
                   <b>No image selected</b>
-                  <span>Paste avatar or banner URL to preview it here.</span>
+                  <span>Upload avatar or banner to preview it here.</span>
                 </div>
               )}
             </div>
+          </div>
           </div>
         </section>
       </SocialAppShell>
