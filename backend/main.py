@@ -390,3 +390,12 @@ except ImportError:
     from .routes.creator_identity import router as creator_identity_router
 
 app.include_router(creator_identity_router)
+
+
+# VibeLoop profile update route
+try:
+    from routes.profile_update import router as profile_update_router
+except ImportError:
+    from .routes.profile_update import router as profile_update_router
+
+app.include_router(profile_update_router)
