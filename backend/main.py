@@ -399,3 +399,12 @@ except ImportError:
     from .routes.profile_update import router as profile_update_router
 
 app.include_router(profile_update_router)
+
+
+# VibeLoop soft delete archive routes
+try:
+    from routes.content_soft_delete import router as content_soft_delete_router
+except ImportError:
+    from .routes.content_soft_delete import router as content_soft_delete_router
+
+app.include_router(content_soft_delete_router)
