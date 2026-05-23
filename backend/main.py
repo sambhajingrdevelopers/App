@@ -416,3 +416,12 @@ except ImportError:
     from .routes.archive_schema_guard import ensure_archive_columns
 
 ensure_archive_columns()
+
+
+# VibeLoop trash restore route
+try:
+    from routes.content_trash import router as content_trash_router
+except ImportError:
+    from .routes.content_trash import router as content_trash_router
+
+app.include_router(content_trash_router)
