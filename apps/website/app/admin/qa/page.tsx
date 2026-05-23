@@ -44,9 +44,9 @@ export default function AdminQAPage() {
       >
         <section className="qaHero">
           <div>
-            <span>{qa?.source === 'backend' ? 'Live Backend QA' : 'QA Loading'}</span>
+            <span>{qa?.source === 'platform' ? 'System QA' : 'QA Loading'}</span>
             <h2>Production QA dashboard</h2>
-            <p>Check backend routes, database health, media storage and environment security.</p>
+            <p>Check platform routes, database health, media storage and environment security.</p>
           </div>
 
           <div className="qaHeroActions">

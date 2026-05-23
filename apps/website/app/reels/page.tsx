@@ -35,11 +35,11 @@ export default function ReelsPage() {
       <SocialAppShell
         active="reels"
         title="Reels"
-        subtitle="Auto-refreshing reel grid from backend."
+        subtitle="Auto-refreshing reel grid from platform."
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Reels' : 'Fallback Reels Ready'}</span>
+            <span>{source === 'platform' ? 'Live Reels' : 'Fallback Reels Ready'}</span>
             <h2>Live reels</h2>
             <p>Every reel published from /create appears here.</p>
           </div>

@@ -3,7 +3,7 @@ export default function ContactSection() {
     <section id="contact" className="section contactSection">
       <h2>Start building the real platform</h2>
       <p>
-        Website first, then backend dynamic data, admin dashboard, mobile app,
+        Website first, then platform dynamic data, admin dashboard, mobile app,
         media upload, chat and real-time notifications.
       </p>
 

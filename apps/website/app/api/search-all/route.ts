@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get('q') || '';
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      source: response.ok ? 'backend' : 'fallback',
+      source: response.ok ? 'platform' : 'fallback',
       query: q,
       total: data.total || 0,
       creators: data.creators || [],

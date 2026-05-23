@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'CHANGE_ME_ADMIN_KEY';
 
 const fallback = {
@@ -14,7 +14,7 @@ const fallback = {
     pendingVerification: 2,
     adsRevenue: '₹48,920',
     systemHealth: '99%',
-    backendStatus: 'Fallback'
+    platformStatus: 'Fallback'
   },
   users: [
     { id: 'USR-101', name: 'Mira Creates', username: '@mira.creates', email: 'mira@vibeloop.com', status: 'Active', role: 'Creator' },
@@ -50,7 +50,7 @@ export async function GET() {
 
     return NextResponse.json({
       ...data,
-      source: 'backend'
+      source: 'platform'
     });
   } catch {
     return NextResponse.json(fallback);

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 const fallbackData = {
   source: 'fallback',
@@ -56,7 +56,7 @@ export async function GET() {
     const data = await response.json();
 
     return NextResponse.json({
-      source: 'backend',
+      source: 'platform',
       stories: data?.stories?.length ? data.stories : fallbackData.stories,
       posts: data?.posts?.length ? data.posts : fallbackData.posts
     });

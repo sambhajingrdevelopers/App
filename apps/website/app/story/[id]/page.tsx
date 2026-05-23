@@ -39,7 +39,7 @@ export default function StoryViewerPage() {
         setStory(viewData.story);
       }
     } catch {
-      setMessage('Story not found or backend not ready.');
+      setMessage('Story not found or platform not ready.');
     }
   }
 
@@ -131,7 +131,7 @@ export default function StoryViewerPage() {
 
             <aside className="storyReplyPanel">
               <h2>Story Replies</h2>
-              <p>Reply privately to this story and keep engagement saved on backend.</p>
+              <p>Reply privately to this story and keep engagement saved on platform.</p>
 
               <div className="storyReplyComposer">
                 <textarea

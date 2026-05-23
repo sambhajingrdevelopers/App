@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 export async function GET() {
   try {
@@ -14,20 +14,20 @@ export async function GET() {
     if (!response.ok) {
       return NextResponse.json({
         success: false,
-        backendReady: false,
+        platformReady: false,
         posts: []
       });
     }
 
     return NextResponse.json({
       success: true,
-      backendReady: true,
+      platformReady: true,
       posts: data?.posts || data || []
     });
   } catch {
     return NextResponse.json({
       success: false,
-      backendReady: false,
+      platformReady: false,
       posts: []
     });
   }
@@ -51,22 +51,22 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       return NextResponse.json({
         success: false,
-        backendReady: false,
-        message: data?.detail || data?.message || 'Backend post endpoint not ready',
+        platformReady: false,
+        message: data?.detail || data?.message || 'Live post endpoint not ready',
         post: body
       });
     }
 
     return NextResponse.json({
       success: true,
-      backendReady: true,
+      platformReady: true,
       post: data?.post || data
     });
   } catch {
     return NextResponse.json({
       success: false,
-      backendReady: false,
-      message: 'Backend unavailable',
+      platformReady: false,
+      message: 'Live unavailable',
       post: null
     });
   }

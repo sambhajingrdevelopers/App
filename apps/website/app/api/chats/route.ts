@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 const fallbackChats = [
   {
@@ -48,7 +48,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      source: 'backend',
+      source: 'platform',
       chats: data.chats || fallbackChats
     });
   } catch {

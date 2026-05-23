@@ -118,7 +118,7 @@ export default function MessagesPage() {
       >
         <section className="dmHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Messages' : 'Fallback Messages Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Messages' : 'Fallback Messages Ready'}</span>
             <h2>Direct message center</h2>
             <p>Chat with creators, brands and followers.</p>
           </div>

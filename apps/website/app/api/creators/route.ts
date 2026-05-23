@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 const fallbackCreators = [
   { id: 'CR-101', name: 'Mira Creates', username: '@mira.creates', category: 'Digital Creator', followers: 52800, isFollowing: false },
@@ -29,7 +29,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      source: 'backend',
+      source: 'platform',
       creators: data.creators || fallbackCreators,
       followingCount: data.followingCount || 0
     });

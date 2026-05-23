@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 const fallbackNotifications = [
   { id: 'NT-101', title: 'New follower', message: '@mira.creates started following you.', type: 'follow', isRead: false },
@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      source: response.ok ? 'backend' : 'fallback',
+      source: response.ok ? 'platform' : 'fallback',
       notifications: data.notifications || fallbackNotifications
     });
   } catch {

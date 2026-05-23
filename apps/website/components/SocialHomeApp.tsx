@@ -61,7 +61,7 @@ export default function SocialHomeApp() {
 
       const savedPosts = JSON.parse(localStorage.getItem('vibeloop_posts') || '[]');
 
-      const backendPosts = (data.posts || []).map((post: Post) => ({
+      const platformPosts = (data.posts || []).map((post: Post) => ({
         ...post,
         liked: false,
         saved: false,
@@ -69,7 +69,7 @@ export default function SocialHomeApp() {
       }));
 
       setStories(data.stories || []);
-      setPosts([...(savedPosts || []), ...backendPosts]);
+      setPosts([...(savedPosts || []), ...platformPosts]);
       setSource(data.source || 'fallback');
     } catch {
       const savedPosts = JSON.parse(localStorage.getItem('vibeloop_posts') || '[]');
@@ -125,7 +125,7 @@ export default function SocialHomeApp() {
 
       setMediaUrl(result.mediaUrl);
       setMediaType(result.mediaType || (isVideo ? 'video' : 'image'));
-      setUploadStatus('Media uploaded to EC2 server.');
+      setUploadStatus('Media uploaded to secure cloud server.');
     } catch {
       const reader = new FileReader();
 
@@ -171,7 +171,7 @@ export default function SocialHomeApp() {
 
       const result = await response.json();
 
-      const finalPost = result?.backendReady && result?.post
+      const finalPost = result?.platformReady && result?.post
         ? { ...newPost, ...result.post, isOwn: true }
         : newPost;
 
@@ -348,7 +348,7 @@ export default function SocialHomeApp() {
             <p>
               Discover creators, reels, stories and trending content.
               <span className="vlSourceBadge">
-                {source === 'backend' ? ' Live Backend' : ' Fallback Ready'}
+                {source === 'platform' ? ' Live Live' : ' Fallback Ready'}
               </span>
             </p>
           </div>

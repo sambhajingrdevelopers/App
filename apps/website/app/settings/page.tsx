@@ -99,7 +99,7 @@ export default function SettingsPage() {
     };
 
     localStorage.setItem('vibeloop_profile', JSON.stringify(profile));
-    setMessage('Saving profile to backend...');
+    setMessage('Saving profile to platform...');
 
     try {
       const response = await fetch('/api/profile', {
@@ -113,13 +113,13 @@ export default function SettingsPage() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result?.message || 'Backend save failed');
+        throw new Error(result?.message || 'Live save failed');
       }
 
       localStorage.setItem('vibeloop_profile', JSON.stringify(result.profile || profile));
-      setMessage('Profile saved to EC2 backend successfully.');
+      setMessage('Profile saved to secure cloud platform successfully.');
     } catch {
-      setMessage('Backend save failed. Profile saved locally.');
+      setMessage('Live save failed. Profile saved locally.');
     }
   }
 

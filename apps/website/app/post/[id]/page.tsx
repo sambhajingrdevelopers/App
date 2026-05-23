@@ -29,7 +29,7 @@ export default function PostDetailPage() {
 
       setPost(data.post);
       setComments(data.comments || []);
-      setSource(data.source || 'backend');
+      setSource(data.source || 'platform');
 
       try {
         const shareResponse = await fetch(`/api/posts/${encodeURIComponent(postId)}/share`, {
@@ -42,7 +42,7 @@ export default function PostDetailPage() {
       }
     } catch {
       setSource('not-found');
-      setMessage('Post not found or backend not ready.');
+      setMessage('Post not found or platform not ready.');
     }
   }
 
@@ -116,7 +116,7 @@ export default function PostDetailPage() {
       setComments(data.post?.commentList || [...comments, data.comment]);
       setMessage('Comment added.');
     } catch {
-      setMessage('Backend failed. Comment added locally.');
+      setMessage('Live failed. Comment added locally.');
     }
   }
 

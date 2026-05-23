@@ -33,7 +33,7 @@ export default function HeroSection() {
             </div>
             <div>
               <strong>24/7</strong>
-              <span>Cloud backend ready</span>
+              <span>Cloud platform ready</span>
             </div>
           </div>
         </div>

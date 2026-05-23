@@ -59,7 +59,7 @@ export default function SearchPage() {
       >
         <section className="searchHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Search' : 'Fallback Search Ready'}</span>
+            <span>{source === 'platform' ? 'Live Search' : 'Fallback Search Ready'}</span>
             <h2>Global search engine</h2>
             <p>Find creators, posts, reels and stories from one smart search.</p>
           </div>

@@ -50,7 +50,7 @@ export default function AdminLoginPage() {
         <div className="adminLoginBadge">Secure Admin Access</div>
 
         <h1>VibeLoop Admin Login</h1>
-        <p>Only authorized admins can access user management, moderation and backend controls.</p>
+        <p>Only authorized admins can access user management, moderation and platform controls.</p>
 
         {message && <div className="adminLoginMessage">{message}</div>}
 

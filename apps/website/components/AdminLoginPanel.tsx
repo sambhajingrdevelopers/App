@@ -60,7 +60,7 @@ export default function AdminLoginPanel() {
           <div className="adminSecurityList">
             <div>✓ Protected dashboard</div>
             <div>✓ Session cookie security</div>
-            <div>✓ Backend control panel</div>
+            <div>✓ Live control panel</div>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'CHANGE_ME_ADMIN_KEY';
 
 export async function GET() {
@@ -14,7 +14,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      source: response.ok ? 'backend' : 'fallback',
+      source: response.ok ? 'platform' : 'fallback',
       reports: data.reports || [],
       verification: data.verification || [],
       ads: data.ads || []

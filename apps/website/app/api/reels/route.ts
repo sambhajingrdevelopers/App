@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 const fallbackReels = [
   {
@@ -57,7 +57,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      source: 'backend',
+      source: 'platform',
       reels: data.reels || fallbackReels
     });
   } catch {
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      source: 'backend',
+      source: 'platform',
       reel: data.reel
     });
   } catch (error: any) {

@@ -94,7 +94,7 @@ export default function AdsPage() {
       >
         <section className="adsHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Ads' : 'Fallback Ads Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Ads' : 'Fallback Ads Ready'}</span>
             <h2>Promote creators, reels and posts</h2>
             <p>Create campaigns, control budget and track ad progress.</p>
           </div>

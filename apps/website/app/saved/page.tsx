@@ -29,7 +29,7 @@ export default function SavedPostsPage() {
       const response = await fetch('/api/saved-posts', { cache: 'no-store' });
       const data = await response.json();
 
-      const backendPosts = data.posts || [];
+      const platformPosts = data.posts || [];
 
       let localSaved: Post[] = [];
 
@@ -40,7 +40,7 @@ export default function SavedPostsPage() {
         localSaved = [];
       }
 
-      const merged = [...localSaved, ...backendPosts].filter(
+      const merged = [...localSaved, ...platformPosts].filter(
         (post, index, arr) => arr.findIndex((item) => String(item.id) === String(post.id)) === index
       );
 
@@ -91,7 +91,7 @@ export default function SavedPostsPage() {
         subtitle="View all bookmarked posts and creator content."
       >
         <div className="vlNotificationTopActions">
-          <span>{source === 'backend' ? 'Live Backend Saved Posts' : 'Fallback Saved Ready'}</span>
+          <span>{source === 'platform' ? 'Live Live Saved Posts' : 'Fallback Saved Ready'}</span>
           <button type="button" onClick={loadSavedPosts}>Refresh</button>
         </div>
 

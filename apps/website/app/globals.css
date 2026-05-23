@@ -4058,7 +4058,7 @@ main {
   }
 }
 
-/* Real chat backend UI */
+/* Real chat platform UI */
 .vlMessagesStatus {
   display: flex;
   flex-wrap: wrap;

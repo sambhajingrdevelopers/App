@@ -35,11 +35,11 @@ export default function StoriesPage() {
       <SocialAppShell
         active="home"
         title="Stories"
-        subtitle="Auto-refreshing story grid from backend."
+        subtitle="Auto-refreshing story grid from platform."
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Stories' : 'Fallback Stories Ready'}</span>
+            <span>{source === 'platform' ? 'Live Stories' : 'Fallback Stories Ready'}</span>
             <h2>Live stories</h2>
             <p>Every story published from /create appears here.</p>
           </div>

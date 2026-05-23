@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 export async function GET(request: NextRequest) {
   const username = request.nextUrl.searchParams.get('username') || '@you';
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      source: response.ok ? 'backend' : 'fallback',
+      source: response.ok ? 'platform' : 'fallback',
       followers: data.followers || [],
       following: data.following || [],
       followersCount: data.followersCount || 0,

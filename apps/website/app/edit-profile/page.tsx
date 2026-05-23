@@ -129,7 +129,7 @@ export default function EditProfilePage() {
       >
         <section className="editProfileHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Profile' : 'Fallback Profile Ready'}</span>
+            <span>{source === 'platform' ? 'Verified Creator Profile' : 'Fallback Profile Ready'}</span>
             <h2>Edit your creator identity</h2>
             <p>Update profile photo, banner, username, bio and creator details.</p>
           </div>

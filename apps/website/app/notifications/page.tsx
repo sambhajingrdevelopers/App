@@ -24,8 +24,8 @@ export default function NotificationsPage() {
       setSummary(summaryData.summary || { total: 0, unread: 0, read: 0 });
 
       setSource(
-        listData.source === 'backend' || summaryData.source === 'backend'
-          ? 'backend'
+        listData.source === 'platform' || summaryData.source === 'platform'
+          ? 'platform'
           : 'fallback'
       );
     } catch {
@@ -119,7 +119,7 @@ export default function NotificationsPage() {
       >
         <section className="notifHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Notifications' : 'Fallback Notifications Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Notifications' : 'Fallback Notifications Ready'}</span>
             <h2>Notification center</h2>
             <p>Manage all updates and unread alerts in one place.</p>
           </div>

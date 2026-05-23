@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,20 +14,20 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       return NextResponse.json({
         success: false,
-        backendReady: false,
-        message: 'Backend delete endpoint not ready'
+        platformReady: false,
+        message: 'Live delete endpoint not ready'
       });
     }
 
     return NextResponse.json({
       success: true,
-      backendReady: true
+      platformReady: true
     });
   } catch {
     return NextResponse.json({
       success: false,
-      backendReady: false,
-      message: 'Backend unavailable'
+      platformReady: false,
+      message: 'Live unavailable'
     });
   }
 }

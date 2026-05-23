@@ -48,11 +48,11 @@ export default function HomePage() {
       <SocialAppShell
         active="home"
         title="Home"
-        subtitle="Live posts, reels and stories from permanent backend storage."
+        subtitle="Live posts, reels and stories from secure storage."
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Feed' : 'Fallback Feed Ready'}</span>
+            <span>{source === 'platform' ? 'Live Feed' : 'Fallback Feed Ready'}</span>
             <h2>Live social feed</h2>
             <p>New posts, reels and stories from /create appear here automatically.</p>
           </div>

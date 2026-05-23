@@ -92,7 +92,7 @@ export default function AdminModerationPage() {
       >
         <section className="moderationHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Moderation' : 'Fallback Moderation Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Moderation' : 'Fallback Moderation Ready'}</span>
             <h2>Admin review and approval center</h2>
             <p>Control user reports, creator verification and ad campaign status from one panel.</p>
           </div>

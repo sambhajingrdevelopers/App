@@ -85,7 +85,7 @@ export default function ExplorePage() {
       localStorage.setItem('vibeloop_following_count', String(data.followingCount || 0));
       setMessage(nextFollow ? `Following ${creator.name}` : `Unfollowed ${creator.name}`);
     } catch {
-      setMessage('Backend follow failed. UI updated locally.');
+      setMessage('Live follow failed. UI updated locally.');
     }
   }
 
@@ -100,7 +100,7 @@ export default function ExplorePage() {
           <h2>Discover what is trending now</h2>
           <p>
             Explore creators, viral reels, hashtags and fresh content.
-            <span className="vlSourceBadge"> {source === 'backend' ? 'Live Backend' : 'Fallback Ready'}</span>
+            <span className="vlSourceBadge"> {source === 'platform' ? 'Live Live' : 'Fallback Ready'}</span>
           </p>
 
           <div className="vlExploreSearch">

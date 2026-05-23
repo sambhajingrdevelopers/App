@@ -108,7 +108,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
 
       setMessage(nextFollow ? 'Profile followed successfully.' : 'Profile unfollowed.');
     } catch {
-      setMessage('Follow failed on backend. UI updated locally.');
+      setMessage('Follow failed on platform. UI updated locally.');
     }
   }
 
@@ -150,7 +150,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
           <small>{p.bio}</small>
 
           <div className="dpSource">
-            {source === 'backend' ? 'Live Backend Profile' : 'Fallback Profile Ready'}
+            {source === 'platform' ? 'Verified Creator Profile' : 'Fallback Profile Ready'}
           </div>
         </div>
 

@@ -33,7 +33,7 @@ export default function ReelDetailPage() {
         method: 'POST'
       }).catch(() => {});
     } catch {
-      setMessage('Reel not found or backend not ready.');
+      setMessage('Reel not found or platform not ready.');
     }
   }
 

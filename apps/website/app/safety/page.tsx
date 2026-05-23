@@ -27,7 +27,7 @@ export default function SafetyPage() {
 
       setReports(reportsData.reports || []);
       setBlocks(blocksData.blocks || []);
-      setSource(reportsData.source === 'backend' || blocksData.source === 'backend' ? 'backend' : 'fallback');
+      setSource(reportsData.source === 'platform' || blocksData.source === 'platform' ? 'platform' : 'fallback');
     } catch {
       setSource('fallback');
     }
@@ -118,7 +118,7 @@ export default function SafetyPage() {
       >
         <section className="safetyHero">
           <div>
-            <span>{source === 'backend' ? 'Live Backend Safety' : 'Fallback Safety Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Safety' : 'Fallback Safety Ready'}</span>
             <h2>Control safety, reports and blocked users</h2>
             <p>Keep the platform clean with reports, moderation and block controls.</p>
           </div>
