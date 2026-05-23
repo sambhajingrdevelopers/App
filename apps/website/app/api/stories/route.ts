@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.secure cloud_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
 
 const fallbackStories = [
   { id: 'ST-101', name: 'Mira', username: '@mira.creates', mediaUrl: '', mediaType: 'image', caption: 'Creator studio morning.', views: 1240 },
