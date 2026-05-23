@@ -1,15 +1,25 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function AdminLoginPage() {
-  const searchParams = useSearchParams();
-  const nextPath = searchParams.get('next') || '/admin/users';
-
+  const [nextPath, setNextPath] = useState('/admin/users');
   const [email, setEmail] = useState('admin@vibeloop.app');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get('next');
+
+      if (next && next.startsWith('/')) {
+        setNextPath(next);
+      }
+    } catch {
+      setNextPath('/admin/users');
+    }
+  }, []);
 
   async function login() {
     setMessage('Checking admin credentials...');
