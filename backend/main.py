@@ -381,3 +381,12 @@ except ImportError:
     from .routes.health_routes import router as health_routes_router
 
 app.include_router(health_routes_router)
+
+
+# VibeLoop creator identity routes
+try:
+    from routes.creator_identity import router as creator_identity_router
+except ImportError:
+    from .routes.creator_identity import router as creator_identity_router
+
+app.include_router(creator_identity_router)
