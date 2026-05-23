@@ -1,122 +1,75 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
 import SocialAppShell from '../../components/SocialAppShell';
 
 export default function EditProfilePage() {
-  const [profile, setProfile] = useState<any>({
-    displayName: '',
-    username: '',
-    bio: '',
-    avatarUrl: '',
-    bannerUrl: '',
-    website: '',
-    location: '',
-    category: 'Digital Creator'
-  });
-
-  const [source, setSource] = useState('loading');
+  const [oldUsername, setOldUsername] = useState('@you');
+  const [name, setName] = useState('VibeLoop Creator');
+  const [username, setUsername] = useState('@you');
+  const [bio, setBio] = useState('Digital creator • Reels • Stories');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [bannerUrl, setBannerUrl] = useState('');
   const [message, setMessage] = useState('');
-  const [uploading, setUploading] = useState('');
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const bannerInputRef = useRef<HTMLInputElement | null>(null);
-
-  function updateField(key: string, value: string) {
-    setProfile((current: any) => ({ ...current, [key]: value }));
-  }
-
-  async function loadProfile() {
-    try {
-      const response = await fetch('/api/profile-settings', { cache: 'no-store' });
-      const data = await response.json();
-
-      setProfile(data.profile);
-      setSource(data.source || 'fallback');
-
-      try {
-        localStorage.setItem('vibeloop_profile', JSON.stringify(data.profile));
-      } catch {
-        // ignore local storage
-      }
-    } catch {
-      setSource('fallback');
-    }
-  }
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    async function loadProfile() {
+      try {
+        const response = await fetch('/api/me', { cache: 'no-store' });
+        const data = await response.json();
+
+        if (data.success && data.user) {
+          setOldUsername(data.user.username || '@you');
+          setName(data.user.name || 'VibeLoop Creator');
+          setUsername(data.user.username || '@you');
+          setBio(data.user.bio || 'Digital creator • Reels • Stories');
+          setAvatarUrl(data.user.avatarUrl || '');
+          setBannerUrl(data.user.bannerUrl || '');
+        }
+      } catch {
+        setMessage('Profile loaded with default values.');
+      }
+    }
+
     loadProfile();
   }, []);
 
-  async function uploadMedia(file: File, type: 'avatarUrl' | 'bannerUrl') {
-    const isImage = file.type.startsWith('image/');
-
-    if (!isImage) {
-      setMessage('Only image upload is allowed.');
-      return;
-    }
-
-    setUploading(type);
-    setMessage('Uploading image...');
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Upload failed');
-      }
-
-      updateField(type, data.mediaUrl);
-      setMessage('Image uploaded successfully.');
-    } catch {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        updateField(type, String(reader.result));
-        setMessage('Server upload failed. Local preview ready.');
-      };
-
-      reader.readAsDataURL(file);
-    } finally {
-      setUploading('');
-    }
-  }
-
   async function saveProfile() {
+    setSaving(true);
     setMessage('Saving profile...');
 
     try {
-      const response = await fetch('/api/profile-settings', {
+      const cleanUsername = username.trim().startsWith('@')
+        ? username.trim()
+        : `@${username.trim()}`;
+
+      const response = await fetch('/api/profile/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profile)
+        body: JSON.stringify({
+          oldUsername,
+          name: name.trim(),
+          username: cleanUsername,
+          bio: bio.trim(),
+          avatarUrl: avatarUrl.trim(),
+          bannerUrl: bannerUrl.trim()
+        })
       });
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Save failed');
+        throw new Error(data.message || 'Profile update failed.');
       }
 
-      setProfile(data.profile);
-
-      try {
-        localStorage.setItem('vibeloop_profile', JSON.stringify(data.profile));
-      } catch {
-        // ignore local storage
-      }
-
-      setMessage('Profile saved successfully. Open /profile to see changes.');
-    } catch {
-      setMessage('Profile save failed. Try again.');
+      setMessage('Profile saved successfully.');
+      window.location.href = '/profile';
+    } catch (error: any) {
+      setMessage(error?.message || 'Profile save failed.');
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -125,130 +78,91 @@ export default function EditProfilePage() {
       <SocialAppShell
         active="profile"
         title="Edit Profile"
-        subtitle="Update your dynamic creator profile."
+        subtitle="Update your creator profile details."
       >
-        <section className="editProfileHero">
+        <section className="createHero">
           <div>
-            <span>{source === 'platform' ? 'Verified Creator Profile' : 'Fallback Profile Ready'}</span>
-            <h2>Edit your creator identity</h2>
-            <p>Update profile photo, banner, username, bio and creator details.</p>
+            <span>Creator Profile</span>
+            <h2>Edit your profile</h2>
+            <p>Update your name, username, bio and profile visuals.</p>
           </div>
 
-          <a href="/profile">View Profile</a>
+          <button type="button" onClick={saveProfile} disabled={saving}>
+            {saving ? 'Saving...' : 'Save'}
+          </button>
         </section>
 
         {message && <div className="vlSettingsMessage">{message}</div>}
 
-        <section className="editProfilePreview">
-          <div
-            className="editProfileBanner"
-            style={{ backgroundImage: profile.bannerUrl ? `url(${profile.bannerUrl})` : undefined }}
-          />
-
-          <div className="editProfilePreviewInfo">
-            <div
-              className="editProfileAvatar"
-              style={{ backgroundImage: profile.avatarUrl ? `url(${profile.avatarUrl})` : undefined }}
-            >
-              {!profile.avatarUrl && (profile.displayName?.[0] || 'V')}
-            </div>
-
-            <div>
-              <h3>{profile.displayName || 'VibeLoop Creator'}</h3>
-              <p>{profile.username || '@you'}</p>
-              <span>{profile.bio || 'Digital creator • Reels • Stories'}</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="editProfileGrid">
-          <div className="editProfilePanel">
-            <h3>Media</h3>
-
-            <div className="editProfileUploadRow">
-              <button type="button" onClick={() => avatarInputRef.current?.click()}>
-                {uploading === 'avatarUrl' ? 'Uploading...' : 'Upload Avatar'}
-              </button>
-
-              <button type="button" onClick={() => bannerInputRef.current?.click()}>
-                {uploading === 'bannerUrl' ? 'Uploading...' : 'Upload Banner'}
-              </button>
-            </div>
-
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) uploadMedia(file, 'avatarUrl');
-              }}
-            />
-
-            <input
-              ref={bannerInputRef}
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) uploadMedia(file, 'bannerUrl');
-              }}
-            />
-
-            <label>
-              Avatar URL
-              <input value={profile.avatarUrl || ''} onChange={(e) => updateField('avatarUrl', e.target.value)} />
-            </label>
-
-            <label>
-              Banner URL
-              <input value={profile.bannerUrl || ''} onChange={(e) => updateField('bannerUrl', e.target.value)} />
-            </label>
-          </div>
-
-          <div className="editProfilePanel">
+        <section className="createGrid">
+          <div className="createPanel">
             <h3>Basic Details</h3>
 
             <label>
               Display Name
-              <input value={profile.displayName || ''} onChange={(e) => updateField('displayName', e.target.value)} />
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Display name"
+              />
             </label>
 
             <label>
               Username
-              <input value={profile.username || ''} onChange={(e) => updateField('username', e.target.value)} />
+              <input
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="@username"
+              />
             </label>
 
             <label>
               Bio
-              <textarea value={profile.bio || ''} onChange={(e) => updateField('bio', e.target.value)} />
+              <textarea
+                value={bio}
+                onChange={(event) => setBio(event.target.value)}
+                placeholder="Write your bio..."
+              />
+            </label>
+
+            <button type="button" onClick={saveProfile} disabled={saving}>
+              {saving ? 'Saving Profile...' : 'Save Profile'}
+            </button>
+          </div>
+
+          <div className="createPanel">
+            <h3>Profile Visuals</h3>
+
+            <label>
+              Avatar Image URL
+              <input
+                value={avatarUrl}
+                onChange={(event) => setAvatarUrl(event.target.value)}
+                placeholder="Paste avatar image URL"
+              />
             </label>
 
             <label>
-              Category
-              <select value={profile.category || 'Digital Creator'} onChange={(e) => updateField('category', e.target.value)}>
-                <option>Digital Creator</option>
-                <option>Business Brand</option>
-                <option>Artist</option>
-                <option>Education Creator</option>
-                <option>Fashion Creator</option>
-                <option>Tech Creator</option>
-              </select>
+              Banner Image URL
+              <input
+                value={bannerUrl}
+                onChange={(event) => setBannerUrl(event.target.value)}
+                placeholder="Paste banner image URL"
+              />
             </label>
 
-            <label>
-              Website
-              <input value={profile.website || ''} onChange={(e) => updateField('website', e.target.value)} />
-            </label>
-
-            <label>
-              Location
-              <input value={profile.location || ''} onChange={(e) => updateField('location', e.target.value)} />
-            </label>
-
-            <button type="button" onClick={saveProfile}>Save Profile</button>
+            <div className="createPreview">
+              {bannerUrl ? (
+                <img src={bannerUrl} alt="Banner preview" />
+              ) : avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar preview" />
+              ) : (
+                <div>
+                  <b>No image selected</b>
+                  <span>Paste avatar or banner URL to preview it here.</span>
+                </div>
+              )}
+            </div>
           </div>
         </section>
       </SocialAppShell>
