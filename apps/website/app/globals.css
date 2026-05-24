@@ -10069,3 +10069,225 @@ main {
     width: 100%;
   }
 }
+
+.searchCleanPage {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 110px;
+}
+
+.searchInputBox {
+  display: flex;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.055);
+  border-radius: 24px;
+  padding: 12px;
+}
+
+.searchInputBox input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: white;
+  outline: none;
+  font-size: 15px;
+}
+
+.searchInputBox button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 15px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #6b3cff);
+}
+
+.searchResultGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.searchResultCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(16, 16, 30, 0.84);
+  border-radius: 24px;
+}
+
+.searchResultAvatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #00c8ff, #7b3cff);
+  color: white;
+  font-weight: 900;
+}
+
+.searchResultAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.searchResultInfo {
+  min-width: 0;
+}
+
+.searchResultInfo span {
+  display: block;
+  color: rgba(255,255,255,0.52);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.searchResultInfo h3 {
+  margin: 3px 0;
+  color: white;
+  font-size: 16px;
+}
+
+.searchResultInfo p {
+  margin: 0;
+  color: rgba(255,255,255,0.64);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+@media (max-width: 560px) {
+  .searchInputBox,
+  .searchResultCard {
+    grid-template-columns: 1fr;
+  }
+
+  .searchInputBox {
+    display: grid;
+  }
+
+  .searchInputBox button,
+  .searchResultCard button {
+    width: 100%;
+  }
+
+  .searchResultCard {
+    align-items: start;
+  }
+}
+
+.searchCleanPage {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 110px;
+}
+
+.searchInputBox {
+  display: flex;
+  gap: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.055);
+  border-radius: 24px;
+  padding: 12px;
+}
+
+.searchInputBox input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: white;
+  outline: none;
+  font-size: 15px;
+}
+
+.searchInputBox button {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 15px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #6b3cff);
+}
+
+.searchResultGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.searchResultCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(16, 16, 30, 0.84);
+  border-radius: 24px;
+}
+
+.searchResultAvatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #00c8ff, #7b3cff);
+  color: white;
+  font-weight: 900;
+}
+
+.searchResultAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.searchResultInfo {
+  min-width: 0;
+}
+
+.searchResultInfo span {
+  display: block;
+  color: rgba(255,255,255,0.52);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.searchResultInfo h3 {
+  margin: 3px 0;
+  color: white;
+  font-size: 16px;
+}
+
+.searchResultInfo p {
+  margin: 0;
+  color: rgba(255,255,255,0.64);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+@media (max-width: 560px) {
+  .searchInputBox,
+  .searchResultCard {
+    grid-template-columns: 1fr;
+  }
+
+  .searchInputBox {
+    display: grid;
+  }
+
+  .searchInputBox button,
+  .searchResultCard button {
+    width: 100%;
+  }
+
+  .searchResultCard {
+    align-items: start;
+  }
+}

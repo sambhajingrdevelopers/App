@@ -1,93 +1,120 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import AuthGuard from '../../components/AuthGuard';
-import SocialAppShell from '../../components/SocialAppShell';
+import { useEffect, useState } from 'react'
+import AuthGuard from '../../components/AuthGuard'
+import SocialAppShell from '../../components/SocialAppShell'
 
-type TabType = 'all' | 'creator' | 'post' | 'reel' | 'story';
+type SearchResult = {
+  id?: string
+  type?: string
+  title?: string
+  name?: string
+  username?: string
+  caption?: string
+  bio?: string
+  mediaUrl?: string
+  avatarUrl?: string
+  href?: string
+}
+
+function normalizeUsername(value?: string) {
+  const clean = String(value || '').trim()
+
+  if (!clean) {
+    return '@you'
+  }
+
+  return clean.startsWith('@') ? clean : `@${clean}`
+}
+
+function firstLetter(value?: string) {
+  return String(value || 'V').trim().slice(0, 1).toUpperCase()
+}
 
 export default function SearchPage() {
-  const [query, setQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<TabType>('all');
-  const [results, setResults] = useState<any[]>([]);
-  const [source, setSource] = useState('loading');
-  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<SearchResult[]>([])
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [quickFollowUsername, setQuickFollowUsername] = useState('@creator.test')
+  const [followLoading, setFollowLoading] = useState('')
 
-  async function runSearch(value = query) {
-    setLoading(true);
+  async function searchNow(nextQuery = query) {
+    const cleanQuery = nextQuery.trim()
+
+    setQuery(nextQuery)
+
+    if (!cleanQuery) {
+      setResults([])
+      setMessage('')
+      return
+    }
+
+    setLoading(true)
+    setMessage('Searching...')
 
     try {
-      const response = await fetch(`/api/search-all?q=${encodeURIComponent(value)}`, {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`, {
         cache: 'no-store'
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
-      setResults(data.results || []);
-      setSource(data.source || 'fallback');
-    } catch {
-      setSource('fallback');
-      setResults([]);
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Search failed')
+      }
+
+      setResults(Array.isArray(data.results) ? data.results : [])
+      setMessage('')
+    } catch (error: any) {
+      setResults([])
+      setMessage(error?.message || 'Search failed')
     } finally {
-      setLoading(false);
+      setLoading(false)
+    }
+  }
+
+  async function followCreator(username?: string) {
+    const target = normalizeUsername(username || quickFollowUsername)
+
+    if (!target || target === '@you') {
+      setMessage('Enter another creator username.')
+      return
+    }
+
+    setFollowLoading(target)
+    setMessage('Updating follow status...')
+
+    try {
+      const response = await fetch('/api/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ following: target })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Follow action failed')
+      }
+
+      setMessage(data.message || 'Follow status updated. Check Home online row.')
+    } catch (error: any) {
+      setMessage(error?.message || 'Follow action failed')
+    } finally {
+      setFollowLoading('')
     }
   }
 
   useEffect(() => {
-    runSearch('');
-  }, []);
-
-  const filteredResults =
-    activeTab === 'all'
-      ? results
-      : results.filter((item) => item.type === activeTab);
-
-  const counts = {
-    all: results.length,
-    creator: results.filter((item) => item.type === 'creator').length,
-    post: results.filter((item) => item.type === 'post').length,
-    reel: results.filter((item) => item.type === 'reel').length,
-    story: results.filter((item) => item.type === 'story').length
-  };
-
-
-  const [quickFollowUsername, setQuickFollowUsername] = useState('@creator.test');
-  const [quickFollowMessage, setQuickFollowMessage] = useState('');
-  const [quickFollowLoading, setQuickFollowLoading] = useState(false);
-
-  async function quickFollow() {
-    const target = quickFollowUsername.trim();
-
-    if (!target) {
-      setQuickFollowMessage('Enter username first.');
-      return;
-    }
-
-    setQuickFollowLoading(true);
-    setQuickFollowMessage('Updating follow status...');
-
-    try {
-      const cleanUsername = target.startsWith('@') ? target : `@${target}`;
-
-      const response = await fetch('/api/follow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ following: cleanUsername })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Follow action failed.');
+    const timeout = setTimeout(() => {
+      if (query.trim()) {
+        searchNow(query)
       }
+    }, 450)
 
-      setQuickFollowMessage(data.message || 'Follow status updated.');
-    } catch (error: any) {
-      setQuickFollowMessage(error?.message || 'Follow action failed.');
-    } finally {
-      setQuickFollowLoading(false);
-    }
-  }
+    return () => clearTimeout(timeout)
+  }, [query])
 
   return (
     <AuthGuard>
@@ -96,92 +123,96 @@ export default function SearchPage() {
         title="Search"
         subtitle="Search creators, posts, reels and stories."
       >
-
-        <section className="quickFollowBox">
-          <div>
-            <b>Quick Follow</b>
-            <span>Follow a creator by username. They will appear in your Home online row.</span>
-          </div>
-
-          <div className="quickFollowForm">
-            <input
-              value={quickFollowUsername}
-              onChange={(event) => setQuickFollowUsername(event.target.value)}
-              placeholder="@creator.username"
-            />
-            <button type="button" onClick={quickFollow} disabled={quickFollowLoading}>
-              {quickFollowLoading ? 'Updating...' : 'Follow / Unfollow'}
-            </button>
-          </div>
-
-          {quickFollowMessage && <small>{quickFollowMessage}</small>}
-        </section>
-
-        <section className="searchHero">
-          <div>
-            <span>{source === 'platform' ? 'Search' : 'Search Ready'}</span>
-            <h2>Search content</h2>
-            <p>Find posts, reels, stories and creators quickly.</p>
-          </div>
-        </section>
-
-        <section className="searchBox">
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') runSearch();
-            }}
-            placeholder="Search creators, posts, reels, stories..."
-          />
-
-          <button type="button" onClick={() => runSearch()}>
-            {loading ? 'Searching...' : 'Search'}
-          </button>
-        </section>
-
-        <section className="searchTabs">
-          <button className={activeTab === 'all' ? 'active' : ''} onClick={() => setActiveTab('all')}>
-            All {counts.all}
-          </button>
-          <button className={activeTab === 'creator' ? 'active' : ''} onClick={() => setActiveTab('creator')}>
-            Creators {counts.creator}
-          </button>
-          <button className={activeTab === 'post' ? 'active' : ''} onClick={() => setActiveTab('post')}>
-            Posts {counts.post}
-          </button>
-          <button className={activeTab === 'reel' ? 'active' : ''} onClick={() => setActiveTab('reel')}>
-            Reels {counts.reel}
-          </button>
-          <button className={activeTab === 'story' ? 'active' : ''} onClick={() => setActiveTab('story')}>
-            Stories {counts.story}
-          </button>
-        </section>
-
-        <section className="searchResults">
-          {filteredResults.map((item) => (
-            <a className="searchResultCard" href={item.href} key={`${item.type}-${item.id}`}>
-              <div className={`searchResultIcon ${item.color || ''}`}>
-                {item.type === 'creator' ? '👤' : item.type === 'post' ? '▣' : item.type === 'reel' ? '▶' : '◎'}
-              </div>
-
-              <div>
-                <b>{item.title}</b>
-                <p>{item.subtitle}</p>
-                <span>{item.meta}</span>
-              </div>
-
-              <em>{item.type}</em>
-            </a>
-          ))}
-
-          {!filteredResults.length && (
-            <div className="adminEmpty">
-              {loading ? 'Searching...' : 'No results found.'}
+        <section className="searchCleanPage">
+          <section className="cleanHomeHeader">
+            <div>
+              <h1>Search</h1>
+              <p>Find creators, posts, reels and stories quickly.</p>
             </div>
-          )}
+          </section>
+
+          <section className="quickFollowBox">
+            <div>
+              <b>Quick Follow</b>
+              <span>Follow a creator by username. They will appear in your Home online row.</span>
+            </div>
+
+            <div className="quickFollowForm">
+              <input
+                value={quickFollowUsername}
+                onChange={(event) => setQuickFollowUsername(event.target.value)}
+                placeholder="@creator.username"
+              />
+              <button type="button" onClick={() => followCreator()} disabled={Boolean(followLoading)}>
+                {followLoading ? 'Updating...' : 'Follow / Unfollow'}
+              </button>
+            </div>
+          </section>
+
+          <section className="searchInputBox">
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search creators, posts, reels, stories..."
+            />
+            <button type="button" onClick={() => searchNow(query)} disabled={loading}>
+              {loading ? 'Searching...' : 'Search'}
+            </button>
+          </section>
+
+          {message && <div className="vlSettingsMessage">{message}</div>}
+
+          <section className="searchResultGrid">
+            {results.map((item, index) => {
+              const username = normalizeUsername(item.username || item.name)
+              const title = item.title || item.name || username
+              const caption = item.caption || item.bio || 'Creator content'
+              const type = item.type || 'creator'
+
+              return (
+                <article className="searchResultCard" key={item.id || `${username}-${index}`}>
+                  <div className="searchResultAvatar">
+                    {item.avatarUrl || item.mediaUrl ? (
+                      <img src={item.avatarUrl || item.mediaUrl} alt={title} />
+                    ) : (
+                      <span>{firstLetter(title)}</span>
+                    )}
+                  </div>
+
+                  <div className="searchResultInfo">
+                    <span>{type.toUpperCase()} • {username}</span>
+                    <h3>{title}</h3>
+                    <p>{caption}</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="restoreMiniButton"
+                    onClick={() => followCreator(username)}
+                    disabled={followLoading === username}
+                  >
+                    {followLoading === username ? 'Updating...' : 'Follow'}
+                  </button>
+                </article>
+              )
+            })}
+
+            {!loading && query.trim() && results.length === 0 && (
+              <div className="cleanEmptyState">
+                <b>No results found</b>
+                <span>Try another username or follow directly using Quick Follow.</span>
+              </div>
+            )}
+
+            {!loading && !query.trim() && (
+              <div className="cleanEmptyState">
+                <b>Start searching</b>
+                <span>Search creator username, post title, reels or stories.</span>
+              </div>
+            )}
+          </section>
         </section>
       </SocialAppShell>
     </AuthGuard>
-  );
+  )
 }
