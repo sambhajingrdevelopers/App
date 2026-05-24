@@ -50,7 +50,6 @@ type OnlineUser = {
   username: string
   avatarUrl?: string
   online?: boolean
-  hasStory?: boolean
 }
 
 type MixedItem = {
@@ -66,13 +65,11 @@ type MixedItem = {
   comments: string | number
   views: string | number
   createdAt?: string
-  original: FeedPost | FeedReel | FeedStory
 }
 
 function isRealMedia(url?: string) {
   if (!url) return false
   const clean = String(url).trim()
-  if (!clean) return false
   return clean.startsWith('http') || clean.startsWith('/') || clean.startsWith('data:')
 }
 
@@ -124,7 +121,6 @@ export default function HomePage() {
       setLoading(false)
     }
   }
-  }
 
   useEffect(() => {
     loadHome()
@@ -165,8 +161,7 @@ export default function HomePage() {
       likes: post.likes || 0,
       comments: post.comments || 0,
       views: 0,
-      createdAt: post.createdAt,
-      original: post
+      createdAt: post.createdAt
     }))
 
     const reelItems: MixedItem[] = reels.map((reel) => ({
@@ -181,8 +176,7 @@ export default function HomePage() {
       likes: reel.likes || 0,
       comments: 0,
       views: reel.views || 0,
-      createdAt: reel.createdAt,
-      original: reel
+      createdAt: reel.createdAt
     }))
 
     const storyItems: MixedItem[] = stories.map((story, index) => ({
@@ -197,8 +191,7 @@ export default function HomePage() {
       likes: 0,
       comments: 0,
       views: 0,
-      createdAt: story.createdAt,
-      original: story
+      createdAt: story.createdAt
     }))
 
     const output: MixedItem[] = []
@@ -207,9 +200,9 @@ export default function HomePage() {
     for (let index = 0; index < max; index += 1) {
       if (postItems[index]) output.push(postItems[index])
       if (reelItems[index]) output.push(reelItems[index])
-      if (reelItems[index + 1]) output.push(reelItems[index + 1])
       if (storyItems[index]) output.push(storyItems[index])
       if (postItems[index + 1]) output.push(postItems[index + 1])
+      if (reelItems[index + 1]) output.push(reelItems[index + 1])
     }
 
     return output.filter((item, index, arr) => arr.findIndex((next) => next.kind === item.kind && next.id === item.id) === index)
@@ -219,7 +212,6 @@ export default function HomePage() {
     <AuthGuard>
       <SocialAppShell active="home" title="" subtitle="">
         <section className="mixedHomePage">
-
           <section className="mixedStoryRow">
             <a className="mixedCreateStory" href="/create">
               <span>+</span>
@@ -277,10 +269,12 @@ export default function HomePage() {
                     <a href={href} className="mixedCardLink">
                       <div className="mixedCardTop">
                         <div className="mixedMiniAvatar">{firstLetter(item.avatar)}</div>
+
                         <div>
                           <b>{item.username} ✓</b>
                           <span>{item.kind === 'reel' ? 'Reels' : item.kind === 'story' ? 'Stories' : timeLabel(index)}</span>
                         </div>
+
                         <em>⋮</em>
                       </div>
 
@@ -293,7 +287,7 @@ export default function HomePage() {
                           )}
 
                           {item.kind === 'reel' && (
-                            <span className="mixedPlay">▶ {item.views || '0'}</span>
+                            <span className="mixedPlay">▶ {item.views || 0}</span>
                           )}
                         </div>
                       ) : (
@@ -305,6 +299,7 @@ export default function HomePage() {
 
                       <div className="mixedCardBottom">
                         <h3>{item.title}</h3>
+
                         {item.kind !== 'reel' && <p>{item.subtitle}</p>}
 
                         {item.kind === 'reel' ? (
