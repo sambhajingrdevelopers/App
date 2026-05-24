@@ -59,9 +59,9 @@ export default function SearchPage() {
       >
         <section className="searchHero">
           <div>
-            <span>{source === 'platform' ? 'Live Search' : 'Live Search Ready'}</span>
-            <h2>Global search engine</h2>
-            <p>Find creators, posts, reels and stories from one smart search.</p>
+            <span>{source === 'platform' ? 'Search' : 'Search Ready'}</span>
+            <h2>Search content</h2>
+            <p>Find posts, reels, stories and creators quickly.</p>
           </div>
         </section>
 
@@ -72,7 +72,7 @@ export default function SearchPage() {
             onKeyDown={(event) => {
               if (event.key === 'Enter') runSearch();
             }}
-            placeholder="Search @mira, reels, posts, stories..."
+            placeholder="Search creators, posts, reels, stories..."
           />
 
           <button type="button" onClick={() => runSearch()}>

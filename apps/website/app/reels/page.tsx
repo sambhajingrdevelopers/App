@@ -35,13 +35,13 @@ export default function ReelsPage() {
       <SocialAppShell
         active="reels"
         title="Reels"
-        subtitle="Auto-refreshing reel grid from platform."
+        subtitle="Watch reels from creators and your uploads."
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'platform' ? 'Live Reels' : 'Live Reels Ready'}</span>
-            <h2>Live reels</h2>
-            <p>Every reel published from /create appears here.</p>
+            <span>{source === 'platform' ? 'Reels' : 'Reels Ready'}</span>
+            <h2>Reels</h2>
+            <p>Videos you create or follow will appear here.</p>
           </div>
 
           <button type="button" onClick={loadReels}>Refresh</button>
@@ -64,7 +64,7 @@ export default function ReelsPage() {
             </a>
           ))}
 
-          {!reels.length && <div className="adminEmpty">No reels yet. Upload one from /create.</div>}
+          {!reels.length && <div className="adminEmpty">No reels yet. Create or follow reel creators.</div>}
         </section>
       </SocialAppShell>
     </AuthGuard>

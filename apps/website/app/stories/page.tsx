@@ -39,9 +39,9 @@ export default function StoriesPage() {
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'platform' ? 'Live Stories' : 'Live Stories Ready'}</span>
+            <span>{source === 'platform' ? 'Stories' : 'Stories Ready'}</span>
             <h2>Live stories</h2>
-            <p>Every story published from /create appears here.</p>
+            <p>Stories from you and followed creators appear here.</p>
           </div>
 
           <button type="button" onClick={loadStories}>Refresh</button>
