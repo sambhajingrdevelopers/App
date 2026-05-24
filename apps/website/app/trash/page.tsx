@@ -138,6 +138,7 @@ export default function TrashPage() {
 
                 <button
                   type="button"
+                  className="restoreMiniButton"
                   onClick={() => restoreItem(item)}
                   disabled={restoringId === item.id}
                 >
