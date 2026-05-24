@@ -446,3 +446,12 @@ except Exception:
     pass
 
 app.include_router(live_content_soft_filter_router)
+
+
+# VibeLoop profile counts route
+try:
+    from routes.profile_counts import router as profile_counts_router
+except ImportError:
+    from .routes.profile_counts import router as profile_counts_router
+
+app.include_router(profile_counts_router)
