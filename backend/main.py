@@ -484,3 +484,12 @@ except Exception:
     pass
 
 app.include_router(content_post_fixed_router)
+
+
+# Admin QA route
+try:
+    from routes.admin_qa import router as admin_qa_router
+except ImportError:
+    from .routes.admin_qa import router as admin_qa_router
+
+app.include_router(admin_qa_router)
