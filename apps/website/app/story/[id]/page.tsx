@@ -108,7 +108,7 @@ export default function StoryViewerPage() {
                   <img src={story.mediaUrl} alt={story.caption || story.name} />
                 )
               ) : (
-                <div className="storyFallback">
+                <div className="storyReady">
                   <span>{story.name?.[0] || 'S'}</span>
                   <h2>{story.caption || 'Creator Story'}</h2>
                   <p>{story.username}</p>

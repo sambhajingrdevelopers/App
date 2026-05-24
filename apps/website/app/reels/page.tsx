@@ -39,7 +39,7 @@ export default function ReelsPage() {
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'platform' ? 'Live Reels' : 'Fallback Reels Ready'}</span>
+            <span>{source === 'platform' ? 'Live Reels' : 'Live Reels Ready'}</span>
             <h2>Live reels</h2>
             <p>Every reel published from /create appears here.</p>
           </div>
@@ -53,7 +53,7 @@ export default function ReelsPage() {
               {reel.videoUrl ? (
                 <video src={reel.videoUrl} muted />
               ) : (
-                <div className={`liveReelFallback ${reel.color || ''}`}>▶</div>
+                <div className={`liveReelReady ${reel.color || ''}`}>▶</div>
               )}
 
               <section>

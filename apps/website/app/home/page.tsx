@@ -52,7 +52,7 @@ export default function HomePage() {
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'platform' ? 'Live Feed' : 'Fallback Feed Ready'}</span>
+            <span>{source === 'platform' ? 'Live Feed' : 'Live Feed Ready'}</span>
             <h2>Live social feed</h2>
             <p>New posts, reels and stories from /create appear here automatically.</p>
           </div>
@@ -131,7 +131,7 @@ export default function HomePage() {
                     <img src={post.mediaUrl} alt={post.title || post.caption} />
                   )
                 ) : (
-                  <div className={`livePostFallback ${post.color || ''}`}>
+                  <div className={`livePostReady ${post.color || ''}`}>
                     <h3>{post.title || 'Creator Post'}</h3>
                     <p>{post.caption}</p>
                   </div>

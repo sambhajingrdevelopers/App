@@ -178,7 +178,7 @@ export default function PostDetailPage() {
                   )}
                 </div>
               ) : (
-                <div className={`postDetailFallback ${post.color || ''}`}>
+                <div className={`postDetailReady ${post.color || ''}`}>
                   <h2>{post.title || 'Creator Post'}</h2>
                   <p>{post.caption}</p>
                 </div>

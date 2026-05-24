@@ -39,7 +39,7 @@ export default function StoriesPage() {
       >
         <section className="liveHomeHero">
           <div>
-            <span>{source === 'platform' ? 'Live Stories' : 'Fallback Stories Ready'}</span>
+            <span>{source === 'platform' ? 'Live Stories' : 'Live Stories Ready'}</span>
             <h2>Live stories</h2>
             <p>Every story published from /create appears here.</p>
           </div>

@@ -274,7 +274,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
           <small>{p.bio}</small>
 
           <div className="dpSource">
-            {source === 'platform' ? 'Verified Creator Profile' : 'Fallback Profile Ready'}
+            {source === 'platform' ? 'Verified Creator Profile' : 'Profile Ready'}
           </div>
         </div>
 
@@ -346,7 +346,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
                   )}
                 </div>
               ) : (
-                <div className={`dpFallbackMedia ${post.color || ''}`}>
+                <div className={`dpReadyMedia ${post.color || ''}`}>
                   <h3>{post.title || 'Creator Post'}</h3>
                   <p>{post.caption}</p>
                 </div>

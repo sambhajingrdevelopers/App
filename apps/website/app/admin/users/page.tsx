@@ -162,7 +162,7 @@ export default function AdminUsersPage() {
       >
         <section className="adminUsersHero">
           <div>
-            <span>{source === 'platform' ? 'Live Users' : 'Fallback Users Ready'}</span>
+            <span>{source === 'platform' ? 'Live Users' : 'Ready Users Ready'}</span>
             <h2>User management control center</h2>
             <p>Control creators, brands, admins, verification and account safety.</p>
           </div>

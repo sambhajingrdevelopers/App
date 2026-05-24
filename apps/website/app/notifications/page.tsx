@@ -119,7 +119,7 @@ export default function NotificationsPage() {
       >
         <section className="notifHero">
           <div>
-            <span>{source === 'platform' ? 'Live Live Notifications' : 'Fallback Notifications Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Notifications' : 'Ready Notifications Ready'}</span>
             <h2>Notification center</h2>
             <p>Manage all updates and unread alerts in one place.</p>
           </div>

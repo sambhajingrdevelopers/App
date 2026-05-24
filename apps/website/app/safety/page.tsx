@@ -118,7 +118,7 @@ export default function SafetyPage() {
       >
         <section className="safetyHero">
           <div>
-            <span>{source === 'platform' ? 'Live Live Safety' : 'Fallback Safety Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Safety' : 'Safety Ready'}</span>
             <h2>Control safety, reports and blocked users</h2>
             <p>Keep the platform clean with reports, moderation and block controls.</p>
           </div>

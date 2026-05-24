@@ -41,7 +41,7 @@ export default function AnalyticsPage() {
     { label: 'Reels Views', value: formatNumber(a.reelViews), hint: `${a.totalReels || 0} reels` },
     { label: 'Stories Views', value: formatNumber(a.storyViews), hint: `${a.totalStories || 0} stories` },
     { label: 'Engagement', value: `${a.engagementRate || 0}%`, hint: 'Average rate' },
-    { label: 'API Source', value: source === 'platform' ? 'Live' : 'Fallback', hint: 'Analytics data' }
+    { label: 'API Source', value: source === 'platform' ? 'Live' : 'Ready', hint: 'Analytics data' }
   ];
 
   return (
@@ -53,7 +53,7 @@ export default function AnalyticsPage() {
       >
         <section className="analyticsHero">
           <div>
-            <span>{source === 'platform' ? 'Live Live Analytics' : 'Fallback Analytics Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Analytics' : 'Ready Analytics Ready'}</span>
             <h2>Creator performance dashboard</h2>
             <p>
               Monitor posts, reels, stories, followers, profile views and content engagement.

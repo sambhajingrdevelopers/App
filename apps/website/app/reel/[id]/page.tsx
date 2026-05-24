@@ -150,7 +150,7 @@ export default function ReelDetailPage() {
               {reel.videoUrl ? (
                 <video src={reel.videoUrl} controls autoPlay muted />
               ) : (
-                <div className={`reelFallback ${reel.color || ''}`}>
+                <div className={`reelReady ${reel.color || ''}`}>
                   <span>▶</span>
                   <h2>{reel.title}</h2>
                   <p>{reel.caption}</p>

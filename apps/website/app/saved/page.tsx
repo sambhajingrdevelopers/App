@@ -91,7 +91,7 @@ export default function SavedPostsPage() {
         subtitle="View all bookmarked posts and creator content."
       >
         <div className="vlNotificationTopActions">
-          <span>{source === 'platform' ? 'Live Live Saved Posts' : 'Fallback Saved Ready'}</span>
+          <span>{source === 'platform' ? 'Live Live Saved Posts' : 'Saved Posts Ready'}</span>
           <button type="button" onClick={loadSavedPosts}>Refresh</button>
         </div>
 

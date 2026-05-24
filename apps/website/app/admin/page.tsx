@@ -135,7 +135,7 @@ export default function AdminPage() {
     { label: 'Verification', value: String(analytics.verificationRequests || verification.length || 0), hint: `${analytics.pendingVerification || 0} pending` },
     { label: 'Ads Revenue', value: analytics.adsRevenue || '₹0', hint: 'This month' },
     { label: 'System Health', value: analytics.systemHealth || '0%', hint: 'Live health' },
-    { label: 'API Source', value: source === 'platform' ? 'Live' : 'Fallback', hint: 'Admin data source' }
+    { label: 'API Source', value: source === 'platform' ? 'Live' : 'Ready', hint: 'Admin data source' }
   ];
 
   return (
@@ -167,7 +167,7 @@ export default function AdminPage() {
 
           <div className="adminLiveCard">
             <b>Live API</b>
-            <strong>{source === 'platform' ? 'Connected' : 'Fallback'}</strong>
+            <strong>{source === 'platform' ? 'Connected' : 'Ready'}</strong>
             <p>{loading ? 'Loading...' : 'secure cloud platform status'}</p>
           </div>
         </section>

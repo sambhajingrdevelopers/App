@@ -77,7 +77,7 @@ export default function VerificationPage() {
       >
         <section className="verificationHero">
           <div>
-            <span>{source === 'platform' ? 'Live Live Verification' : 'Fallback Verification Ready'}</span>
+            <span>{source === 'platform' ? 'Live Live Verification' : 'Verification Ready'}</span>
             <h2>Get your verified VibeLoop badge</h2>
             <p>
               Submit your creator or business verification request. Admin will review and approve it.

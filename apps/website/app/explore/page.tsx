@@ -100,7 +100,7 @@ export default function ExplorePage() {
           <h2>Discover what is trending now</h2>
           <p>
             Explore creators, viral reels, hashtags and fresh content.
-            <span className="vlSourceBadge"> {source === 'platform' ? 'Live Live' : 'Fallback Ready'}</span>
+            <span className="vlSourceBadge"> {source === 'platform' ? 'Live Live' : 'Ready Ready'}</span>
           </p>
 
           <div className="vlExploreSearch">

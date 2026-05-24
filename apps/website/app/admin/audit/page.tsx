@@ -46,7 +46,7 @@ export default function AdminAuditPage() {
       >
         <section className="auditHero">
           <div>
-            <span>{source === 'platform' ? 'Live Audit' : 'Fallback Audit Ready'}</span>
+            <span>{source === 'platform' ? 'Live Audit' : 'Ready Audit Ready'}</span>
             <h2>Security audit log viewer</h2>
             <p>Review admin actions with old value, new value and exact timestamp.</p>
           </div>
@@ -69,7 +69,7 @@ export default function AdminAuditPage() {
             <span>Showing now</span>
           </div>
           <div>
-            <b>{source === 'platform' ? 'Live' : 'Fallback'}</b>
+            <b>{source === 'platform' ? 'Live' : 'Ready'}</b>
             <span>Data source</span>
           </div>
         </section>
