@@ -50,6 +50,45 @@ export default function SearchPage() {
     story: results.filter((item) => item.type === 'story').length
   };
 
+
+  const [quickFollowUsername, setQuickFollowUsername] = useState('@creator.test');
+  const [quickFollowMessage, setQuickFollowMessage] = useState('');
+  const [quickFollowLoading, setQuickFollowLoading] = useState(false);
+
+  async function quickFollow() {
+    const target = quickFollowUsername.trim();
+
+    if (!target) {
+      setQuickFollowMessage('Enter username first.');
+      return;
+    }
+
+    setQuickFollowLoading(true);
+    setQuickFollowMessage('Updating follow status...');
+
+    try {
+      const cleanUsername = target.startsWith('@') ? target : `@${target}`;
+
+      const response = await fetch('/api/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ following: cleanUsername })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Follow action failed.');
+      }
+
+      setQuickFollowMessage(data.message || 'Follow status updated.');
+    } catch (error: any) {
+      setQuickFollowMessage(error?.message || 'Follow action failed.');
+    } finally {
+      setQuickFollowLoading(false);
+    }
+  }
+
   return (
     <AuthGuard>
       <SocialAppShell
@@ -57,6 +96,27 @@ export default function SearchPage() {
         title="Search"
         subtitle="Search creators, posts, reels and stories."
       >
+
+        <section className="quickFollowBox">
+          <div>
+            <b>Quick Follow</b>
+            <span>Follow a creator by username. They will appear in your Home online row.</span>
+          </div>
+
+          <div className="quickFollowForm">
+            <input
+              value={quickFollowUsername}
+              onChange={(event) => setQuickFollowUsername(event.target.value)}
+              placeholder="@creator.username"
+            />
+            <button type="button" onClick={quickFollow} disabled={quickFollowLoading}>
+              {quickFollowLoading ? 'Updating...' : 'Follow / Unfollow'}
+            </button>
+          </div>
+
+          {quickFollowMessage && <small>{quickFollowMessage}</small>}
+        </section>
+
         <section className="searchHero">
           <div>
             <span>{source === 'platform' ? 'Search' : 'Search Ready'}</span>

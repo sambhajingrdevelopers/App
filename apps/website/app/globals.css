@@ -10013,3 +10013,59 @@ main {
     max-width: 100% !important;
   }
 }
+
+.quickFollowBox {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.055);
+  border-radius: 24px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.quickFollowBox b {
+  color: white;
+  font-size: 16px;
+}
+
+.quickFollowBox span,
+.quickFollowBox small {
+  color: rgba(255,255,255,0.62);
+}
+
+.quickFollowForm {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quickFollowForm input {
+  flex: 1;
+  min-width: 180px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+  color: white;
+  border-radius: 999px;
+  padding: 12px 14px;
+  outline: none;
+}
+
+.quickFollowForm button {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 16px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00c8ff, #7b3cff);
+}
+
+@media (max-width: 520px) {
+  .quickFollowForm {
+    display: grid;
+  }
+
+  .quickFollowForm input,
+  .quickFollowForm button {
+    width: 100%;
+  }
+}
