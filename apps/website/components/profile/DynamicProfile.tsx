@@ -179,6 +179,49 @@ export default function DynamicProfile({ username = '@you' }: Props) {
   const initial = p.displayName?.[0]?.toUpperCase() || 'V';
   const modalList = connectionModal === 'followers' ? followers : following;
 
+  async function archiveProfileItem(type: 'post' | 'reel' | 'story', id: string) {
+    const confirmed = window.confirm('Move this item to Trash? You can restore it later.')
+
+    if (!confirmed) {
+      return
+    }
+
+    setMessage('Moving item to Trash...')
+
+    try {
+      const response = await fetch('/api/archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, id, action: 'archive' })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Archive failed')
+      }
+
+      if (type === 'post') {
+        setPosts((current) => current.filter((item) => String(item.id) !== String(id)))
+      }
+
+      if (type === 'reel') {
+        setReels((current) => current.filter((item) => String(item.id) !== String(id)))
+      }
+
+      if (type === 'story') {
+        setStories((current) => current.filter((item) => String(item.id) !== String(id)))
+      }
+
+      setTrashCount((count) => count + 1)
+      setMessage('Item moved to Trash. You can restore it from Trash.')
+    } catch (error: any) {
+      setMessage(error?.message || 'Archive failed')
+    }
+  }
+
+
+
   useEffect(() => {
     async function loadRealProfileContent() {
       try {
@@ -312,6 +355,17 @@ export default function DynamicProfile({ username = '@you' }: Props) {
               <div className="dpPostInfo">
                 <b>{post.user}</b>
                 <span>♡ {post.likes} • 💬 {post.comments}</span>
+                  <button
+                    type="button"
+                    className="archiveMiniButton"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      archiveProfileItem('post', String(post.id))
+                    }}
+                  >
+                    Archive
+                  </button>
               </div>
             </a>
           ))}
@@ -329,6 +383,13 @@ export default function DynamicProfile({ username = '@you' }: Props) {
               <div>
                 <b>{reel.title}</b>
                 <span>{reel.views} views</span>
+                <button
+                  type="button"
+                  className="archiveMiniButton"
+                  onClick={() => archiveProfileItem('reel', String(reel.id))}
+                >
+                  Archive
+                </button>
               </div>
             </article>
           ))}
@@ -353,6 +414,13 @@ export default function DynamicProfile({ username = '@you' }: Props) {
 
               <b>{story.caption || 'Story'}</b>
               <span>{story.views} views</span>
+                <button
+                  type="button"
+                  className="archiveMiniButton"
+                  onClick={() => archiveProfileItem('story', String(story.id))}
+                >
+                  Archive
+                </button>
             </article>
           ))}
 
