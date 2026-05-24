@@ -10291,3 +10291,94 @@ main {
     align-items: start;
   }
 }
+
+/* Home real-feed mobile cleanup */
+.cleanHomePage {
+  padding-top: 0 !important;
+}
+
+.onlineStoryRow {
+  margin-top: 4px !important;
+}
+
+.cleanPostList {
+  padding-bottom: 120px !important;
+}
+
+.cleanPostCard {
+  overflow: hidden !important;
+}
+
+.cleanMediaBox {
+  width: 100% !important;
+  background: #05050b !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  margin-top: 8px !important;
+}
+
+.cleanMediaBox img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 70vh !important;
+  object-fit: contain !important;
+  display: block !important;
+  background: #05050b !important;
+}
+
+.cleanMediaBox video {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 70vh !important;
+  object-fit: contain !important;
+  display: block !important;
+  background: #05050b !important;
+}
+
+.cleanPostBody {
+  padding: 14px 16px 16px !important;
+}
+
+.cleanPostBody h3 {
+  font-size: 20px !important;
+  line-height: 1.15 !important;
+}
+
+.cleanPostBody p {
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+}
+
+@media (max-width: 520px) {
+  .cleanHomePage {
+    gap: 12px !important;
+  }
+
+  .onlineStoryRow {
+    padding: 2px 0 10px !important;
+  }
+
+  .feedModeTabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(18px);
+  }
+
+  .cleanPostCard {
+    border-radius: 24px !important;
+  }
+
+  .cleanPostUser {
+    padding: 13px 14px 8px !important;
+  }
+
+  .cleanMediaBox {
+    border-radius: 16px !important;
+  }
+
+  .cleanMediaBox img,
+  .cleanMediaBox video {
+    max-height: 62vh !important;
+  }
+}

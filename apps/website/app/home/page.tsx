@@ -135,19 +135,9 @@ export default function HomePage() {
       <SocialAppShell
         active="home"
         title="Home"
-        subtitle="Posts, reels and stories from people you follow."
+        subtitle="Latest updates from followed creators."
       >
         <section className="cleanHomePage">
-          <header className="cleanHomeHeader">
-            <div>
-              <h1>Home</h1>
-              <p>Followed creators, posts, reels and stories in one clean feed.</p>
-            </div>
-
-            <button type="button" onClick={loadHome} disabled={loading}>
-              {loading ? 'Refreshing...' : 'Refresh'}
-            </button>
-          </header>
 
           <section className="onlineStoryRow">
             <a className="createStoryCircle" href="/create">
