@@ -147,6 +147,25 @@ export default function DynamicProfile({ username = '@you' }: Props) {
     loadProfileCounts();
   }, [profile?.username]);
 
+  const [trashCount, setTrashCount] = useState(0);
+
+  useEffect(() => {
+    async function loadTrashCount() {
+      try {
+        const response = await fetch('/api/trash', { cache: 'no-store' });
+        const data = await response.json();
+
+        if (data.success) {
+          setTrashCount(Number(data.total || data.items?.length || 0));
+        }
+      } catch {
+        setTrashCount(0);
+      }
+    }
+
+    loadTrashCount();
+  }, []);
+
   const p = profile || {
     displayName: 'VibeLoop Creator',
     username: '@you',
@@ -199,6 +218,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
           )}
 
           <a href="/messages">Message</a>
+          <a href="/trash">Trash {trashCount > 0 ? `(${trashCount})` : ``}</a>
         </div>
       </section>
 

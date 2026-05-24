@@ -42,6 +42,12 @@ export default function TrashPage() {
   }
 
   async function restoreItem(item: TrashItem) {
+    const confirmed = window.confirm('Are you sure you want to restore this item?');
+
+    if (!confirmed) {
+      return;
+    }
+
     setRestoringId(item.id);
     setMessage('Restoring item...');
 
@@ -82,7 +88,7 @@ export default function TrashPage() {
           <div>
             <span>Soft Delete Vault</span>
             <h2>Trash & Restore</h2>
-            <p>Deleted posts, reels and stories are archived here instead of being permanently removed.</p>
+            <p>Deleted posts, reels and stories are archived here instead of being permanently removed. Total archived items: {items.length}</p>
           </div>
 
           <button type="button" onClick={loadTrash} disabled={loading}>
