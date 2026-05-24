@@ -39,6 +39,15 @@ type FeedStory = {
   caption?: string
 }
 
+type OnlineUser = {
+  id: string
+  name: string
+  username: string
+  avatarUrl?: string
+  online?: boolean
+  hasStory?: boolean
+}
+
 type FeedMode = 'posts' | 'reels' | 'stories'
 
 function isRealMedia(url?: string) {
@@ -56,6 +65,7 @@ export default function HomePage() {
   const [posts, setPosts] = useState<FeedPost[]>([])
   const [reels, setReels] = useState<FeedReel[]>([])
   const [stories, setStories] = useState<FeedStory[]>([])
+  const [followedUsers, setFollowedUsers] = useState<OnlineUser[]>([])
   const [mode, setMode] = useState<FeedMode>('posts')
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
@@ -65,16 +75,19 @@ export default function HomePage() {
     setMessage('')
 
     try {
-      const [feedResponse, reelResponse, storyResponse] = await Promise.all([
+      const [feedResponse, reelResponse, storyResponse, onlineResponse] = await Promise.all([
         fetch('/api/feed', { cache: 'no-store' }),
         fetch('/api/reels', { cache: 'no-store' }),
-        fetch('/api/stories', { cache: 'no-store' })
+        fetch('/api/stories', { cache: 'no-store' }),
+        fetch('/api/home/online-following', { cache: 'no-store' })
       ])
 
       const feedData = await feedResponse.json().catch(() => ({}))
       const reelData = await reelResponse.json().catch(() => ({}))
       const storyData = await storyResponse.json().catch(() => ({}))
+      const onlineData = await onlineResponse.json().catch(() => ({}))
 
+      setFollowedUsers(Array.isArray(onlineData.users) ? onlineData.users : [])
       setPosts(Array.isArray(feedData.posts) ? feedData.posts : [])
       setReels(Array.isArray(reelData.reels) ? reelData.reels : Array.isArray(feedData.reels) ? feedData.reels : [])
       setStories(Array.isArray(storyData.stories) ? storyData.stories : Array.isArray(feedData.stories) ? feedData.stories : [])
@@ -83,6 +96,7 @@ export default function HomePage() {
       setPosts([])
       setReels([])
       setStories([])
+      setFollowedUsers([])
     } finally {
       setLoading(false)
     }
@@ -93,17 +107,28 @@ export default function HomePage() {
   }, [])
 
   const onlineUsers = useMemo(() => {
-    const mapped = stories
-      .map((story, index) => ({
-        id: story.id || `story-${index}`,
-        name: story.name || story.username || 'Creator',
-        username: story.username || '@you',
-        mediaUrl: story.mediaUrl || ''
-      }))
-      .filter((item, index, arr) => arr.findIndex((next) => next.username === item.username) === index)
+    const followed = followedUsers.map((user) => ({
+      id: user.id,
+      name: user.name || user.username || 'Creator',
+      username: user.username || '@you',
+      mediaUrl: user.avatarUrl || '',
+      online: user.online !== false,
+      hasStory: user.hasStory !== false
+    }))
 
-    return mapped.slice(0, 12)
-  }, [stories])
+    const storyUsers = stories.map((story, index) => ({
+      id: story.id || `story-${index}`,
+      name: story.name || story.username || 'Creator',
+      username: story.username || '@you',
+      mediaUrl: story.mediaUrl || '',
+      online: true,
+      hasStory: true
+    }))
+
+    return [...followed, ...storyUsers]
+      .filter((item, index, arr) => arr.findIndex((next) => next.username === item.username) === index)
+      .slice(0, 12)
+  }, [followedUsers, stories])
 
   return (
     <AuthGuard>
