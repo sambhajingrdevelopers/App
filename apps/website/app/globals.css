@@ -10706,3 +10706,127 @@ main {
     font-size: 12px;
   }
 }
+
+/* Home final cleanup: one search bar only + better mixed feed */
+.mixedHomePage {
+  padding-top: 0 !important;
+}
+
+.mixedStoryRow {
+  margin-top: 0 !important;
+}
+
+.mixedFeedGrid {
+  align-items: start !important;
+}
+
+.mixedFeedCard.story .mixedCardTop,
+.mixedFeedCard.reel .mixedCardTop {
+  padding: 9px !important;
+}
+
+.mixedFeedCard.story .mixedMedia,
+.mixedFeedCard.reel .mixedMedia {
+  aspect-ratio: 9 / 14 !important;
+}
+
+.mixedFeedCard.post.wide .mixedMedia {
+  aspect-ratio: 4 / 3 !important;
+}
+
+.mixedFeedCard.post:not(.wide) .mixedMedia {
+  aspect-ratio: 1 / 1 !important;
+}
+
+.mixedFeedCard.post .mixedMedia img,
+.mixedFeedCard.post .mixedMedia video {
+  object-fit: contain !important;
+  background: #05050b !important;
+}
+
+.mixedFeedCard.reel .mixedMedia img,
+.mixedFeedCard.reel .mixedMedia video,
+.mixedFeedCard.story .mixedMedia img,
+.mixedFeedCard.story .mixedMedia video {
+  object-fit: cover !important;
+}
+
+.mixedTextOnly {
+  min-height: 170px !important;
+  border-radius: 0 !important;
+}
+
+.mixedFeedCard.story .mixedTextOnly,
+.mixedFeedCard.reel .mixedTextOnly {
+  min-height: 230px !important;
+}
+
+.mixedCardBottom h3 {
+  word-break: break-word !important;
+}
+
+.mixedCardBottom p {
+  word-break: break-word !important;
+}
+
+/* Hide desktop side rail on tablet/mobile width too */
+@media (max-width: 980px) {
+  aside,
+  .vlAside,
+  .vlSidebar,
+  .socialSidebar,
+  .sideRail,
+  .leftRail,
+  .iconRail,
+  .desktopSidebar,
+  .desktopNav {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  main,
+  .vlMain,
+  .socialMain,
+  .appMain,
+  .mainContent {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .mixedFeedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .mixedFeedCard.wide {
+    grid-column: span 2 !important;
+  }
+
+  .mixedFeedCard {
+    border-radius: 20px !important;
+  }
+
+  .mixedCardTop b {
+    font-size: 12px !important;
+  }
+
+  .mixedCardTop span {
+    font-size: 10px !important;
+  }
+
+  .mixedCardBottom {
+    padding: 9px 10px 11px !important;
+  }
+
+  .mixedCardBottom h3 {
+    font-size: 13px !important;
+  }
+
+  .mixedCardBottom p {
+    font-size: 12px !important;
+  }
+}

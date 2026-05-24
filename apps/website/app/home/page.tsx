@@ -90,7 +90,6 @@ export default function HomePage() {
   const [reels, setReels] = useState<FeedReel[]>([])
   const [stories, setStories] = useState<FeedStory[]>([])
   const [followedUsers, setFollowedUsers] = useState<OnlineUser[]>([])
-  const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
 
@@ -125,12 +124,6 @@ export default function HomePage() {
       setLoading(false)
     }
   }
-
-  function goSearch() {
-    const q = search.trim()
-    if (q) {
-      window.location.href = `/search?q=${encodeURIComponent(q)}`
-    }
   }
 
   useEffect(() => {
@@ -226,17 +219,6 @@ export default function HomePage() {
     <AuthGuard>
       <SocialAppShell active="home" title="" subtitle="">
         <section className="mixedHomePage">
-          <section className="mixedSearchBar">
-            <span>⌕</span>
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') goSearch()
-              }}
-              placeholder="Search creators, reels, hashtags..."
-            />
-          </section>
 
           <section className="mixedStoryRow">
             <a className="mixedCreateStory" href="/create">
