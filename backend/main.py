@@ -455,3 +455,12 @@ except ImportError:
     from .routes.profile_counts import router as profile_counts_router
 
 app.include_router(profile_counts_router)
+
+
+# VibeLoop profile content route
+try:
+    from routes.profile_content import router as profile_content_router
+except ImportError:
+    from .routes.profile_content import router as profile_content_router
+
+app.include_router(profile_content_router)
