@@ -80,7 +80,7 @@ export default function TrashPage() {
   return (
     <AuthGuard>
       <SocialAppShell
-        active="profile"
+        active="trash"
         title="Trash"
         subtitle="Archived content is safely stored here and can be restored."
       >
