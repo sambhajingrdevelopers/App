@@ -9319,3 +9319,317 @@ main {
   cursor: not-allowed;
   transform: none;
 }
+
+.cleanHomePage {
+  display: grid;
+  gap: 18px;
+  padding-bottom: 110px;
+}
+
+.cleanHomeHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 28px;
+  background: rgba(12, 12, 24, 0.82);
+}
+
+.cleanHomeHeader h1 {
+  margin: 0;
+  font-size: clamp(34px, 8vw, 56px);
+  letter-spacing: -0.08em;
+}
+
+.cleanHomeHeader p {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.62);
+  line-height: 1.35;
+}
+
+.cleanHomeHeader button,
+.cleanEmptyState a {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00c8ff, #7b3cff);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.onlineStoryRow {
+  display: flex;
+  gap: 13px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scrollbar-width: none;
+}
+
+.onlineStoryRow::-webkit-scrollbar {
+  display: none;
+}
+
+.createStoryCircle,
+.onlineStoryItem {
+  min-width: 78px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+}
+
+.createStoryCircle span,
+.onlineAvatar {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 7px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #ff00b8, #6538ff);
+  box-shadow: 0 14px 34px rgba(255, 0, 184, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.createStoryCircle span {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.onlineAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.onlineAvatar span {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.onlineAvatar i {
+  position: absolute;
+  right: 4px;
+  bottom: 5px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #1cff89;
+  border: 3px solid #11111c;
+}
+
+.createStoryCircle b,
+.onlineStoryItem b {
+  display: block;
+  font-size: 12px;
+  color: rgba(255,255,255,0.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emptyFollowBox,
+.cleanEmptyState {
+  min-width: 220px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  background: rgba(255,255,255,0.055);
+  padding: 18px;
+  display: grid;
+  gap: 7px;
+  color: rgba(255,255,255,0.72);
+}
+
+.emptyFollowBox b,
+.cleanEmptyState b {
+  color: white;
+}
+
+.feedModeTabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  gap: 6px;
+}
+
+.feedModeTabs button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255,255,255,0.65);
+  padding: 12px 8px;
+  font-weight: 900;
+}
+
+.feedModeTabs button.active {
+  color: white;
+  background: linear-gradient(135deg, #ff00b8, #6b3cff);
+}
+
+.feedModeTabs span {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.cleanPostList,
+.cleanReelGrid,
+.cleanStoryGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.cleanPostCard,
+.cleanReelCard,
+.cleanStoryCard {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(16, 16, 30, 0.84);
+  border-radius: 26px;
+  overflow: hidden;
+  color: white;
+  text-decoration: none;
+}
+
+.cleanPostUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+}
+
+.cleanAvatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #6b3cff);
+}
+
+.cleanPostUser b,
+.cleanPostUser span {
+  display: block;
+}
+
+.cleanPostUser span {
+  color: rgba(255,255,255,0.56);
+  font-size: 13px;
+}
+
+.cleanMediaBox {
+  background: #05050b;
+}
+
+.cleanMediaBox img,
+.cleanMediaBox video {
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  display: block;
+  background: #05050b;
+}
+
+.cleanPostBody {
+  padding: 14px;
+}
+
+.cleanPostBody h3 {
+  margin: 0 0 7px;
+  font-size: 18px;
+}
+
+.cleanPostBody p {
+  margin: 0 0 12px;
+  color: rgba(255,255,255,0.76);
+}
+
+.cleanPostBody span {
+  color: rgba(255,255,255,0.55);
+  font-size: 13px;
+}
+
+.cleanReelGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cleanReelCard {
+  min-height: 220px;
+  display: grid;
+  align-content: end;
+  position: relative;
+  background: linear-gradient(160deg, rgba(255,0,184,0.18), rgba(0,200,255,0.08));
+}
+
+.cleanReelCard video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cleanReelCard > div:last-child {
+  position: relative;
+  z-index: 2;
+  padding: 14px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.72));
+}
+
+.reelFallback,
+.storyFallback {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+  font-weight: 900;
+}
+
+.cleanStoryCard {
+  padding: 14px;
+  display: grid;
+  gap: 9px;
+}
+
+.cleanStoryCard img,
+.cleanStoryCard video {
+  width: 100%;
+  max-height: 480px;
+  object-fit: contain;
+  border-radius: 20px;
+  background: #05050b;
+}
+
+.cleanStoryCard span {
+  color: rgba(255,255,255,0.62);
+}
+
+@media (max-width: 720px) {
+  .cleanHomePage {
+    gap: 14px;
+  }
+
+  .cleanHomeHeader {
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .cleanHomeHeader button {
+    padding: 10px 13px;
+    font-size: 12px;
+  }
+
+  .cleanReelGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cleanReelCard {
+    min-height: 190px;
+  }
+}
