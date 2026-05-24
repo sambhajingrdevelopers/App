@@ -513,3 +513,12 @@ except Exception:
     pass
 
 app.include_router(content_story_fixed_router)
+
+
+# Home online following route
+try:
+    from routes.home_online_following import router as home_online_following_router
+except ImportError:
+    from .routes.home_online_following import router as home_online_following_router
+
+app.include_router(home_online_following_router)
