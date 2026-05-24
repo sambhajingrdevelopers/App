@@ -9633,3 +9633,155 @@ main {
     min-height: 190px;
   }
 }
+
+/* Mobile production polish: full width content + bottom nav focus */
+@media (max-width: 760px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .vlShell,
+  .socialShell,
+  .appShell,
+  .socialAppShell,
+  .dashboardShell {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .vlAside,
+  .vlSidebar,
+  .v1Aside,
+  .sideRail,
+  .leftRail,
+  .desktopSidebar,
+  .socialSidebar {
+    display: none !important;
+  }
+
+  .vlMain,
+  .v1Main,
+  .socialMain,
+  .appMain,
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .cleanHomePage,
+  .dpPage,
+  .createPage,
+  .reelsPage,
+  .storiesPage,
+  .searchPage {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  .bottomNav,
+  .mobileNav,
+  .tabBar,
+  .vlBottomNav {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    z-index: 999 !important;
+    border-radius: 28px !important;
+    backdrop-filter: blur(22px) !important;
+  }
+
+  .floatingBell,
+  .floatingMessage,
+  .quickBell,
+  .quickMessage {
+    right: 14px !important;
+    transform: scale(0.88);
+  }
+
+  .floatingBell,
+  .quickBell {
+    bottom: 118px !important;
+  }
+
+  .floatingMessage,
+  .quickMessage {
+    bottom: 62px !important;
+  }
+
+  .cleanHomeHeader,
+  .onlineStoryRow,
+  .feedModeTabs,
+  .cleanPostCard,
+  .cleanReelCard,
+  .cleanStoryCard,
+  .dpHeader,
+  .dpStats,
+  .dpTabs {
+    max-width: 100% !important;
+  }
+
+  .cleanHomeHeader {
+    margin-top: 8px !important;
+  }
+
+  .cleanReelGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .cleanPostCard {
+    border-radius: 22px !important;
+  }
+
+  .cleanMediaBox img,
+  .cleanMediaBox video {
+    max-height: 420px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .cleanHomeHeader h1,
+  .dpDisplayName h2,
+  .createPage h1,
+  .reelsPage h1,
+  .storiesPage h1,
+  .searchPage h1 {
+    font-size: 36px !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.07em !important;
+  }
+
+  .cleanHomeHeader {
+    display: grid !important;
+  }
+
+  .cleanHomeHeader button {
+    width: fit-content !important;
+  }
+
+  .feedModeTabs button {
+    font-size: 12px !important;
+    padding: 11px 6px !important;
+  }
+
+  .onlineStoryItem,
+  .createStoryCircle {
+    min-width: 70px !important;
+  }
+
+  .onlineAvatar,
+  .createStoryCircle span {
+    width: 58px !important;
+    height: 58px !important;
+  }
+
+  .cleanReelCard {
+    min-height: 170px !important;
+  }
+}
