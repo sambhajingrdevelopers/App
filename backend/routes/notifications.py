@@ -34,9 +34,9 @@ def init_db():
             now = datetime.utcnow().isoformat()
 
             seed = [
-                ("NT-101", "like", "♡", "Mira liked your post", "Your creator post is getting strong engagement.", 0, now),
-                ("NT-102", "comment", "💬", "Dev commented on your reel", "This reel style looks premium and powerful.", 0, now),
-                ("NT-103", "follow", "＋", "Sara started following you", "You have a new creator follower.", 0, now),
+                ("NT-101", "like", "♡", "Creator liked your post", "Your creator post is getting strong engagement.", 0, now),
+                ("NT-102", "comment", "💬", "Creator commented on your reel", "This reel style looks premium and powerful.", 0, now),
+                ("NT-103", "follow", "＋", "Creator started following you", "You have a new creator follower.", 0, now),
                 ("NT-104", "save", "🔖", "Your post was saved 24 times", "Saved posts help your profile reach more people.", 1, now),
                 ("NT-105", "system", "⚡", "Creator growth alert", "Your profile reach increased by 42% this week.", 0, now)
             ]

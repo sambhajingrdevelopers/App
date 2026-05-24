@@ -52,11 +52,11 @@ def init_db():
         if count == 0:
             now = now_iso()
             seed = [
-                ("USR-101", "VibeLoop Creator", "@you", "you@vibeloop.app", "creator", "Active", 1, 52800, now, now, ""),
-                ("USR-102", "Mira Creates", "@mira.creates", "mira@vibeloop.app", "creator", "Active", 1, 52800, now, now, ""),
+                ("USR-YOU-1", "VibeLoop Creator", "@you", "you@vibeloop.app", "creator", "Active", 1, 52800, now, now, ""),
+                ("USR-YOU-2", "VibeLoop Creator", "@you", "mira@vibeloop.app", "creator", "Active", 1, 52800, now, now, ""),
                 ("USR-103", "Style Loop", "@styleloop", "style@vibeloop.app", "brand", "Active", 1, 76400, now, now, ""),
-                ("USR-104", "Travel Dev", "@travel.dev", "travel@vibeloop.app", "creator", "Active", 0, 42100, now, now, ""),
-                ("USR-105", "Founder Hub", "@founderhub", "founder@vibeloop.app", "creator", "Blocked", 0, 28700, now, now, ""),
+                ("USR-104", "VibeLoop Creator", "@you", "travel@vibeloop.app", "creator", "Active", 0, 42100, now, now, ""),
+                ("USR-105", "Founder Hub", "@you", "founder@vibeloop.app", "creator", "Blocked", 0, 28700, now, now, ""),
             ]
 
             conn.executemany(

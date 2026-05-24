@@ -66,9 +66,9 @@ def init_admin_db():
             now = datetime.utcnow().isoformat()
 
             users = [
-                ("USR-101", "Mira Creates", "@mira.creates", "mira@vibeloop.com", "Active", "Creator", now),
-                ("USR-102", "Travel Dev", "@travel.dev", "dev@vibeloop.com", "Active", "Creator", now),
-                ("USR-103", "Urban Snap", "@urban.snap", "sara@vibeloop.com", "Review", "Creator", now),
+                ("USR-YOU-1", "VibeLoop Creator", "@you", "mira@vibeloop.com", "Active", "Creator", now),
+                ("USR-YOU-2", "VibeLoop Creator", "@you", "dev@vibeloop.com", "Active", "Creator", now),
+                ("USR-103", "VibeLoop Creator", "@you", "sara@vibeloop.com", "Review", "Creator", now),
                 ("USR-104", "Style Loop", "@styleloop", "style@vibeloop.com", "Active", "Business", now),
             ]
 
@@ -79,8 +79,8 @@ def init_admin_db():
             ]
 
             verification = [
-                ("VR-301", "@mira.creates", "Digital Creator", "Pending", now),
-                ("VR-302", "@travel.dev", "Travel Creator", "Approved", now),
+                ("VR-301", "@you", "Digital Creator", "Pending", now),
+                ("VR-302", "@you", "Travel Creator", "Approved", now),
                 ("VR-303", "@styleloop", "Fashion Brand", "Pending", now),
             ]
 

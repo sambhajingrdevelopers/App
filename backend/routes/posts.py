@@ -9,13 +9,13 @@ router = APIRouter()
 
 DB_PATH = Path(__file__).resolve().parent.parent / "vibeloop_posts.db"
 
-DEFAULT_STORIES = ["You", "Mira", "Dev", "Sara", "Aarav", "Zayn", "Riya"]
+DEFAULT_STORIES = ["You", "Creator", "Creator", "Creator", "Creator", "Creator", "Creator"]
 
 DEFAULT_POSTS = [
     {
-        "id": "seed-1",
-        "user": "@mira.creates",
-        "name": "Mira",
+        "id": "platform-post-1",
+        "user": "@you",
+        "name": "Creator",
         "location": "Mumbai",
         "title": "Creator Studio Setup",
         "caption": "A premium creator workspace built for posts, reels, stories and audience growth.",
@@ -28,11 +28,11 @@ DEFAULT_POSTS = [
         "isOwn": False
     },
     {
-        "id": "seed-2",
-        "user": "@travel.dev",
-        "name": "Dev",
+        "id": "platform-post-2",
+        "user": "@you",
+        "name": "Creator",
         "location": "Pune Hills",
-        "title": "Travel Reel Moment",
+        "title": "Creator Reel Moment",
         "caption": "Discover short-form creator content with a clean and immersive reels experience.",
         "likes": "8400",
         "comments": "119",
@@ -43,9 +43,9 @@ DEFAULT_POSTS = [
         "isOwn": False
     },
     {
-        "id": "seed-3",
-        "user": "@urban.snap",
-        "name": "Sara",
+        "id": "platform-post-3",
+        "user": "@you",
+        "name": "Creator",
         "location": "Bengaluru",
         "title": "Urban Creator Drop",
         "caption": "A premium post interface designed for creator engagement and brand discovery.",

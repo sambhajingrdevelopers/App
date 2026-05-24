@@ -45,7 +45,7 @@ def init_db():
             now = datetime.utcnow().isoformat()
             seed = [
                 ("ST-101", "You", "@you", "", "image", "Behind the scenes today", 12, now),
-                ("ST-102", "Mira", "@mira.creates", "", "image", "New creator setup", 240, now),
+                ("ST-102", "Creator", "@you", "", "image", "New creator setup", 240, now),
                 ("ST-103", "Style Loop", "@styleloop", "", "image", "Fashion drop preview", 510, now)
             ]
 

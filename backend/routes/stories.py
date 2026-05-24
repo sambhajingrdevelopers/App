@@ -36,10 +36,10 @@ def init_db():
             now = datetime.utcnow().isoformat()
 
             seed = [
-                ("ST-101", "Mira", "@mira.creates", "", "image", "Creator studio morning.", 1240, now),
-                ("ST-102", "Dev", "@travel.dev", "", "image", "Travel reel behind the scenes.", 980, now),
-                ("ST-103", "Sara", "@urban.snap", "", "image", "Urban snap story.", 1540, now),
-                ("ST-104", "Aarav", "@founderhub", "", "image", "Startup office story.", 740, now),
+                ("ST-101", "Creator", "@you", "", "image", "Creator studio update.", 1240, now),
+                ("ST-102", "Creator", "@you", "", "image", "Travel reel behind the scenes.", 980, now),
+                ("ST-103", "Creator", "@you", "", "image", "Urban snap story.", 1540, now),
+                ("ST-104", "Creator", "@you", "", "image", "Creator workspace story.", 740, now),
             ]
 
             conn.executemany(

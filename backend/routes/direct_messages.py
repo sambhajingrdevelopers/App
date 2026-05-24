@@ -45,14 +45,14 @@ def init_db():
             now = datetime.utcnow().isoformat()
 
             threads = [
-                ("TH-101", "Mira Creates", "@mira.creates", "", "Your reel concept is amazing!", 2, now),
+                ("TH-101", "VibeLoop Creator", "@you", "", "Your reel concept is amazing!", 2, now),
                 ("TH-102", "Style Loop", "@styleloop", "", "Can we collaborate on a campaign?", 1, now),
-                ("TH-103", "Founder Hub", "@founderhub", "", "Let us discuss creator growth.", 0, now)
+                ("TH-103", "Founder Hub", "@you", "", "Let us discuss creator growth.", 0, now)
             ]
 
             messages = [
-                ("MSG-101", "TH-101", "@mira.creates", "Hey, I loved your latest post.", 0, now),
-                ("MSG-102", "TH-101", "@mira.creates", "Your reel concept is amazing!", 0, now),
+                ("MSG-101", "TH-101", "@you", "Hey, I loved your latest post.", 0, now),
+                ("MSG-102", "TH-101", "@you", "Your reel concept is amazing!", 0, now),
                 ("MSG-103", "TH-102", "@styleloop", "Can we collaborate on a campaign?", 0, now),
                 ("MSG-104", "TH-103", "@you", "Sure, let us discuss creator growth.", 1, now)
             ]

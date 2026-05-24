@@ -39,7 +39,7 @@ def init_db():
 
             seed = [
                 ("REEL-101", "Fashion Drop", "@styleloop", "Premium fashion reel concept.", "", "1.2M", "42K", "1.1K", "pink", now),
-                ("REEL-102", "Office Story", "@founderhub", "Startup office creator moment.", "", "889K", "28K", "620", "blue", now),
+                ("REEL-102", "Office Story", "@you", "Startup office creator moment.", "", "889K", "28K", "620", "blue", now),
                 ("REEL-103", "Creator Life", "@creatorlife", "Daily creator lifestyle reel.", "", "2.7M", "91K", "2.4K", "purple", now)
             ]
 

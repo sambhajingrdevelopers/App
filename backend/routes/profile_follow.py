@@ -34,11 +34,11 @@ def init_db():
         if count == 0:
             now = datetime.utcnow().isoformat()
             seed = [
-                ("CR-101", "Mira Creates", "@mira.creates", "Digital Creator", 52800, 0, now),
-                ("CR-102", "Travel Dev", "@travel.dev", "Travel Creator", 42100, 0, now),
-                ("CR-103", "Urban Snap", "@urban.snap", "Lifestyle Creator", 31800, 0, now),
+                ("CR-101", "VibeLoop Creator", "@you", "Digital Creator", 52800, 0, now),
+                ("CR-102", "VibeLoop Creator", "@you", "Travel Creator", 42100, 0, now),
+                ("CR-103", "VibeLoop Creator", "@you", "Lifestyle Creator", 31800, 0, now),
                 ("CR-104", "Style Loop", "@styleloop", "Fashion Brand", 76400, 0, now),
-                ("CR-105", "Founder Hub", "@founderhub", "Startup Creator", 28700, 0, now),
+                ("CR-105", "Founder Hub", "@you", "Startup Creator", 28700, 0, now),
                 ("CR-106", "Food Spark", "@foodspark", "Food Creator", 64500, 0, now),
             ]
 

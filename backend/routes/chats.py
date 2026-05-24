@@ -46,10 +46,10 @@ def init_db():
             now = datetime.utcnow().isoformat()
 
             chats = [
-                ("CHAT-101", "Mira", "@mira.creates", "M", "Design looks powerful 🔥", 2, now),
-                ("CHAT-102", "Dev", "@travel.dev", "D", "Send me the reel preview.", 0, now),
-                ("CHAT-103", "Sara", "@urban.snap", "S", "New post idea ready?", 1, now),
-                ("CHAT-104", "Aarav", "@founderhub", "A", "Let us build this platform.", 0, now),
+                ("CHAT-101", "Creator", "@you", "M", "Design looks powerful 🔥", 2, now),
+                ("CHAT-102", "Creator", "@you", "D", "Send me the reel preview.", 0, now),
+                ("CHAT-103", "Creator", "@you", "S", "New post idea ready?", 1, now),
+                ("CHAT-104", "Creator", "@you", "A", "Let us build this platform.", 0, now),
             ]
 
             messages = [

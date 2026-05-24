@@ -82,8 +82,8 @@ def init_db():
         if count == 0:
             now = datetime.utcnow().isoformat()
             seed = [
-                ("RL-101", "Neon Creator Drop", "@mira.creates", "A cinematic creator moment with neon lights.", "", "12.4K", "2.1K", "18", "pink", now),
-                ("RL-102", "Travel Motion Reel", "@travel.dev", "Fast travel edit with smooth transitions.", "", "8.7K", "1.4K", "11", "blue", now),
+                ("RL-101", "Neon Creator Drop", "@you", "A cinematic creator moment with neon lights.", "", "12.4K", "2.1K", "18", "pink", now),
+                ("RL-102", "Travel Motion Reel", "@you", "Fast travel edit with smooth transitions.", "", "8.7K", "1.4K", "11", "blue", now),
                 ("RL-103", "Style Loop Fit Check", "@styleloop", "Fashion reel for trending outfit inspiration.", "", "22.5K", "3.8K", "42", "purple", now)
             ]
 
