@@ -179,6 +179,33 @@ export default function DynamicProfile({ username = '@you' }: Props) {
   const initial = p.displayName?.[0]?.toUpperCase() || 'V';
   const modalList = connectionModal === 'followers' ? followers : following;
 
+  useEffect(() => {
+    async function loadRealProfileContent() {
+      try {
+        const username = profile?.username || '@you';
+
+        const response = await fetch(
+          `/api/profile-content?username=${encodeURIComponent(username)}`,
+          { cache: 'no-store' }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          setPosts(data.posts || []);
+          setReels(data.reels || []);
+          setStories(data.stories || []);
+        }
+      } catch {
+        // keep current profile content
+      }
+    }
+
+    loadRealProfileContent();
+  }, [profile?.username]);
+
+
+
   return (
     <div className="dpPage">
       <div
