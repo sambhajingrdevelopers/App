@@ -464,3 +464,23 @@ except ImportError:
     from .routes.profile_content import router as profile_content_router
 
 app.include_router(profile_content_router)
+
+
+# Fixed create-post route
+try:
+    from routes.content_post_fixed import router as content_post_fixed_router
+except ImportError:
+    from .routes.content_post_fixed import router as content_post_fixed_router
+
+try:
+    app.router.routes = [
+        route for route in app.router.routes
+        if not (
+            getattr(route, "path", "") == "/api/v1/content/post"
+            and "POST" in getattr(route, "methods", set())
+        )
+    ]
+except Exception:
+    pass
+
+app.include_router(content_post_fixed_router)
