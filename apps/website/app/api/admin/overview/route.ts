@@ -17,16 +17,16 @@ const fallback = {
     platformStatus: 'Fallback'
   },
   users: [
-    { id: 'USR-101', name: 'Mira Creates', username: '@mira.creates', email: 'mira@vibeloop.com', status: 'Active', role: 'Creator' },
-    { id: 'USR-102', name: 'Travel Dev', username: '@travel.dev', email: 'dev@vibeloop.com', status: 'Active', role: 'Creator' }
+    { id: 'USR-101', name: 'VibeLoop Creator', username: '@you', email: 'mira@vibeloop.com', status: 'Active', role: 'Creator' },
+    { id: 'USR-102', name: 'Creator Studio', username: '@you', email: 'dev@vibeloop.com', status: 'Active', role: 'Creator' }
   ],
   reports: [
     { id: 'RPT-101', username: '@unknown.user', reason: 'Spam content', status: 'Pending' },
     { id: 'RPT-102', username: '@fake.brand', reason: 'Fake business account', status: 'Review' }
   ],
   verification: [
-    { id: 'VR-301', username: '@mira.creates', category: 'Digital Creator', status: 'Pending' },
-    { id: 'VR-302', username: '@travel.dev', category: 'Travel Creator', status: 'Approved' }
+    { id: 'VR-301', username: '@you', category: 'Digital Creator', status: 'Pending' },
+    { id: 'VR-302', username: '@you', category: 'Travel Creator', status: 'Approved' }
   ],
   ads: [
     { id: 'AD-501', title: 'Creator Boost Campaign', budget: '₹12,500', status: 'Running', progress: 72 },

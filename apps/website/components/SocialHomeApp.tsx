@@ -572,7 +572,7 @@ export default function SocialHomeApp() {
 
         <div className="vlPanel">
           <h3>Suggested Creators</h3>
-          {['Mira Creates', 'Travel Dev', 'Urban Snap'].map((name) => (
+          {['VibeLoop Creator', 'Creator Studio', 'Content Hub'].map((name) => (
             <div className="vlCreator" key={name}>
               <div>{name[0]}</div>
               <span>{name}</span>

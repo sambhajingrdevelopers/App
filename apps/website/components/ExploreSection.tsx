@@ -19,7 +19,7 @@ export default function ExploreSection() {
       </div>
 
       <div className="creatorList">
-        {['Mira Creates', 'Travel Dev', 'Urban Snap', 'Style Loop'].map((name, index) => (
+        {['VibeLoop Creator', 'Creator Studio', 'Content Hub', 'Style Loop'].map((name, index) => (
           <div className="creatorItem" key={name}>
             <div className="avatar">{name[0]}</div>
             <div>

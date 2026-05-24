@@ -6,7 +6,7 @@ const fallbackChats = [
   {
     id: 'CHAT-101',
     name: 'Mira',
-    username: '@mira.creates',
+    username: '@you',
     avatar: 'M',
     lastMessage: 'Design looks powerful 🔥',
     unread: 2,
@@ -19,7 +19,7 @@ const fallbackChats = [
   {
     id: 'CHAT-102',
     name: 'Dev',
-    username: '@travel.dev',
+    username: '@you',
     avatar: 'D',
     lastMessage: 'Send me the reel preview.',
     unread: 0,

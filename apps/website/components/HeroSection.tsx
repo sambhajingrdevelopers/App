@@ -78,7 +78,7 @@ export default function HeroSection() {
               <div className="postUser">
                 <div className="avatar">M</div>
                 <div>
-                  <b>@mira.creates ✓</b>
+                  <b>@you ✓</b>
                   <span>Mumbai, India</span>
                 </div>
               </div>
