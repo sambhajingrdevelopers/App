@@ -522,3 +522,12 @@ except ImportError:
     from .routes.home_online_following import router as home_online_following_router
 
 app.include_router(home_online_following_router)
+
+
+# Follow/unfollow system route
+try:
+    from routes.follow_system import router as follow_system_router
+except ImportError:
+    from .routes.follow_system import router as follow_system_router
+
+app.include_router(follow_system_router)
