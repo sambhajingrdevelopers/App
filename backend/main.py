@@ -425,3 +425,24 @@ except ImportError:
     from .routes.content_trash import router as content_trash_router
 
 app.include_router(content_trash_router)
+
+
+# VibeLoop live content soft-delete filter routes
+try:
+    from routes.live_content_soft_filter import router as live_content_soft_filter_router
+except ImportError:
+    from .routes.live_content_soft_filter import router as live_content_soft_filter_router
+
+try:
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in [
+            "/api/v1/content/home-live",
+            "/api/v1/content/reels-live",
+            "/api/v1/content/stories-live"
+        ]
+    ]
+except Exception:
+    pass
+
+app.include_router(live_content_soft_filter_router)
