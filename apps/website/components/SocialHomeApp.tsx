@@ -348,7 +348,7 @@ export default function SocialHomeApp() {
             <p>
               Discover creators, reels, stories and trending content.
               <span className="vlSourceBadge">
-                {source === 'platform' ? ' Live Live' : ' Ready Ready'}
+                {source === 'platform' ? ' Live Feed' : ' Live Feed'}
               </span>
             </p>
           </div>
