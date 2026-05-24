@@ -20,6 +20,7 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'messages', label: '✉ Messages', href: '/messages' },
   { key: 'notifications', label: '♡ Notifications', href: '/notifications' },
   { key: 'saved', label: '🔖 Saved', href: '/saved' },
+  { key: 'following', label: '👥 Following', href: '/following' },
   { key: 'trash', label: '🗑 Trash', href: '/trash' },
   { key: 'profile', label: '◉ Profile', href: '/profile' },
   { key: 'settings', label: '⚙ Settings', href: '/settings' },

@@ -288,6 +288,7 @@ export default function DynamicProfile({ username = '@you' }: Props) {
           )}
 
           <a href="/messages">Message</a>
+          <a href="/following">Following</a>
           <a href="/trash">Trash {trashCount > 0 ? `(${trashCount})` : ``}</a>
         </div>
       </section>
