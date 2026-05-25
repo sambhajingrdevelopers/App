@@ -15310,3 +15310,99 @@ body:has(.publicOwnerProfile) .mainContent {
     grid-template-columns: 1fr !important;
   }
 }
+
+.poActionMessage {
+  margin: 0 18px 14px !important;
+  padding: 11px 14px !important;
+  border-radius: 18px !important;
+  color: white !important;
+  background: rgba(0, 200, 255, 0.12) !important;
+  border: 1px solid rgba(0, 200, 255, 0.2) !important;
+  font-weight: 800 !important;
+}
+
+.simpleMessagePage {
+  width: min(100%, 620px) !important;
+  max-width: 620px !important;
+  margin: 0 auto !important;
+  padding: 10px 0 130px !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.simpleMessagePage header {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+.simpleMessagePage header a {
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.08) !important;
+  font-size: 30px !important;
+}
+
+.simpleMessagePage h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  letter-spacing: -.06em !important;
+}
+
+.simpleMessagePage p {
+  margin: 4px 0 0 !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.simpleChatBox {
+  min-height: 360px !important;
+  border-radius: 28px !important;
+  padding: 16px !important;
+  background: rgba(10,12,24,.88) !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+  display: grid !important;
+  gap: 10px !important;
+  align-content: start !important;
+}
+
+.simpleBubble {
+  width: fit-content !important;
+  max-width: 80% !important;
+  margin-left: auto !important;
+  padding: 12px 14px !important;
+  border-radius: 18px 18px 4px 18px !important;
+  color: white !important;
+  background: linear-gradient(135deg, #007dff, #ff00d4) !important;
+}
+
+.simpleChatInput {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+}
+
+.simpleChatInput input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: white !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.simpleChatInput button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 14px 18px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}

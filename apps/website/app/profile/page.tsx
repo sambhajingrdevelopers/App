@@ -76,12 +76,16 @@ export default function ProfilePage() {
   const [stories, setStories] = useState<ContentItem[]>([])
   const [tab, setTab] = useState<'posts' | 'reels' | 'stories' | 'tagged'>('posts')
   const [loading, setLoading] = useState(true)
+  const [viewerUsername, setViewerUsername] = useState('@guest')
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [actionMessage, setActionMessage] = useState('')
 
   async function loadProfile() {
     setLoading(true)
 
     try {
       const session = await getSessionUser()
+      setViewerUsername(session.username)
       const params = new URLSearchParams(window.location.search)
       const targetUsername = normalizeUsername(params.get('username') || session.username)
 
@@ -109,6 +113,21 @@ export default function ProfilePage() {
       setPosts(Array.isArray(data.posts) ? data.posts : [])
       setReels(Array.isArray(data.reels) ? data.reels : [])
       setStories(Array.isArray(data.stories) ? data.stories : [])
+
+      if (!Boolean(user.isOwner)) {
+        const followData = await fetch(
+          `/api/follow/status?follower=${encodeURIComponent(session.username)}&following=${encodeURIComponent(normalizeUsername(user.username || targetUsername))}`,
+          { cache: 'no-store' }
+        ).then((res) => res.json()).catch(() => ({}))
+
+        setIsFollowing(Boolean(followData.isFollowing))
+
+        setProfile((prev) => ({
+          ...prev,
+          followers: followData.followers ?? prev.followers,
+          following: followData.following ?? prev.following
+        }))
+      }
     } finally {
       setLoading(false)
     }
@@ -126,6 +145,56 @@ export default function ProfilePage() {
   }, [tab, posts, reels, stories])
 
   const likes = posts.reduce((sum, item) => sum + Number(item.likes || 0), 0)
+
+
+  async function handleFollow() {
+    if (profile.isOwner) return
+
+    setActionMessage('Updating follow...')
+
+    const data = await fetch('/api/follow/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        follower: viewerUsername,
+        following: profile.username
+      })
+    }).then((res) => res.json()).catch(() => ({
+      success: false,
+      message: 'Follow failed.'
+    }))
+
+    if (data.success) {
+      setIsFollowing(Boolean(data.isFollowing))
+      setProfile((prev) => ({
+        ...prev,
+        followers: data.followers ?? prev.followers,
+        following: data.following ?? prev.following
+      }))
+    }
+
+    setActionMessage(data.message || 'Updated.')
+  }
+
+  function handleMessage() {
+    window.location.href = `/messages?to=${encodeURIComponent(profile.username)}`
+  }
+
+  async function handleShare() {
+    const url = `${window.location.origin}/profile?username=${encodeURIComponent(profile.username)}`
+
+    if (navigator.share) {
+      await navigator.share({
+        title: `${profile.name} on VibeLoop`,
+        text: `View ${profile.name}'s profile`,
+        url
+      })
+      return
+    }
+
+    await navigator.clipboard.writeText(url)
+    setActionMessage('Profile link copied.')
+  }
 
   return (
     <AuthGuard>
@@ -214,12 +283,14 @@ export default function ProfilePage() {
                 </>
               ) : (
                 <>
-                  <button type="button">Follow</button>
-                  {profile.allowMessages && <button type="button">Message</button>}
-                  <button type="button">Share</button>
+                  <button type="button" onClick={handleFollow}>{isFollowing ? "Following" : "Follow"}</button>
+                  {profile.allowMessages && <button type="button" onClick={handleMessage}>Message</button>}
+                  <button type="button" onClick={handleShare}>Share</button>
                 </>
               )}
             </div>
+
+            {actionMessage && <div className="poActionMessage">{actionMessage}</div>}
 
             <div className="poHighlights">
               {profile.isOwner && (

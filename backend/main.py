@@ -636,3 +636,12 @@ except ImportError:
     from .routes.profile_privacy_fixed import router as profile_privacy_fixed_router
 
 app.include_router(profile_privacy_fixed_router)
+
+
+# Follow / unfollow fixed route
+try:
+    from routes.follow_fixed import router as follow_fixed_router
+except ImportError:
+    from .routes.follow_fixed import router as follow_fixed_router
+
+app.include_router(follow_fixed_router)
