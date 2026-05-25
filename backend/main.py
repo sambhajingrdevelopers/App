@@ -531,3 +531,23 @@ except ImportError:
     from .routes.follow_system import router as follow_system_router
 
 app.include_router(follow_system_router)
+
+
+# Fixed secure login route
+try:
+    from routes.auth_login_fixed import router as auth_login_fixed_router
+except ImportError:
+    from .routes.auth_login_fixed import router as auth_login_fixed_router
+
+try:
+    app.router.routes = [
+        route for route in app.router.routes
+        if not (
+            getattr(route, "path", "") == "/api/v1/auth/login"
+            and "POST" in getattr(route, "methods", set())
+        )
+    ]
+except Exception:
+    pass
+
+app.include_router(auth_login_fixed_router)
