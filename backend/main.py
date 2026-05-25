@@ -551,3 +551,23 @@ except Exception:
     pass
 
 app.include_router(auth_login_fixed_router)
+
+
+# Fixed secure register route
+try:
+    from routes.auth_register_fixed import router as auth_register_fixed_router
+except ImportError:
+    from .routes.auth_register_fixed import router as auth_register_fixed_router
+
+try:
+    app.router.routes = [
+        route for route in app.router.routes
+        if not (
+            getattr(route, "path", "") == "/api/v1/auth/register"
+            and "POST" in getattr(route, "methods", set())
+        )
+    ]
+except Exception:
+    pass
+
+app.include_router(auth_register_fixed_router)
