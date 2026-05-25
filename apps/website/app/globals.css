@@ -11009,3 +11009,182 @@ body:has(.mixedHomePage) .vlBottomNav {
     font-size: 12px !important;
   }
 }
+
+/* FINAL FIX: Home page mobile responsive full width */
+body:has(.mixedHomePage) {
+  overflow-x: hidden !important;
+}
+
+/* Home page should never become a thin left column */
+.mixedHomePage {
+  width: min(calc(100vw - 28px), 720px) !important;
+  max-width: min(calc(100vw - 28px), 720px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+}
+
+.mixedHomePage * {
+  box-sizing: border-box !important;
+}
+
+/* Force parent containers to allow full Home width */
+body:has(.mixedHomePage) main,
+body:has(.mixedHomePage) .vlMain,
+body:has(.mixedHomePage) .socialMain,
+body:has(.mixedHomePage) .appMain,
+body:has(.mixedHomePage) .mainContent,
+body:has(.mixedHomePage) .pageContent,
+body:has(.mixedHomePage) .contentArea {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  overflow-x: hidden !important;
+}
+
+/* Hide left desktop rail on Home only */
+body:has(.mixedHomePage) aside,
+body:has(.mixedHomePage) .vlAside,
+body:has(.mixedHomePage) .vlSidebar,
+body:has(.mixedHomePage) .socialSidebar,
+body:has(.mixedHomePage) .sideRail,
+body:has(.mixedHomePage) .leftRail,
+body:has(.mixedHomePage) .iconRail,
+body:has(.mixedHomePage) .desktopSidebar,
+body:has(.mixedHomePage) .desktopNav {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+}
+
+/* Mixed feed must stay normal width */
+.mixedStoryRow,
+.mixedFeedGrid {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.mixedFeedGrid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.mixedFeedCard {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.mixedFeedCard.wide {
+  grid-column: span 2 !important;
+}
+
+.mixedMedia {
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Uploaded content responsive */
+.mixedFeedCard.post.wide .mixedMedia {
+  aspect-ratio: 4 / 3 !important;
+}
+
+.mixedFeedCard.post:not(.wide) .mixedMedia {
+  aspect-ratio: 1 / 1 !important;
+}
+
+.mixedFeedCard.reel .mixedMedia,
+.mixedFeedCard.story .mixedMedia {
+  aspect-ratio: 9 / 14 !important;
+}
+
+.mixedMedia img,
+.mixedMedia video {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+.mixedFeedCard.post .mixedMedia img,
+.mixedFeedCard.post .mixedMedia video {
+  object-fit: contain !important;
+  background: #05050b !important;
+}
+
+.mixedFeedCard.reel .mixedMedia img,
+.mixedFeedCard.reel .mixedMedia video,
+.mixedFeedCard.story .mixedMedia img,
+.mixedFeedCard.story .mixedMedia video {
+  object-fit: cover !important;
+}
+
+/* Bottom nav should not squeeze Home */
+body:has(.mixedHomePage) .bottomNav,
+body:has(.mixedHomePage) .mobileNav,
+body:has(.mixedHomePage) .tabBar,
+body:has(.mixedHomePage) .vlBottomNav {
+  left: 16px !important;
+  right: 16px !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+@media (max-width: 430px) {
+  .mixedHomePage {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  body:has(.mixedHomePage) main,
+  body:has(.mixedHomePage) .vlMain,
+  body:has(.mixedHomePage) .socialMain,
+  body:has(.mixedHomePage) .appMain,
+  body:has(.mixedHomePage) .mainContent,
+  body:has(.mixedHomePage) .pageContent,
+  body:has(.mixedHomePage) .contentArea {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .mixedFeedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .mixedCardTop {
+    padding: 8px !important;
+    gap: 7px !important;
+  }
+
+  .mixedMiniAvatar {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .mixedCardTop b {
+    font-size: 11px !important;
+  }
+
+  .mixedCardTop span {
+    font-size: 10px !important;
+  }
+
+  .mixedCardBottom {
+    padding: 9px !important;
+  }
+
+  .mixedCardBottom h3 {
+    font-size: 13px !important;
+  }
+
+  .mixedCardBottom p {
+    font-size: 12px !important;
+  }
+}
