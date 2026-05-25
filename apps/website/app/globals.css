@@ -11426,3 +11426,313 @@ body:has(.mixedHomePage) .vlBottomNav {
     min-height: 54px !important;
   }
 }
+
+/* One-bar universal search page */
+.universalSearchPage {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 120px;
+}
+
+.universalSearchHeader h1 {
+  margin: 0;
+  color: white;
+  font-size: 34px;
+  letter-spacing: -0.06em;
+}
+
+.universalSearchHeader p {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.62);
+}
+
+.universalSearchBox {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 28px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.universalSearchInputWrap {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 999px;
+  padding: 0 18px;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.universalSearchInputWrap span {
+  color: rgba(255,255,255,0.72);
+  font-size: 24px;
+}
+
+.universalSearchInputWrap input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+}
+
+.universalSearchActions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.universalSearchActions button,
+.universalResultCard button {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 16px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #673cff);
+}
+
+.universalSearchActions button:first-child {
+  background: linear-gradient(135deg, #00c8ff, #673cff);
+}
+
+.universalSearchBox small {
+  color: rgba(255,255,255,0.66);
+}
+
+.universalResultGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.universalResultCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.universalResultAvatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #673cff);
+}
+
+.universalResultAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.universalResultCard small {
+  color: rgba(255,255,255,0.52);
+  font-weight: 800;
+}
+
+.universalResultCard h3 {
+  margin: 3px 0;
+  color: white;
+  font-size: 16px;
+}
+
+.universalResultCard p {
+  margin: 0;
+  color: rgba(255,255,255,0.66);
+  font-size: 13px;
+}
+
+.universalEmptyState {
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.055);
+  color: rgba(255,255,255,0.65);
+  display: grid;
+  gap: 6px;
+}
+
+.universalEmptyState b {
+  color: white;
+}
+
+@media (max-width: 520px) {
+  .universalSearchActions {
+    grid-template-columns: 1fr;
+  }
+
+  .universalResultCard {
+    grid-template-columns: 1fr;
+  }
+
+  .universalResultCard button {
+    width: 100%;
+  }
+}
+
+/* One-bar universal search page */
+.universalSearchPage {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 120px;
+}
+
+.universalSearchHeader h1 {
+  margin: 0;
+  color: white;
+  font-size: 34px;
+  letter-spacing: -0.06em;
+}
+
+.universalSearchHeader p {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,0.62);
+}
+
+.universalSearchBox {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 28px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.universalSearchInputWrap {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 999px;
+  padding: 0 18px;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.universalSearchInputWrap span {
+  color: rgba(255,255,255,0.72);
+  font-size: 24px;
+}
+
+.universalSearchInputWrap input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+}
+
+.universalSearchActions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.universalSearchActions button,
+.universalResultCard button {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 16px;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #673cff);
+}
+
+.universalSearchActions button:first-child {
+  background: linear-gradient(135deg, #00c8ff, #673cff);
+}
+
+.universalSearchBox small {
+  color: rgba(255,255,255,0.66);
+}
+
+.universalResultGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.universalResultCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.universalResultAvatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff00b8, #673cff);
+}
+
+.universalResultAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.universalResultCard small {
+  color: rgba(255,255,255,0.52);
+  font-weight: 800;
+}
+
+.universalResultCard h3 {
+  margin: 3px 0;
+  color: white;
+  font-size: 16px;
+}
+
+.universalResultCard p {
+  margin: 0;
+  color: rgba(255,255,255,0.66);
+  font-size: 13px;
+}
+
+.universalEmptyState {
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.055);
+  color: rgba(255,255,255,0.65);
+  display: grid;
+  gap: 6px;
+}
+
+.universalEmptyState b {
+  color: white;
+}
+
+@media (max-width: 520px) {
+  .universalSearchActions {
+    grid-template-columns: 1fr;
+  }
+
+  .universalResultCard {
+    grid-template-columns: 1fr;
+  }
+
+  .universalResultCard button {
+    width: 100%;
+  }
+}

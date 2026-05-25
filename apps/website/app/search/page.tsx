@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 
@@ -14,16 +14,11 @@ type SearchResult = {
   bio?: string
   mediaUrl?: string
   avatarUrl?: string
-  href?: string
 }
 
 function normalizeUsername(value?: string) {
   const clean = String(value || '').trim()
-
-  if (!clean) {
-    return '@you'
-  }
-
+  if (!clean) return ''
   return clean.startsWith('@') ? clean : `@${clean}`
 }
 
@@ -36,17 +31,14 @@ export default function SearchPage() {
   const [results, setResults] = useState<SearchResult[]>([])
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const [quickFollowUsername, setQuickFollowUsername] = useState('@creator.test')
-  const [followLoading, setFollowLoading] = useState('')
+  const [followLoading, setFollowLoading] = useState(false)
 
-  async function searchNow(nextQuery = query) {
-    const cleanQuery = nextQuery.trim()
-
-    setQuery(nextQuery)
+  async function searchNow() {
+    const cleanQuery = query.trim()
 
     if (!cleanQuery) {
       setResults([])
-      setMessage('')
+      setMessage('Type creator name, username, post, reel or story.')
       return
     }
 
@@ -61,28 +53,63 @@ export default function SearchPage() {
       const data = await response.json()
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Search failed')
+        throw new Error(data.message || 'Search failed.')
       }
 
-      setResults(Array.isArray(data.results) ? data.results : [])
-      setMessage('')
+      const list = Array.isArray(data.results) ? data.results : []
+      setResults(list)
+      setMessage(list.length ? '' : 'No result found.')
     } catch (error: any) {
       setResults([])
-      setMessage(error?.message || 'Search failed')
+      setMessage(error?.message || 'Search failed.')
     } finally {
       setLoading(false)
     }
   }
 
-  async function followCreator(username?: string) {
-    const target = normalizeUsername(username || quickFollowUsername)
+  async function followFromSearch() {
+    const cleanQuery = query.trim()
+    const username = normalizeUsername(cleanQuery)
 
-    if (!target || target === '@you') {
-      setMessage('Enter another creator username.')
+    if (!username || !username.startsWith('@')) {
+      setMessage('Enter username like @creator.test to follow.')
       return
     }
 
-    setFollowLoading(target)
+    setFollowLoading(true)
+    setMessage('Updating follow status...')
+
+    try {
+      const response = await fetch('/api/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ following: username })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Follow action failed.')
+      }
+
+      setMessage(data.message || 'Follow status updated. Check Home online row.')
+      await searchNow()
+    } catch (error: any) {
+      setMessage(error?.message || 'Follow action failed.')
+    } finally {
+      setFollowLoading(false)
+    }
+  }
+
+  async function followResult(username?: string) {
+    const target = normalizeUsername(username)
+
+    if (!target) {
+      setMessage('Creator username missing.')
+      return
+    }
+
+    setFollowLoading(true)
     setMessage('Updating follow status...')
 
     try {
@@ -95,77 +122,64 @@ export default function SearchPage() {
       const data = await response.json()
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Follow action failed')
+        throw new Error(data.message || 'Follow action failed.')
       }
 
-      setMessage(data.message || 'Follow status updated. Check Home online row.')
+      setMessage(data.message || 'Follow status updated.')
     } catch (error: any) {
-      setMessage(error?.message || 'Follow action failed')
+      setMessage(error?.message || 'Follow action failed.')
     } finally {
-      setFollowLoading('')
+      setFollowLoading(false)
     }
   }
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (query.trim()) {
-        searchNow(query)
-      }
-    }, 450)
-
-    return () => clearTimeout(timeout)
-  }, [query])
-
   return (
     <AuthGuard>
-      <SocialAppShell
-        active="search"
-        title="Search"
-        subtitle="Find creators, posts, reels and stories."
-      >
-        <section className="searchCleanPage">
+      <SocialAppShell active="search" title="" subtitle="">
+        <section className="universalSearchPage">
+          <header className="universalSearchHeader">
+            <h1>Search</h1>
+            <p>Search anything or follow a creator from one bar.</p>
+          </header>
 
-          <section className="quickFollowBox">
-            <div>
-              <b>Quick Follow</b>
-              <span>Follow a creator by username. They will appear in your Home online row.</span>
+          <section className="universalSearchBox">
+            <div className="universalSearchInputWrap">
+              <span>⌕</span>
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    searchNow()
+                  }
+                }}
+                placeholder="Search @creator, posts, reels, stories..."
+              />
             </div>
 
-            <div className="quickFollowForm">
-              <input
-                value={quickFollowUsername}
-                onChange={(event) => setQuickFollowUsername(event.target.value)}
-                placeholder="@creator.username"
-              />
-              <button type="button" onClick={() => followCreator()} disabled={Boolean(followLoading)}>
-                {followLoading ? 'Updating...' : 'Follow / Unfollow'}
+            <div className="universalSearchActions">
+              <button type="button" onClick={searchNow} disabled={loading}>
+                {loading ? 'Searching...' : 'Search'}
+              </button>
+
+              <button type="button" onClick={followFromSearch} disabled={followLoading}>
+                {followLoading ? 'Updating...' : 'Follow @'}
               </button>
             </div>
+
+            {message && <small>{message}</small>}
           </section>
 
-          <section className="searchInputBox">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search creators, posts, reels, stories..."
-            />
-            <button type="button" onClick={() => searchNow(query)} disabled={loading}>
-              {loading ? 'Searching...' : 'Search'}
-            </button>
-          </section>
-
-          {message && <div className="vlSettingsMessage">{message}</div>}
-
-          <section className="searchResultGrid">
+          <section className="universalResultGrid">
             {results.map((item, index) => {
               const username = normalizeUsername(item.username || item.name)
-              const title = item.title || item.name || username
+              const title = item.title || item.name || username || 'Creator'
               const caption = item.caption || item.bio || 'Creator content'
               const type = item.type || 'creator'
 
               return (
-                <article className="searchResultCard" key={item.id || `${username}-${index}`}>
-                  <div className="searchResultAvatar">
+                <article className="universalResultCard" key={item.id || `${username}-${index}`}>
+                  <div className="universalResultAvatar">
                     {item.avatarUrl || item.mediaUrl ? (
                       <img src={item.avatarUrl || item.mediaUrl} alt={title} />
                     ) : (
@@ -173,35 +187,29 @@ export default function SearchPage() {
                     )}
                   </div>
 
-                  <div className="searchResultInfo">
-                    <span>{type.toUpperCase()} • {username}</span>
+                  <div>
+                    <small>{type.toUpperCase()} • {username}</small>
                     <h3>{title}</h3>
                     <p>{caption}</p>
                   </div>
 
-                  <button
-                    type="button"
-                    className="restoreMiniButton"
-                    onClick={() => followCreator(username)}
-                    disabled={followLoading === username}
-                  >
-                    {followLoading === username ? 'Updating...' : 'Follow'}
-                  </button>
+                  {username && (
+                    <button
+                      type="button"
+                      onClick={() => followResult(username)}
+                      disabled={followLoading}
+                    >
+                      Follow
+                    </button>
+                  )}
                 </article>
               )
             })}
 
-            {!loading && query.trim() && results.length === 0 && (
-              <div className="cleanEmptyState">
-                <b>No results found</b>
-                <span>Try another username or follow directly using Quick Follow.</span>
-              </div>
-            )}
-
-            {!loading && !query.trim() && (
-              <div className="cleanEmptyState">
+            {!results.length && !message && (
+              <div className="universalEmptyState">
                 <b>Start searching</b>
-                <span>Search creator username, post title, reels or stories.</span>
+                <span>Use one bar to find creators, posts, reels and stories.</span>
               </div>
             )}
           </section>
