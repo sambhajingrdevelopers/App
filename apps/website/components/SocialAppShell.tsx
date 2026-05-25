@@ -91,6 +91,7 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
             }
 
             localStorage.removeItem('vibeloop_user');
+        fetch('/api/auth/session', { method: 'DELETE' }).catch(() => {});
             window.location.href = '/login';
           }}
         >
