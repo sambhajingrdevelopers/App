@@ -20,14 +20,6 @@ type Item = {
   views?: number | string
 }
 
-type Profile = {
-  userId: string
-  name: string
-  username: string
-  bio: string
-  isOwn: boolean
-}
-
 function normalizeUsername(value?: string | null) {
   const clean = String(value || '').trim()
   if (!clean) return '@you'
@@ -38,17 +30,17 @@ function firstLetter(value?: string) {
   return String(value || 'V').trim().slice(0, 1).toUpperCase()
 }
 
-function validMedia(url?: string) {
+function mediaOk(url?: string) {
   const clean = String(url || '').trim()
   return clean.startsWith('http') || clean.startsWith('/') || clean.startsWith('data:')
 }
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<Profile>({
+  const [user, setUser] = useState({
     userId: 'USR-YOU',
     name: 'Creator',
     username: '@you',
-    bio: 'Digital Creator',
+    bio: 'Digital Creator • Designer • Developer',
     isOwn: true
   })
 
@@ -67,52 +59,37 @@ export default function ProfilePage() {
       const targetUsername = normalizeUsername(params.get('username') || session.username)
       const isOwn = targetUsername === normalizeUsername(session.username)
 
-      const [feedData, reelsData, storiesData] = await Promise.all([
-        fetch('/api/feed', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-        fetch('/api/reels', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-        fetch('/api/stories', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({}))
+      const [feed, reelData, storyData] = await Promise.all([
+        fetch('/api/feed', { cache: 'no-store' }).then(r => r.json()).catch(() => ({})),
+        fetch('/api/reels', { cache: 'no-store' }).then(r => r.json()).catch(() => ({})),
+        fetch('/api/stories', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}))
       ])
 
-      const allPosts: Item[] = Array.isArray(feedData.posts) ? feedData.posts : []
-      const allReels: Item[] = Array.isArray(reelsData.reels)
-        ? reelsData.reels
-        : Array.isArray(feedData.reels)
-          ? feedData.reels
-          : []
-      const allStories: Item[] = Array.isArray(storiesData.stories)
-        ? storiesData.stories
-        : Array.isArray(feedData.stories)
-          ? feedData.stories
-          : []
+      const allPosts: Item[] = Array.isArray(feed.posts) ? feed.posts : []
+      const allReels: Item[] = Array.isArray(reelData.reels) ? reelData.reels : Array.isArray(feed.reels) ? feed.reels : []
+      const allStories: Item[] = Array.isArray(storyData.stories) ? storyData.stories : Array.isArray(feed.stories) ? feed.stories : []
 
-      const belongs = (item: Item) => {
-        const itemUser = normalizeUsername(item.username || item.user || item.name)
-        return itemUser === targetUsername
-      }
+      const match = (item: Item) => normalizeUsername(item.username || item.user || item.name) === targetUsername
 
-      const userPosts = allPosts.filter(belongs)
-      const userReels = allReels.filter(belongs)
-      const userStories = allStories.filter(belongs)
+      const profilePosts = allPosts.filter(match)
+      const profileReels = allReels.filter(match)
+      const profileStories = allStories.filter(match)
 
-      setPosts(userPosts)
-      setReels(userReels)
-      setStories(userStories)
+      const realName = isOwn
+        ? session.name
+        : profilePosts[0]?.name || profileReels[0]?.name || profileStories[0]?.name || targetUsername.replace('@', '')
 
-      const realName =
-        isOwn
-          ? session.name
-          : userPosts[0]?.name ||
-            userReels[0]?.name ||
-            userStories[0]?.name ||
-            targetUsername.replace('@', '')
-
-      setProfile({
+      setUser({
         userId: session.userId,
         name: realName || 'Creator',
         username: targetUsername,
-        bio: isOwn ? 'Digital Creator' : 'Creator profile',
+        bio: isOwn ? 'Digital Creator • Designer • Developer' : 'Creator profile',
         isOwn
       })
+
+      setPosts(profilePosts)
+      setReels(profileReels)
+      setStories(profileStories)
     } finally {
       setLoading(false)
     }
@@ -128,41 +105,56 @@ export default function ProfilePage() {
     return posts
   }, [tab, posts, reels, stories])
 
+  const totalLikes = posts.reduce((sum, item) => sum + Number(item.likes || 0), 0)
+
   return (
     <AuthGuard>
       <SocialAppShell active="profile" title="" subtitle="" hideSearch>
-        <section className="dynProfilePage">
-          <header className="dynProfileTop">
+        <main className="realProfilePage">
+          <header className="realProfileHeader">
+            <a href="/home" className="realProfileIcon">‹</a>
             <div>
               <h1>Profile</h1>
-              <p>Dynamic creator profile</p>
+              <p>Creator account</p>
             </div>
-
-            <div className="dynProfileTopBtns">
+            <div className="realProfileHeaderActions">
               <a href="/settings">⚙</a>
               <a href="/trash">🗑</a>
             </div>
           </header>
 
-          <article className="dynProfileCard">
-            <div className="dynCover" />
+          <section className="realProfileCard">
+            <div className="realCover">
+              <div className="realCoverDots"><span /><span /></div>
+            </div>
 
-            <div className="dynProfileRow">
-              <div className="dynAvatar">{firstLetter(profile.name)}</div>
+            <div className="realIdentity">
+              <div className="realAvatar">
+                <span>{firstLetter(user.name)}</span>
+                <i />
+              </div>
 
-              <div className="dynInfo">
-                <h2>
-                  {profile.name}
-                  <span>✓</span>
-                </h2>
-                <b>{profile.username}</b>
-                <p>{profile.bio}</p>
-                <small>Verified Creator Profile</small>
+              <div className="realNameBlock">
+                <h2>{user.name}<b>✓</b></h2>
+                <strong>{user.username}</strong>
+                <p>{user.bio}</p>
+                <small>📍 India · Joined 2026</small>
               </div>
             </div>
 
-            <div className="dynActions">
-              {profile.isOwn ? (
+            <p className="realBio">
+              Creating digital experiences that inspire and connect. Design. Code. Create.
+            </p>
+
+            <div className="realStats">
+              <div><b>{posts.length}</b><span>Posts</span></div>
+              <div><b>{reels.length}</b><span>Reels</span></div>
+              <div><b>{stories.length}</b><span>Stories</span></div>
+              <div><b>{totalLikes}</b><span>Likes</span></div>
+            </div>
+
+            <div className="realActions">
+              {user.isOwn ? (
                 <>
                   <a href="/settings">Edit Profile</a>
                   <a href="/create">Create</a>
@@ -177,56 +169,39 @@ export default function ProfilePage() {
               )}
             </div>
 
-            <div className="dynStats">
-              <div>
-                <strong>{posts.length}</strong>
-                <span>Posts</span>
-              </div>
-              <div>
-                <strong>{reels.length}</strong>
-                <span>Reels</span>
-              </div>
-              <div>
-                <strong>{stories.length}</strong>
-                <span>Stories</span>
-              </div>
+            <div className="realHighlights">
+              {['Travel ✈️', 'Design 🎨', 'Life ✨', 'BTS 🎬', 'More +'].map((item) => (
+                <div key={item}>
+                  <span>{item.split(' ')[0].slice(0, 1)}</span>
+                  <b>{item}</b>
+                </div>
+              ))}
             </div>
 
-            <div className="dynTabs">
-              <button className={tab === 'posts' ? 'active' : ''} onClick={() => setTab('posts')} type="button">
-                Posts
-              </button>
-              <button className={tab === 'reels' ? 'active' : ''} onClick={() => setTab('reels')} type="button">
-                Reels
-              </button>
-              <button className={tab === 'stories' ? 'active' : ''} onClick={() => setTab('stories')} type="button">
-                Stories
-              </button>
+            <div className="realTabs">
+              <button className={tab === 'posts' ? 'active' : ''} onClick={() => setTab('posts')} type="button">▦ Posts</button>
+              <button className={tab === 'reels' ? 'active' : ''} onClick={() => setTab('reels')} type="button">▣ Reels</button>
+              <button className={tab === 'stories' ? 'active' : ''} onClick={() => setTab('stories')} type="button">◉ Stories</button>
             </div>
-          </article>
+          </section>
 
-          <section className="dynGrid">
-            {loading && <div className="dynEmpty">Loading profile...</div>}
+          <section className="realContentGrid">
+            {loading && <div className="realEmpty">Loading profile...</div>}
 
             {!loading && activeItems.map((item) => {
-              const media = item.mediaUrl || item.videoUrl || ''
+              const src = item.mediaUrl || item.videoUrl || ''
               const isVideo = item.mediaType === 'video' || Boolean(item.videoUrl)
 
               return (
-                <article className="dynPost" key={item.id}>
-                  {validMedia(media) ? (
-                    <div className="dynMedia">
-                      {isVideo ? (
-                        <video src={media} controls muted playsInline />
-                      ) : (
-                        <img src={media} alt={item.title || 'content'} />
-                      )}
-                    </div>
-                  ) : (
-                    <div className="dynFallback">{tab === 'reels' ? '▶' : tab === 'stories' ? '◉' : '✦'}</div>
-                  )}
-
-                  <div className="dynPostText">
+                <article className="realPostCard" key={item.id}>
+                  <div className="realPostMedia">
+                    {mediaOk(src) ? (
+                      isVideo ? <video src={src} muted playsInline controls /> : <img src={src} alt={item.title || 'post'} />
+                    ) : (
+                      <span>{tab === 'reels' ? '▶' : tab === 'stories' ? '◉' : '✦'}</span>
+                    )}
+                  </div>
+                  <div className="realPostText">
                     <h3>{item.title || 'Creator Content'}</h3>
                     <p>{item.caption || 'Profile update'}</p>
                   </div>
@@ -235,14 +210,14 @@ export default function ProfilePage() {
             })}
 
             {!loading && activeItems.length === 0 && (
-              <div className="dynEmpty">
+              <div className="realEmpty">
                 <b>No {tab} yet</b>
-                <span>{profile.isOwn ? 'Create your first content.' : 'No content published yet.'}</span>
-                {profile.isOwn && <a href="/create">Create now</a>}
+                <span>{user.isOwn ? 'Create your first content now.' : 'This creator has no content yet.'}</span>
+                {user.isOwn && <a href="/create">Create now</a>}
               </div>
             )}
           </section>
-        </section>
+        </main>
       </SocialAppShell>
     </AuthGuard>
   )
