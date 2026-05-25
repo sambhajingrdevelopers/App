@@ -23,7 +23,7 @@ const fallbackProfile = {
 };
 
 export async function GET(request: NextRequest) {
-  const username = request.nextUrl.searchParams.get('username') || '@you';
+  const username = request.cookies.get('vibeloop_username')?.value || request.nextUrl.searchParams.get('username') || '@you';
 
   try {
     const response = await fetch(

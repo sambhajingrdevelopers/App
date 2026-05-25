@@ -10,7 +10,12 @@ const fallbackProfile = {
   bannerUrl: ''
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const username =
+    request.cookies.get("vibeloop_username")?.value ||
+    request.nextUrl.searchParams.get("username") ||
+    "@you"
+
   try {
     const response = await fetch(`${BACKEND_URL}/api/v1/profile`, {
       method: 'GET',

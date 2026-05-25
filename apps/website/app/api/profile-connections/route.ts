@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
 
 export async function GET(request: NextRequest) {
-  const username = request.nextUrl.searchParams.get('username') || '@you';
+  const username = request.cookies.get('vibeloop_username')?.value || request.nextUrl.searchParams.get('username') || '@you';
 
   try {
     const response = await fetch(
