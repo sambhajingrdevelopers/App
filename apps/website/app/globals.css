@@ -12120,3 +12120,41 @@ body:has(.mixedHomePage) .vlBottomNav {
     grid-column: 1 / -1;
   }
 }
+
+/* Premium search page must have only ONE search bar */
+body:has(.premiumSearchPage) .cleanSearch,
+body:has(.premiumSearchPage) .vlSearch,
+body:has(.premiumSearchPage) .topSearch,
+body:has(.premiumSearchPage) .shellSearch,
+body:has(.premiumSearchPage) .headerSearch,
+body:has(.premiumSearchPage) .appSearch,
+body:has(.premiumSearchPage) .globalSearch,
+body:has(.premiumSearchPage) .searchBar:not(.premiumSearchBar),
+body:has(.premiumSearchPage) .mixedSearchBar,
+body:has(.premiumSearchPage) .searchInputBox,
+body:has(.premiumSearchPage) .quickFollowBox,
+body:has(.premiumSearchPage) .universalSearchBox {
+  display: none !important;
+}
+
+body:has(.premiumSearchPage) .premiumSearchBar {
+  display: grid !important;
+}
+
+/* Search page desktop/mobile clean width */
+body:has(.premiumSearchPage) main,
+body:has(.premiumSearchPage) .vlMain,
+body:has(.premiumSearchPage) .socialMain,
+body:has(.premiumSearchPage) .appMain,
+body:has(.premiumSearchPage) .mainContent,
+body:has(.premiumSearchPage) .pageContent,
+body:has(.premiumSearchPage) .contentArea {
+  overflow-x: hidden !important;
+}
+
+.premiumSearchPage {
+  width: min(100%, 980px) !important;
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
