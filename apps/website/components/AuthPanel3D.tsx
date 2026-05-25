@@ -22,12 +22,23 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
     setLoading(true);
 
     try {
-      const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
+      
+    if (!password.trim()) {
+      alert('Password is required.')
+      return
+    }
+
+    if (password.trim().length < 6) {
+      alert('Password must be at least 6 characters.')
+      return
+    }
+
+    const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName, email, username, password })
+        body: JSON.stringify({ fullName, name: fullName, email, username, identifier: username || email, password })
       });
 
       const result = await response.json();
@@ -41,7 +52,25 @@ export default function AuthPanel3D({ initialMode = 'login' }: AuthPanel3DProps)
         setMode('login');
         setPassword('');
       } else {
-        localStorage.setItem('vibeloop_user', JSON.stringify(result.data || {}));
+        
+      const realUser = result.user || result.data?.user || result.data || {}
+
+      if (!realUser.username && username) {
+        realUser.username = username.startsWith('@') ? username : `@${username}`
+      }
+
+      if (!realUser.name) {
+        realUser.name = fullName || realUser.username || 'Creator'
+      }
+
+      localStorage.setItem('vibeloop_user', JSON.stringify(realUser))
+
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(realUser)
+      }).catch(() => {})
+;
         setStatus('Login successful. Opening platform...');
         setTimeout(() => {
           window.location.href = '/home';
