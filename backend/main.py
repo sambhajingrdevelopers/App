@@ -597,3 +597,24 @@ except Exception:
     pass
 
 app.include_router(content_persistent_fixed_router)
+
+
+# Fixed public users search route
+try:
+    from routes.users_search_fixed import router as users_search_fixed_router
+except ImportError:
+    from .routes.users_search_fixed import router as users_search_fixed_router
+
+try:
+    fixed_user_paths = {
+        "/api/v1/users/search",
+        "/api/v1/users/list",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in fixed_user_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(users_search_fixed_router)

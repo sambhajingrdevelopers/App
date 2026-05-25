@@ -34,11 +34,12 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const [homeData, reelsData, storiesData, followingData] = await Promise.all([
+  const [homeData, reelsData, storiesData, followingData, usersData] = await Promise.all([
     getJson("/api/v1/content/home-live"),
     getJson("/api/v1/content/reels-live"),
     getJson("/api/v1/content/stories-live"),
-    getJson(`/api/v1/following?username=${encodeURIComponent(username)}`)
+    getJson(`/api/v1/following?username=${encodeURIComponent(username)}`),
+    getJson(`/api/v1/users/search?q=${encodeURIComponent(q)}`)
   ])
 
   const posts = Array.isArray(homeData.posts) ? homeData.posts : []
@@ -54,7 +55,20 @@ export async function GET(request: NextRequest) {
       ? homeData.stories
       : []
 
-  const creators = Array.isArray(followingData.users) ? followingData.users : []
+  const followingCreators = Array.isArray(followingData.users) ? followingData.users : []
+  const realUsers = Array.isArray(usersData.users)
+    ? usersData.users
+    : Array.isArray(usersData.results)
+      ? usersData.results
+      : []
+
+  const creators = [
+    ...realUsers,
+    ...followingCreators
+  ].filter((user: any, index: number, arr: any[]) => {
+    const key = normalizeUsername(user.username || user.name)
+    return arr.findIndex((x: any) => normalizeUsername(x.username || x.name) === key) === index
+  })
 
   const creatorResults = creators
     .filter((user: any) =>
