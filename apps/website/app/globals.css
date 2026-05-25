@@ -12158,3 +12158,330 @@ body:has(.premiumSearchPage) .contentArea {
   margin-left: auto !important;
   margin-right: auto !important;
 }
+
+/* Reels section under Popular creators */
+.premiumReelsPanel {
+  margin-top: 2px;
+}
+
+.premiumReelsPanel .premiumSuggestionGrid {
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+}
+
+.premiumReelsPanel .premiumSuggestionCard {
+  min-height: 250px;
+}
+
+.premiumReelsPanel .premiumSuggestionMedia {
+  height: 190px;
+  aspect-ratio: 9 / 14;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,0,184,0.35), transparent 42%),
+    radial-gradient(circle at 70% 80%, rgba(0,200,255,0.18), transparent 48%),
+    linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+}
+
+.premiumReelsPanel .premiumSuggestionMedia::after {
+  content: '▶';
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+}
+
+.premiumReelsPanel .premiumSuggestionMedia em {
+  background: linear-gradient(135deg, #ff00b8, #673cff);
+}
+
+@media (max-width: 540px) {
+  .premiumReelsPanel .premiumSuggestionGrid {
+    grid-template-columns: repeat(3, 165px);
+    overflow-x: auto;
+  }
+
+  .premiumReelsPanel .premiumSuggestionMedia {
+    height: 210px;
+  }
+}
+
+/* FINAL PROFILE RESPONSIVE FIX */
+html,
+body {
+  overflow-x: hidden !important;
+}
+
+body:has(.dynamicProfile),
+body:has(.profilePage),
+body:has(.profileShell),
+body:has(.profileCard),
+body:has(.profileHero),
+body:has(.dpProfile),
+body:has(.dpShell),
+body:has(.dpContainer) {
+  overflow-x: hidden !important;
+}
+
+.profilePage,
+.profileShell,
+.profileContent,
+.profileContainer,
+.profileCard,
+.profileHero,
+.profileMain,
+.dynamicProfile,
+.dpProfile,
+.dpShell,
+.dpContainer,
+.dpMain,
+.dpCard,
+.dpHero {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+.profileCover,
+.profileBanner,
+.profileHeroBanner,
+.profileHeaderImage,
+.profileBg,
+.dpCover,
+.dpBanner,
+.dpHeroBanner,
+.dpHeaderImage,
+.dpProfileCover {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: clamp(150px, 34vw, 260px) !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  object-fit: cover !important;
+  box-sizing: border-box !important;
+}
+
+.profileCover img,
+.profileBanner img,
+.profileHeroBanner img,
+.profileHeaderImage img,
+.dpCover img,
+.dpBanner img,
+.dpHeroBanner img,
+.dpHeaderImage img,
+.dpProfileCover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.profileAvatar,
+.dpAvatar,
+.dpProfileAvatar,
+.profilePhoto {
+  width: clamp(88px, 24vw, 150px) !important;
+  height: clamp(88px, 24vw, 150px) !important;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+}
+
+.profileInfo,
+.profileDetails,
+.profileMeta,
+.dpInfo,
+.dpDetails,
+.dpMeta {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.profileStats,
+.dpStats,
+.profileStatGrid,
+.dpStatGrid {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.profileTabs,
+.dpTabs,
+.profileTabBar,
+.dpTabBar {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.profileTabs::-webkit-scrollbar,
+.dpTabs::-webkit-scrollbar,
+.profileTabBar::-webkit-scrollbar,
+.dpTabBar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.profilePosts,
+.profileGrid,
+.dpPosts,
+.dpGrid,
+.dpContentGrid {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  padding-bottom: 120px !important;
+}
+
+.profilePosts > *,
+.profileGrid > *,
+.dpPosts > *,
+.dpGrid > *,
+.dpContentGrid > * {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Mobile profile must fit screen */
+@media (max-width: 760px) {
+  body:has(.dynamicProfile) main,
+  body:has(.profilePage) main,
+  body:has(.dpProfile) main,
+  body:has(.profileCard) main,
+  body:has(.dynamicProfile) .vlMain,
+  body:has(.profilePage) .vlMain,
+  body:has(.dpProfile) .vlMain,
+  body:has(.profileCard) .vlMain,
+  body:has(.dynamicProfile) .socialMain,
+  body:has(.profilePage) .socialMain,
+  body:has(.dpProfile) .socialMain,
+  body:has(.profileCard) .socialMain,
+  body:has(.dynamicProfile) .appMain,
+  body:has(.profilePage) .appMain,
+  body:has(.dpProfile) .appMain,
+  body:has(.profileCard) .appMain,
+  body:has(.dynamicProfile) .mainContent,
+  body:has(.profilePage) .mainContent,
+  body:has(.dpProfile) .mainContent,
+  body:has(.profileCard) .mainContent {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-x: hidden !important;
+  }
+
+  .profilePage,
+  .profileShell,
+  .profileContent,
+  .profileContainer,
+  .profileCard,
+  .profileHero,
+  .dynamicProfile,
+  .dpProfile,
+  .dpShell,
+  .dpContainer,
+  .dpCard,
+  .dpHero {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius: 24px !important;
+  }
+
+  .profileCover,
+  .profileBanner,
+  .profileHeroBanner,
+  .profileHeaderImage,
+  .dpCover,
+  .dpBanner,
+  .dpHeroBanner,
+  .dpHeaderImage,
+  .dpProfileCover {
+    width: 100% !important;
+    height: 180px !important;
+    border-radius: 22px !important;
+  }
+
+  .profileAvatar,
+  .dpAvatar,
+  .dpProfileAvatar,
+  .profilePhoto {
+    width: 108px !important;
+    height: 108px !important;
+  }
+
+  .profileStats,
+  .dpStats,
+  .profileStatGrid,
+  .dpStatGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .profilePosts,
+  .profileGrid,
+  .dpPosts,
+  .dpGrid,
+  .dpContentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 420px) {
+  .profilePage,
+  .profileShell,
+  .profileContent,
+  .profileContainer,
+  .profileCard,
+  .profileHero,
+  .dynamicProfile,
+  .dpProfile,
+  .dpShell,
+  .dpContainer,
+  .dpCard,
+  .dpHero {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+
+  .profileCover,
+  .profileBanner,
+  .profileHeroBanner,
+  .profileHeaderImage,
+  .dpCover,
+  .dpBanner,
+  .dpHeroBanner,
+  .dpHeaderImage,
+  .dpProfileCover {
+    height: 160px !important;
+  }
+
+  .profilePosts,
+  .profileGrid,
+  .dpPosts,
+  .dpGrid,
+  .dpContentGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
