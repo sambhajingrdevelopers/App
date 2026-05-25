@@ -6,6 +6,7 @@ import AdminNavLink from './AdminNavLink';
 type ActivePage = string;
 
 type Props = {
+  hideSearch?: boolean
   active: ActivePage;
   title: string;
   subtitle: string;
@@ -32,7 +33,7 @@ const menu: { key: ActivePage; label: string; href: string }[] = [
   { key: 'create', label: '＋ Create', href: '/create' }
 ];
 
-export default function SocialAppShell({ active, title, subtitle, children }: Props) {
+export default function SocialAppShell({ active, title, subtitle, children, hideSearch = false }: Props) {
   const [topSearch, setTopSearch] = useState('');
   const [profile, setProfile] = useState({
     displayName: 'VibeLoop Creator',
@@ -106,7 +107,7 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
             <p>{subtitle}</p>
           </div>
 
-          <div className="vlSearch">
+          {!hideSearch && (<div className="vlSearch">
             <span>⌕</span>
             <input
               placeholder="Search creators, reels, hashtags..."
@@ -118,7 +119,7 @@ export default function SocialAppShell({ active, title, subtitle, children }: Pr
                 }
               }}
             />
-          </div>
+          </div>)}
         </header>
 
         {children}

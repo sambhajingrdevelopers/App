@@ -160,7 +160,7 @@ export default function ProfilePage() {
 
   return (
     <AuthGuard>
-      <SocialAppShell active="profile" title="" subtitle="">
+      <SocialAppShell active="profile" title="" subtitle="" hideSearch>
         <section className="proProfilePage">
           <article className="proProfileCard">
             <div className="proProfileCover">
