@@ -4,34 +4,29 @@ const BACKEND_URL = process.env.EC2_BACKEND_URL || "http://43.205.145.63:8003"
 
 export async function GET() {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/v1/feed`, {
-      method: "GET",
+    const response = await fetch(`${BACKEND_URL}/api/v1/content/home-live`, {
       cache: "no-store"
     })
-
-    if (!response.ok) {
-      return NextResponse.json({
-        success: true,
-        source: "platform",
-        stories: [],
-        posts: []
-      })
-    }
 
     const data = await response.json()
 
     return NextResponse.json({
-      success: true,
-      source: "platform",
+      success: data.success !== false,
+      source: data.source || "backend",
+      posts: data.posts || [],
+      reels: data.reels || [],
       stories: data.stories || [],
-      posts: data.posts || []
+      total: data.total || 0
     })
-  } catch {
+  } catch (error: any) {
     return NextResponse.json({
-      success: true,
-      source: "platform",
+      success: false,
+      source: "frontend-error",
+      message: error?.message || "Feed load failed",
+      posts: [],
+      reels: [],
       stories: [],
-      posts: []
+      total: 0
     })
   }
 }

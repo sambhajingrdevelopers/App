@@ -5,30 +5,24 @@ const BACKEND_URL = process.env.EC2_BACKEND_URL || "http://43.205.145.63:8003"
 export async function GET() {
   try {
     const response = await fetch(`${BACKEND_URL}/api/v1/content/reels-live`, {
-      method: "GET",
       cache: "no-store"
     })
-
-    if (!response.ok) {
-      return NextResponse.json({
-        success: true,
-        source: "platform",
-        reels: []
-      })
-    }
 
     const data = await response.json()
 
     return NextResponse.json({
-      success: true,
-      source: "platform",
-      reels: data.reels || []
+      success: data.success !== false,
+      source: data.source || "backend",
+      reels: data.reels || [],
+      total: data.total || 0
     })
-  } catch {
+  } catch (error: any) {
     return NextResponse.json({
-      success: true,
-      source: "platform",
-      reels: []
+      success: false,
+      source: "frontend-error",
+      message: error?.message || "Reels load failed",
+      reels: [],
+      total: 0
     })
   }
 }
