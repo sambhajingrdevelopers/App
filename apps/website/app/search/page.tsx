@@ -70,6 +70,24 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false)
   const [followLoading, setFollowLoading] = useState('')
 
+  // AUTO_REAL_USER_SEARCH
+  useEffect(() => {
+    const clean = query.trim()
+
+    if (!clean) {
+      setResults([])
+      setMessage('')
+      return
+    }
+
+    const timer = setTimeout(() => {
+      searchNow(clean)
+    }, 450)
+
+    return () => clearTimeout(timer)
+  }, [query])
+
+
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('vibeloop_recent_searches') || '[]')
     if (Array.isArray(saved)) setRecent(saved.slice(0, 6))
@@ -154,6 +172,39 @@ export default function SearchPage() {
         title: '#AdvancedDesign',
         subtitle: '18.7K posts',
         username: '',
+        mediaUrl: ''
+      }
+    ]
+  }, [discover])
+
+  const reelSuggestions = useMemo(() => {
+    const liveReels = discover.filter((item) => item.type === 'reel').slice(0, 6)
+
+    if (liveReels.length) return liveReels
+
+    return [
+      {
+        id: 'reel-website-preview',
+        type: 'reel' as const,
+        title: 'Website Preview Motion',
+        subtitle: '1.2K views',
+        username: '@sambhajingrdevelopers',
+        mediaUrl: ''
+      },
+      {
+        id: 'reel-ui-motion',
+        type: 'reel' as const,
+        title: '3D UI Motion Preview',
+        subtitle: '940 views',
+        username: '@design.studio',
+        mediaUrl: ''
+      },
+      {
+        id: 'reel-workflow',
+        type: 'reel' as const,
+        title: 'Creative Workflow',
+        subtitle: '720 views',
+        username: '@creativehub',
         mediaUrl: ''
       }
     ]
@@ -381,14 +432,14 @@ export default function SearchPage() {
             </div>
           </section>
 
-          <section className="premiumSuggestedPanel">
+          <section className="premiumSuggestedPanel premiumReelsPanel">
             <div className="premiumSectionTitle">
-              <h2>Suggested for you</h2>
+              <h2>Reels for you</h2>
               <a href="/search">See all</a>
             </div>
 
             <div className="premiumSuggestionGrid">
-              {suggestedItems.slice(0, 3).map((item) => (
+              {reelSuggestions.slice(0, 6).map((item) => (
                 <article className="premiumSuggestionCard" key={item.id}>
                   <div className="premiumSuggestionMedia">
                     {isRealMedia(item.mediaUrl) ? (

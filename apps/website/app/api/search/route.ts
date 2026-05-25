@@ -23,7 +23,6 @@ async function getJson(path: string) {
 
 export async function GET(request: NextRequest) {
   const q = String(request.nextUrl.searchParams.get("q") || "").trim()
-  const username = request.cookies.get("vibeloop_username")?.value || "@you"
 
   if (!q) {
     return NextResponse.json({
@@ -34,15 +33,21 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const [homeData, reelsData, storiesData, followingData, usersData] = await Promise.all([
+  const [usersData, homeData, reelsData, storiesData] = await Promise.all([
+    getJson(`/api/v1/users/search?q=${encodeURIComponent(q)}`),
     getJson("/api/v1/content/home-live"),
     getJson("/api/v1/content/reels-live"),
-    getJson("/api/v1/content/stories-live"),
-    getJson(`/api/v1/following?username=${encodeURIComponent(username)}`),
-    getJson(`/api/v1/users/search?q=${encodeURIComponent(q)}`)
+    getJson("/api/v1/content/stories-live")
   ])
 
+  const realUsers = Array.isArray(usersData.users)
+    ? usersData.users
+    : Array.isArray(usersData.results)
+      ? usersData.results
+      : []
+
   const posts = Array.isArray(homeData.posts) ? homeData.posts : []
+
   const reels = Array.isArray(reelsData.reels)
     ? reelsData.reels
     : Array.isArray(homeData.reels)
@@ -55,35 +60,18 @@ export async function GET(request: NextRequest) {
       ? homeData.stories
       : []
 
-  const followingCreators = Array.isArray(followingData.users) ? followingData.users : []
-  const realUsers = Array.isArray(usersData.users)
-    ? usersData.users
-    : Array.isArray(usersData.results)
-      ? usersData.results
-      : []
-
-  const creators = [
-    ...realUsers,
-    ...followingCreators
-  ].filter((user: any, index: number, arr: any[]) => {
-    const key = normalizeUsername(user.username || user.name)
-    return arr.findIndex((x: any) => normalizeUsername(x.username || x.name) === key) === index
-  })
-
-  const creatorResults = creators
-    .filter((user: any) =>
-      includesQuery(user.name, q) ||
-      includesQuery(user.username, q)
-    )
-    .map((user: any) => ({
-      id: user.id || user.username,
-      type: "creator",
-      title: user.name || user.username || "Creator",
-      name: user.name || user.username || "Creator",
-      username: normalizeUsername(user.username),
-      caption: user.online ? "Online creator" : "Creator profile",
-      avatarUrl: user.avatarUrl || ""
-    }))
+  const creatorResults = realUsers.map((user: any) => ({
+    id: user.id || user.userId || user.username,
+    type: "creator",
+    title: user.name || user.username || "Creator",
+    name: user.name || user.username || "Creator",
+    username: normalizeUsername(user.username),
+    caption: user.bio || user.caption || "Digital Creator",
+    bio: user.bio || user.caption || "Digital Creator",
+    avatarUrl: user.avatarUrl || "",
+    verified: user.verified !== false,
+    followers: user.followers || 0
+  }))
 
   const postResults = posts
     .filter((post: any) =>
@@ -146,14 +134,14 @@ export async function GET(request: NextRequest) {
     ...postResults,
     ...reelResults,
     ...storyResults
-  ].slice(0, 60)
+  ].slice(0, 80)
 
   return NextResponse.json({
     success: true,
-    source: "backend-live",
+    source: "backend-users-content-search",
     query: q,
     counts: {
-      creators: creatorResults.length,
+      users: creatorResults.length,
       posts: postResults.length,
       reels: reelResults.length,
       stories: storyResults.length
