@@ -14647,3 +14647,19 @@ body:has(.realProfilePage) .mainContent {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Dynamic owner/public profile privacy polish */
+.realStats {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.realActions a,
+.realActions button {
+  border-radius: 18px !important;
+}
+
+@media (max-width: 430px) {
+  .realStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

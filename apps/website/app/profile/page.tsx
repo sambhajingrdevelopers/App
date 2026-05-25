@@ -54,42 +54,27 @@ export default function ProfilePage() {
     setLoading(true)
 
     try {
-      const session = await getSessionUser()
       const params = new URLSearchParams(window.location.search)
-      const targetUsername = normalizeUsername(params.get('username') || session.username)
-      const isOwn = targetUsername === normalizeUsername(session.username)
+      const target = params.get('username') || ''
 
-      const [feed, reelData, storyData] = await Promise.all([
-        fetch('/api/feed', { cache: 'no-store' }).then(r => r.json()).catch(() => ({})),
-        fetch('/api/reels', { cache: 'no-store' }).then(r => r.json()).catch(() => ({})),
-        fetch('/api/stories', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}))
-      ])
+      const data = await fetch(`/api/profile${target ? `?username=${encodeURIComponent(target)}` : ''}`, {
+        cache: 'no-store'
+      }).then((r) => r.json())
 
-      const allPosts: Item[] = Array.isArray(feed.posts) ? feed.posts : []
-      const allReels: Item[] = Array.isArray(reelData.reels) ? reelData.reels : Array.isArray(feed.reels) ? feed.reels : []
-      const allStories: Item[] = Array.isArray(storyData.stories) ? storyData.stories : Array.isArray(feed.stories) ? feed.stories : []
-
-      const match = (item: Item) => normalizeUsername(item.username || item.user || item.name) === targetUsername
-
-      const profilePosts = allPosts.filter(match)
-      const profileReels = allReels.filter(match)
-      const profileStories = allStories.filter(match)
-
-      const realName = isOwn
-        ? session.name
-        : profilePosts[0]?.name || profileReels[0]?.name || profileStories[0]?.name || targetUsername.replace('@', '')
+      const profileUser = data.user || {}
+      const counts = data.counts || {}
 
       setUser({
-        userId: session.userId,
-        name: realName || 'Creator',
-        username: targetUsername,
-        bio: isOwn ? 'Digital Creator • Designer • Developer' : 'Creator profile',
-        isOwn
+        userId: profileUser.username || 'USR-YOU',
+        name: profileUser.name || 'Creator',
+        username: profileUser.username || '@you',
+        bio: profileUser.bio || 'Digital Creator • Designer • Developer',
+        isOwn: Boolean(profileUser.isOwner)
       })
 
-      setPosts(profilePosts)
-      setReels(profileReels)
-      setStories(profileStories)
+      setPosts(Array.isArray(data.posts) ? data.posts : [])
+      setReels(Array.isArray(data.reels) ? data.reels : [])
+      setStories(Array.isArray(data.stories) ? data.stories : [])
     } finally {
       setLoading(false)
     }

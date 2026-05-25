@@ -627,3 +627,12 @@ except ImportError:
     from .routes.public_users_search_fixed import router as public_users_search_fixed_router
 
 app.include_router(public_users_search_fixed_router)
+
+
+# Profile privacy + dynamic public profile route
+try:
+    from routes.profile_privacy_fixed import router as profile_privacy_fixed_router
+except ImportError:
+    from .routes.profile_privacy_fixed import router as profile_privacy_fixed_router
+
+app.include_router(profile_privacy_fixed_router)

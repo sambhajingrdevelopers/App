@@ -1,88 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server"
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://43.205.145.63:8003';
+const BACKEND_URL = process.env.EC2_BACKEND_URL || "http://43.205.145.63:8003"
 
-const fallbackProfile = {
-  displayName: 'VibeLoop Creator',
-  username: '@you',
-  bio: 'Digital creator • Reels • Stories • Brand collaborations',
-  avatarUrl: '',
-  bannerUrl: ''
-};
-
-export async function GET(request: NextRequest) {
-  const username =
-    request.cookies.get("vibeloop_username")?.value ||
-    request.nextUrl.searchParams.get("username") ||
-    "@you"
-
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/v1/profile`, {
-      method: 'GET',
-      cache: 'no-store'
-    });
-
-    if (!response.ok) {
-      return NextResponse.json({
-        success: true,
-        source: 'fallback',
-        profile: fallbackProfile
-      });
-    }
-
-    const data = await response.json();
-
-    return NextResponse.json({
-      success: true,
-      source: 'platform',
-      profile: data.profile || fallbackProfile
-    });
-  } catch {
-    return NextResponse.json({
-      success: true,
-      source: 'fallback',
-      profile: fallbackProfile
-    });
-  }
+function normalizeUsername(value: any) {
+  const clean = String(value || "").trim()
+  if (!clean) return "@you"
+  return clean.startsWith("@") ? clean : `@${clean}`
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const target = normalizeUsername(request.nextUrl.searchParams.get("username") || request.cookies.get("vibeloop_username")?.value || "@you")
+  const viewer = normalizeUsername(request.cookies.get("vibeloop_username")?.value || "@guest")
+
   try {
-    const body = await request.json();
+    const res = await fetch(
+      `${BACKEND_URL}/api/v1/public/profile?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(viewer)}`,
+      { cache: "no-store" }
+    )
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/profile`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body),
-      cache: 'no-store'
-    });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: data?.detail || data?.message || 'Profile save failed'
-        },
-        { status: response.status }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      source: 'platform',
-      profile: data.profile
-    });
+    const data = await res.json()
+    return NextResponse.json(data)
   } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        message: error?.message || 'Profile server error'
+    return NextResponse.json({
+      success: false,
+      message: error?.message || "Profile load failed",
+      user: {
+        name: target.replace("@", ""),
+        username: target,
+        bio: "Digital Creator",
+        isOwner: target === viewer,
+        isPrivate: false,
+        allowMessages: true,
+        followers: 0,
+        following: 0
       },
-      { status: 500 }
-    );
+      posts: [],
+      reels: [],
+      stories: [],
+      counts: { posts: 0, reels: 0, stories: 0, followers: 0, following: 0 }
+    })
   }
 }
