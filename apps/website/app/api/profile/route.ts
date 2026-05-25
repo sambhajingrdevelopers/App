@@ -8,36 +8,134 @@ function normalizeUsername(value: any) {
   return clean.startsWith("@") ? clean : `@${clean}`
 }
 
-export async function GET(request: NextRequest) {
-  const target = normalizeUsername(request.nextUrl.searchParams.get("username") || request.cookies.get("vibeloop_username")?.value || "@you")
-  const viewer = normalizeUsername(request.cookies.get("vibeloop_username")?.value || "@guest")
-
+async function getJson(path: string) {
   try {
-    const res = await fetch(
-      `${BACKEND_URL}/api/v1/public/profile?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(viewer)}`,
-      { cache: "no-store" }
-    )
+    const res = await fetch(`${BACKEND_URL}${path}`, { cache: "no-store" })
+    return await res.json()
+  } catch {
+    return {}
+  }
+}
 
-    const data = await res.json()
-    return NextResponse.json(data)
-  } catch (error: any) {
+function safeCount(value: any) {
+  const n = Number(value || 0)
+  return Number.isFinite(n) ? n : 0
+}
+
+function matchUser(item: any, username: string) {
+  const target = normalizeUsername(username).toLowerCase()
+  const itemUser = normalizeUsername(item?.username || item?.user || item?.creator || item?.name).toLowerCase()
+  return itemUser === target
+}
+
+export async function GET(request: NextRequest) {
+  const target = normalizeUsername(
+    request.nextUrl.searchParams.get("username") ||
+    request.cookies.get("vibeloop_username")?.value ||
+    "@you"
+  )
+
+  const viewer = normalizeUsername(
+    request.nextUrl.searchParams.get("viewer") ||
+    request.cookies.get("vibeloop_username")?.value ||
+    "@guest"
+  )
+
+  const isOwner = target.toLowerCase() === viewer.toLowerCase()
+
+  const backendProfile = await getJson(
+    `/api/v1/public/profile?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(viewer)}`
+  )
+
+  if (backendProfile?.success && backendProfile?.user) {
     return NextResponse.json({
-      success: false,
-      message: error?.message || "Profile load failed",
+      success: true,
+      source: "backend-public-profile",
       user: {
-        name: target.replace("@", ""),
-        username: target,
-        bio: "Digital Creator",
-        isOwner: target === viewer,
-        isPrivate: false,
-        allowMessages: true,
-        followers: 0,
-        following: 0
+        name: backendProfile.user.name || target.replace("@", ""),
+        username: normalizeUsername(backendProfile.user.username || target),
+        bio: backendProfile.user.bio || "Digital Creator",
+        avatarUrl: backendProfile.user.avatarUrl || "",
+        bannerUrl: backendProfile.user.bannerUrl || "",
+        verified: backendProfile.user.verified !== false,
+        followers: backendProfile.user.followers ?? 0,
+        following: backendProfile.user.following ?? 0,
+        isOwner: Boolean(backendProfile.user.isOwner),
+        isPrivate: Boolean(backendProfile.user.isPrivate),
+        allowMessages: backendProfile.user.allowMessages !== false
       },
-      posts: [],
-      reels: [],
-      stories: [],
-      counts: { posts: 0, reels: 0, stories: 0, followers: 0, following: 0 }
+      privacy: backendProfile.privacy || {},
+      posts: Array.isArray(backendProfile.posts) ? backendProfile.posts : [],
+      reels: Array.isArray(backendProfile.reels) ? backendProfile.reels : [],
+      stories: Array.isArray(backendProfile.stories) ? backendProfile.stories : [],
+      counts: backendProfile.counts || {}
     })
   }
+
+  const [usersData, feedData, reelsData, storiesData] = await Promise.all([
+    getJson(`/api/v1/public/users/search?q=${encodeURIComponent(target)}`),
+    getJson("/api/v1/content/home-live"),
+    getJson("/api/v1/content/reels-live"),
+    getJson("/api/v1/content/stories-live")
+  ])
+
+  const users = Array.isArray(usersData.users)
+    ? usersData.users
+    : Array.isArray(usersData.results)
+      ? usersData.results
+      : []
+
+  const foundUser =
+    users.find((u: any) => normalizeUsername(u.username).toLowerCase() === target.toLowerCase()) ||
+    users[0] ||
+    {}
+
+  const posts = (Array.isArray(feedData.posts) ? feedData.posts : []).filter((item: any) => matchUser(item, target))
+  const reels = (
+    Array.isArray(reelsData.reels)
+      ? reelsData.reels
+      : Array.isArray(feedData.reels)
+        ? feedData.reels
+        : []
+  ).filter((item: any) => matchUser(item, target))
+
+  const stories = (
+    Array.isArray(storiesData.stories)
+      ? storiesData.stories
+      : Array.isArray(feedData.stories)
+        ? feedData.stories
+        : []
+  ).filter((item: any) => matchUser(item, target))
+
+  return NextResponse.json({
+    success: true,
+    source: "frontend-profile-fallback",
+    user: {
+      name: foundUser.name || target.replace("@", "") || "Creator",
+      username: target,
+      bio: foundUser.bio || foundUser.caption || "Digital Creator • Designer • Developer",
+      avatarUrl: foundUser.avatarUrl || "",
+      bannerUrl: foundUser.bannerUrl || "",
+      verified: foundUser.verified !== false,
+      followers: safeCount(foundUser.followers),
+      following: safeCount(foundUser.following),
+      isOwner,
+      isPrivate: false,
+      allowMessages: true
+    },
+    privacy: {
+      isPrivate: false,
+      allowMessages: true
+    },
+    posts,
+    reels,
+    stories,
+    counts: {
+      posts: posts.length,
+      reels: reels.length,
+      stories: stories.length,
+      followers: safeCount(foundUser.followers),
+      following: safeCount(foundUser.following)
+    }
+  })
 }

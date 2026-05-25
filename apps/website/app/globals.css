@@ -14663,3 +14663,650 @@ body:has(.realProfilePage) .mainContent {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* Real Post Detail Page */
+body:has(.realPostDetailPage) .cleanSearch,
+body:has(.realPostDetailPage) .searchBar,
+body:has(.realPostDetailPage) input[placeholder*="Search creators"] {
+  display: none !important;
+}
+
+.realPostDetailPage {
+  width: min(100%, 640px) !important;
+  max-width: 640px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding: 8px 0 130px !important;
+}
+
+.realPostDetailHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.realPostDetailHeader a {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+.realPostDetailHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  letter-spacing: -0.06em !important;
+}
+
+.realPostDetailHeader p {
+  margin: 5px 0 0 !important;
+  color: rgba(255,255,255,0.62) !important;
+}
+
+.realPostDetailState {
+  min-height: 180px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  border-radius: 28px !important;
+  padding: 20px !important;
+  color: rgba(255,255,255,0.68) !important;
+  background: rgba(255,255,255,0.055) !important;
+}
+
+.realPostDetailState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.realPostDetailState a {
+  width: fit-content !important;
+  margin: 6px auto 0 !important;
+  padding: 11px 15px !important;
+  border-radius: 999px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.realPostDetailCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(10,12,24,0.88) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+}
+
+.realPostDetailUser {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px !important;
+}
+
+.realPostDetailAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  font-size: 24px !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.realPostDetailUser div a {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  font-size: 18px !important;
+}
+
+.realPostDetailUser div a span {
+  color: #00c8ff !important;
+}
+
+.realPostDetailUser small {
+  display: block !important;
+  color: rgba(255,255,255,0.58) !important;
+  margin-top: 3px !important;
+}
+
+.realPostDetailUser button {
+  border: 0 !important;
+  color: white !important;
+  font-size: 24px !important;
+  background: transparent !important;
+}
+
+.realPostDetailMedia {
+  width: 100% !important;
+  min-height: 280px !important;
+  max-height: 560px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: #05050b !important;
+}
+
+.realPostDetailMedia img,
+.realPostDetailMedia video {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 560px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.realPostDetailMedia span {
+  color: white !important;
+  font-size: 70px !important;
+}
+
+.realPostDetailBody {
+  padding: 15px !important;
+}
+
+.realPostDetailBody h2 {
+  margin: 0 0 8px !important;
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.realPostDetailBody p {
+  margin: 0 0 13px !important;
+  color: rgba(255,255,255,0.68) !important;
+  line-height: 1.45 !important;
+}
+
+.realPostDetailActions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.realPostDetailActions button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 12px 8px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+.realPostCommentBox {
+  padding: 0 15px 15px !important;
+}
+
+.realPostCommentBox h3 {
+  margin: 0 0 10px !important;
+  color: white !important;
+}
+
+.realPostCommentBox div {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+}
+
+.realPostCommentBox input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+.realPostCommentBox button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 12px 15px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+/* Public + Owner Dynamic Profile */
+body:has(.publicOwnerProfile) {
+  overflow-x: hidden !important;
+}
+
+body:has(.publicOwnerProfile) aside,
+body:has(.publicOwnerProfile) .sidebar,
+body:has(.publicOwnerProfile) .sideNav,
+body:has(.publicOwnerProfile) .vlSideNav,
+body:has(.publicOwnerProfile) .cleanSearch,
+body:has(.publicOwnerProfile) .searchBar,
+body:has(.publicOwnerProfile) input[placeholder*="Search creators"] {
+  display: none !important;
+}
+
+body:has(.publicOwnerProfile) main,
+body:has(.publicOwnerProfile) .vlMain,
+body:has(.publicOwnerProfile) .socialMain,
+body:has(.publicOwnerProfile) .appMain,
+body:has(.publicOwnerProfile) .mainContent {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  overflow-x: hidden !important;
+}
+
+.publicOwnerProfile {
+  width: min(100%, 650px) !important;
+  max-width: 650px !important;
+  margin: 0 auto !important;
+  padding: 4px 0 130px !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.publicOwnerProfile * {
+  box-sizing: border-box !important;
+}
+
+.poProfileHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.poRoundBtn,
+.poHeaderActions a,
+.poHeaderActions button {
+  width: 44px !important;
+  height: 44px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 24px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+
+.poRoundBtn {
+  font-size: 32px !important;
+}
+
+.poProfileHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  line-height: 1 !important;
+  letter-spacing: -.06em !important;
+}
+
+.poProfileHeader p {
+  margin: 4px 0 0 !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.poHeaderActions {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.poProfileCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  padding-bottom: 16px !important;
+  background: rgba(10,12,24,.9) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+
+.poCover {
+  height: 185px !important;
+  border-radius: 30px 30px 22px 22px !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,0,184,.35), transparent 35%),
+    linear-gradient(135deg, #0ebdff, #6d3cff 65%, #ff00b8) !important;
+}
+
+.poCover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.poCover span {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.22), transparent 30%),
+    linear-gradient(120deg, transparent, rgba(255,255,255,.12), transparent) !important;
+}
+
+.poIdentity {
+  padding: 0 18px !important;
+  margin-top: -58px !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  gap: 16px !important;
+  align-items: end !important;
+}
+
+.poAvatar {
+  width: 116px !important;
+  height: 116px !important;
+  border-radius: 50% !important;
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+  border: 6px solid #090914 !important;
+  box-shadow: 0 18px 45px rgba(255,0,184,.25) !important;
+}
+
+.poAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.poAvatar b {
+  color: white !important;
+  font-size: 52px !important;
+}
+
+.poAvatar i {
+  position: absolute !important;
+  right: 5px !important;
+  bottom: 8px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  background: #10e58e !important;
+  border: 4px solid #090914 !important;
+}
+
+.poNameBox h2 {
+  margin: 0 !important;
+  color: white !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  font-size: 34px !important;
+  line-height: 1 !important;
+  letter-spacing: -.06em !important;
+}
+
+.poNameBox h2 em {
+  width: 30px !important;
+  height: 30px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+  font-style: normal !important;
+  font-size: 15px !important;
+}
+
+.poNameBox strong {
+  display: block !important;
+  color: #00eaff !important;
+  font-size: 18px !important;
+  margin-top: 4px !important;
+}
+
+.poNameBox p,
+.poNameBox small,
+.poBio {
+  color: rgba(255,255,255,.68) !important;
+}
+
+.poNameBox p {
+  margin: 6px 0 4px !important;
+}
+
+.poBio {
+  margin: 18px 18px 14px !important;
+  text-align: center !important;
+  line-height: 1.45 !important;
+}
+
+.poStats {
+  padding: 0 18px 14px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.poStats div {
+  text-align: center !important;
+  border-radius: 18px !important;
+  padding: 13px 6px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.poStats b {
+  display: block !important;
+  color: white !important;
+  font-size: 23px !important;
+}
+
+.poStats span {
+  color: rgba(255,255,255,.58) !important;
+  font-size: 12px !important;
+}
+
+.poActions {
+  padding: 0 18px 16px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.poActions a,
+.poActions button {
+  height: 48px !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  display: grid !important;
+  place-items: center !important;
+  text-decoration: none !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #007dff, #ff00d4) !important;
+}
+
+.poActions a:nth-child(3),
+.poActions button:nth-child(3) {
+  background: rgba(255,255,255,.07) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+
+.poHighlights {
+  padding: 0 18px 16px !important;
+  display: flex !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.poHighlights::-webkit-scrollbar {
+  display: none !important;
+}
+
+.poHighlights a,
+.poHighlights button {
+  min-width: 72px !important;
+  border: 0 !important;
+  background: transparent !important;
+  display: grid !important;
+  justify-items: center !important;
+  gap: 6px !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.poHighlights span {
+  width: 62px !important;
+  height: 62px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 2px solid rgba(255,255,255,.18) !important;
+  background: rgba(255,255,255,.06) !important;
+  font-size: 24px !important;
+}
+
+.poHighlights b {
+  font-size: 12px !important;
+  white-space: nowrap !important;
+}
+
+.poTabs {
+  margin: 0 18px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+}
+
+.poTabs button {
+  border: 0 !important;
+  padding: 15px 6px !important;
+  color: rgba(255,255,255,.62) !important;
+  background: rgba(255,255,255,.03) !important;
+  font-weight: 900 !important;
+}
+
+.poTabs button.active {
+  color: #ff00e6 !important;
+  box-shadow: inset 0 -3px 0 #8a3cff !important;
+}
+
+.poGrid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.poPost {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  background: rgba(10,12,24,.88) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.poPostMedia {
+  aspect-ratio: 1 / 1 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(255,255,255,.05) !important;
+  text-decoration: none !important;
+  color: white !important;
+  font-size: 42px !important;
+}
+
+.poPostMedia img,
+.poPostMedia video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.poPostText {
+  padding: 10px !important;
+}
+
+.poPostText h3 {
+  margin: 0 0 4px !important;
+  color: white !important;
+  font-size: 14px !important;
+}
+
+.poPostText p {
+  margin: 0 !important;
+  color: rgba(255,255,255,.6) !important;
+  font-size: 12px !important;
+}
+
+.poEmpty {
+  grid-column: 1 / -1 !important;
+  min-height: 130px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 7px !important;
+  border-radius: 20px !important;
+  color: rgba(255,255,255,.65) !important;
+  background: rgba(255,255,255,.05) !important;
+}
+
+.poEmpty b {
+  color: white !important;
+}
+
+.poEmpty a {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  padding: 10px 14px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #007dff, #ff00d4) !important;
+}
+
+@media (max-width: 430px) {
+  .publicOwnerProfile {
+    width: calc(100vw - 20px) !important;
+  }
+
+  .poCover {
+    height: 155px !important;
+  }
+
+  .poIdentity {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .poAvatar {
+    width: 96px !important;
+    height: 96px !important;
+  }
+
+  .poAvatar b {
+    font-size: 42px !important;
+  }
+
+  .poStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .poActions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .poTabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .poGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
