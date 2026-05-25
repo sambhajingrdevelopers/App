@@ -11333,3 +11333,35 @@ body:has(.mixedHomePage) .vlBottomNav {
     width: 100% !important;
   }
 }
+
+/* Stories only in top row. Feed below = posts + reels only */
+.mixedFeedCard.story {
+  display: none !important;
+}
+
+.mixedStoryRow {
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.mixedStoryUser > div {
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.mixedStoryUser img {
+  border-radius: 50% !important;
+  object-fit: cover !important;
+}
+
+.mixedFeedCard.reel .mixedMedia {
+  aspect-ratio: 9 / 14 !important;
+}
+
+.mixedFeedCard.post.wide .mixedMedia {
+  aspect-ratio: 4 / 3 !important;
+}
+
+.mixedFeedCard.post:not(.wide) .mixedMedia {
+  aspect-ratio: 1 / 1 !important;
+}

@@ -54,7 +54,7 @@ type OnlineUser = {
 
 type MixedItem = {
   id: string
-  kind: 'post' | 'reel' | 'story'
+  kind: 'post' | 'reel'
   title: string
   subtitle: string
   username: string
@@ -179,28 +179,12 @@ export default function HomePage() {
       createdAt: reel.createdAt
     }))
 
-    const storyItems: MixedItem[] = stories.map((story, index) => ({
-      id: story.id || `story-${index}`,
-      kind: 'story',
-      title: story.name || story.username || 'Story',
-      subtitle: story.caption || 'Story update',
-      username: story.username || '@you',
-      avatar: story.name || story.username || 'S',
-      mediaUrl: story.mediaUrl || '',
-      mediaType: story.mediaType || 'image',
-      likes: 0,
-      comments: 0,
-      views: 0,
-      createdAt: story.createdAt
-    }))
-
     const output: MixedItem[] = []
-    const max = Math.max(postItems.length, reelItems.length, storyItems.length)
+    const max = Math.max(postItems.length, reelItems.length)
 
     for (let index = 0; index < max; index += 1) {
       if (postItems[index]) output.push(postItems[index])
       if (reelItems[index]) output.push(reelItems[index])
-      if (storyItems[index]) output.push(storyItems[index])
       if (postItems[index + 1]) output.push(postItems[index + 1])
       if (reelItems[index + 1]) output.push(reelItems[index + 1])
     }
@@ -248,13 +232,11 @@ export default function HomePage() {
             <section className="mixedFeedGrid">
               {mixedItems.map((item, index) => {
                 const isWide = item.kind === 'post' && index % 5 === 0
-                const isTall = item.kind === 'reel' || item.kind === 'story'
+                const isTall = item.kind === 'reel'
                 const href =
                   item.kind === 'reel'
                     ? `/reel/${encodeURIComponent(item.id)}`
-                    : item.kind === 'post'
-                      ? `/post/${encodeURIComponent(item.id)}`
-                      : '/stories'
+                    : `/post/${encodeURIComponent(item.id)}`
 
                 return (
                   <article
@@ -272,7 +254,7 @@ export default function HomePage() {
 
                         <div>
                           <b>{item.username} ✓</b>
-                          <span>{item.kind === 'reel' ? 'Reels' : item.kind === 'story' ? 'Stories' : timeLabel(index)}</span>
+                          <span>{item.kind === 'reel' ? 'Reels' : timeLabel(index)}</span>
                         </div>
 
                         <em>⋮</em>
