@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
   }
 
   const [usersData, homeData, reelsData, storiesData] = await Promise.all([
-    getJson(`/api/v1/users/search?q=${encodeURIComponent(q)}`),
+    getJson(`/api/v1/public/users/search?q=${encodeURIComponent(q)}`),
     getJson("/api/v1/content/home-live"),
     getJson("/api/v1/content/reels-live"),
     getJson("/api/v1/content/stories-live")

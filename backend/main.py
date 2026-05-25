@@ -618,3 +618,12 @@ except Exception:
     pass
 
 app.include_router(users_search_fixed_router)
+
+
+# Public users search/list route - no conflict with /api/v1/users/{username}
+try:
+    from routes.public_users_search_fixed import router as public_users_search_fixed_router
+except ImportError:
+    from .routes.public_users_search_fixed import router as public_users_search_fixed_router
+
+app.include_router(public_users_search_fixed_router)
