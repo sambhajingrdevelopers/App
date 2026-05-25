@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import AuthGuard from '../../components/AuthGuard';
+import { getSessionUser } from '../../lib/sessionUser'
 import SocialAppShell from '../../components/SocialAppShell';
 
 type ContentType = 'post' | 'reel' | 'story';
 type MediaType = 'image' | 'video';
 
 export default function CreatePage() {
+  const [sessionUser, setSessionUser] = useState({ userId: 'USR-YOU', id: 'USR-YOU', username: '@you', name: 'Creator' })
+
   const [type, setType] = useState<ContentType>('post');
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
@@ -82,8 +85,8 @@ export default function CreatePage() {
       location: location.trim() || 'VibeLoop',
       mediaUrl,
       mediaType,
-      username: '@you',
-      name: 'VibeLoop Creator',
+      username: '{sessionUser.username}',
+      name: 'Creator',
       color: type === 'post' ? 'pink' : type === 'reel' ? 'purple' : 'orange'
     };
 
@@ -206,7 +209,7 @@ export default function CreatePage() {
             </label>
 
             <div className="createPublishInfo">
-              <b>Publishing as @you</b>
+              <b>Publishing as {sessionUser.username}</b>
               <span>
                 Your new {type} will appear automatically in the live feed after publishing.
               </span>
