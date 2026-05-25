@@ -11366,3 +11366,63 @@ body:has(.mixedHomePage) .vlBottomNav {
   aspect-ratio: 1 / 1 !important;
 }
 
+
+/* Search page cleanup */
+.searchCleanPage {
+  gap: 18px !important;
+}
+
+.quickFollowBox {
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.quickFollowBox > div:first-child {
+  display: grid !important;
+  gap: 5px !important;
+}
+
+.quickFollowBox b {
+  display: block !important;
+  font-size: 18px !important;
+  line-height: 1.15 !important;
+}
+
+.quickFollowBox span {
+  display: block !important;
+  line-height: 1.4 !important;
+}
+
+.searchInputBox {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.searchInputBox input {
+  min-height: 54px !important;
+  padding: 0 18px !important;
+  border-radius: 24px !important;
+  background: rgba(255,255,255,0.055) !important;
+}
+
+.searchInputBox button {
+  min-height: 54px !important;
+}
+
+@media (max-width: 520px) {
+  .quickFollowBox {
+    border-radius: 26px !important;
+    padding: 18px !important;
+  }
+
+  .quickFollowForm {
+    display: grid !important;
+    gap: 12px !important;
+  }
+
+  .quickFollowForm input,
+  .quickFollowForm button {
+    width: 100% !important;
+    min-height: 54px !important;
+  }
+}

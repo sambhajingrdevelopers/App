@@ -121,15 +121,9 @@ export default function SearchPage() {
       <SocialAppShell
         active="search"
         title="Search"
-        subtitle="Search creators, posts, reels and stories."
+        subtitle="Find creators, posts, reels and stories."
       >
         <section className="searchCleanPage">
-          <section className="cleanHomeHeader">
-            <div>
-              <h1>Search</h1>
-              <p>Find creators, posts, reels and stories quickly.</p>
-            </div>
-          </section>
 
           <section className="quickFollowBox">
             <div>
