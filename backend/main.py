@@ -571,3 +571,29 @@ except Exception:
     pass
 
 app.include_router(auth_register_fixed_router)
+
+
+# Persistent fixed content routes
+try:
+    from routes.content_persistent_fixed import router as content_persistent_fixed_router
+except ImportError:
+    from .routes.content_persistent_fixed import router as content_persistent_fixed_router
+
+try:
+    fixed_content_paths = {
+        "/api/v1/content/post",
+        "/api/v1/content/reel",
+        "/api/v1/content/story",
+        "/api/v1/content/home-live",
+        "/api/v1/content/reels-live",
+        "/api/v1/content/stories-live",
+    }
+
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in fixed_content_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(content_persistent_fixed_router)
