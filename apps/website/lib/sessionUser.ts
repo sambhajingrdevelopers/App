@@ -9,7 +9,6 @@ export async function getSessionUser(): Promise<SessionUser> {
   try {
     const response = await fetch('/api/auth/session', { cache: 'no-store' })
     const data = await response.json()
-
     const user = data.user || {}
 
     const username = user.username || '@you'

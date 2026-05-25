@@ -26,9 +26,10 @@ type ProfileUser = {
   username: string
   name: string
   bio: string
+  isOwn: boolean
 }
 
-function normalizeUsername(value?: string) {
+function normalizeUsername(value?: string | null) {
   const clean = String(value || '').trim()
   if (!clean) return '@you'
   return clean.startsWith('@') ? clean : `@${clean}`
@@ -39,8 +40,7 @@ function firstLetter(value?: string) {
 }
 
 function isRealMedia(url?: string) {
-  if (!url) return false
-  const clean = String(url).trim()
+  const clean = String(url || '').trim()
   return clean.startsWith('http') || clean.startsWith('/') || clean.startsWith('data:')
 }
 
@@ -49,7 +49,8 @@ export default function ProfilePage() {
     userId: 'USR-YOU',
     username: '@you',
     name: 'Creator',
-    bio: 'Digital Creator'
+    bio: 'Digital Creator',
+    isOwn: true
   })
 
   const [posts, setPosts] = useState<ContentItem[]>([])
@@ -57,21 +58,17 @@ export default function ProfilePage() {
   const [stories, setStories] = useState<ContentItem[]>([])
   const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'stories'>('posts')
   const [loading, setLoading] = useState(true)
+  const [message, setMessage] = useState('')
 
   async function loadProfile() {
     setLoading(true)
+    setMessage('')
 
     try {
       const session = await getSessionUser()
       const params = new URLSearchParams(window.location.search)
       const targetUsername = normalizeUsername(params.get('username') || session.username)
-
-      setProfile({
-        userId: session.userId,
-        username: targetUsername,
-        name: targetUsername === session.username ? session.name : targetUsername.replace('@', ''),
-        bio: 'Digital Creator'
-      })
+      const isOwn = targetUsername === normalizeUsername(session.username)
 
       const [feedResponse, reelResponse, storyResponse] = await Promise.all([
         fetch('/api/feed', { cache: 'no-store' }),
@@ -100,10 +97,31 @@ export default function ProfilePage() {
         return itemUsername === targetUsername
       }
 
-      setPosts(allPosts.filter(belongsToProfile))
-      setReels(allReels.filter(belongsToProfile))
-      setStories(allStories.filter(belongsToProfile))
+      const profilePosts = allPosts.filter(belongsToProfile)
+      const profileReels = allReels.filter(belongsToProfile)
+      const profileStories = allStories.filter(belongsToProfile)
+
+      const displayName =
+        isOwn
+          ? session.name
+          : profilePosts[0]?.name ||
+            profileReels[0]?.name ||
+            profileStories[0]?.name ||
+            targetUsername.replace('@', '')
+
+      setProfile({
+        userId: session.userId,
+        username: targetUsername,
+        name: displayName || 'Creator',
+        bio: isOwn ? 'Digital Creator • Posts • Reels • Stories' : 'Creator profile',
+        isOwn
+      })
+
+      setPosts(profilePosts)
+      setReels(profileReels)
+      setStories(profileStories)
     } catch {
+      setMessage('Profile load failed.')
       setPosts([])
       setReels([])
       setStories([])
@@ -112,9 +130,27 @@ export default function ProfilePage() {
     }
   }
 
-  useEffect(() => {
-    loadProfile()
-  }, [])
+  async function followProfile() {
+    setMessage('Updating follow status...')
+
+    try {
+      const response = await fetch('/api/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ following: profile.username })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Follow action failed.')
+      }
+
+      setMessage(data.message || 'Follow status updated.')
+    } catch (error: any) {
+      setMessage(error?.message || 'Follow action failed.')
+    }
+  }
 
   const activeItems = useMemo(() => {
     if (activeTab === 'reels') return reels
@@ -125,14 +161,18 @@ export default function ProfilePage() {
   return (
     <AuthGuard>
       <SocialAppShell active="profile" title="" subtitle="">
-        <section className="fixedProfilePage">
-          <article className="fixedProfileCard">
-            <div className="fixedProfileBanner" />
+        <section className="proProfilePage">
+          <article className="proProfileCard">
+            <div className="proProfileCover">
+              <div className="proCoverGlow" />
+            </div>
 
-            <div className="fixedProfileInfo">
-              <div className="fixedProfileAvatar">{firstLetter(profile.name || profile.username)}</div>
+            <div className="proProfileIdentity">
+              <div className="proProfileAvatar">
+                {firstLetter(profile.name || profile.username)}
+              </div>
 
-              <div className="fixedProfileText">
+              <div className="proProfileInfo">
                 <h1>
                   {profile.name}
                   <span>✓</span>
@@ -143,28 +183,44 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="fixedProfileActions">
-              <button type="button">Follow</button>
-              <button type="button">Message</button>
-              <button type="button">Following</button>
+            <div className="proProfileActions">
+              {profile.isOwn ? (
+                <>
+                  <a href="/settings">Edit Profile</a>
+                  <a href="/create">Create</a>
+                  <a href="/trash">Trash</a>
+                </>
+              ) : (
+                <>
+                  <button type="button" onClick={followProfile}>Follow</button>
+                  <button type="button">Message</button>
+                  <button type="button">Share</button>
+                </>
+              )}
             </div>
 
-            <div className="fixedProfileStats">
+            {message && <div className="proProfileMessage">{message}</div>}
+
+            <div className="proProfileStats">
               <div>
-                <b>{posts.length}</b>
+                <strong>{posts.length}</strong>
                 <span>Posts</span>
               </div>
               <div>
-                <b>{reels.length}</b>
+                <strong>{reels.length}</strong>
                 <span>Reels</span>
               </div>
               <div>
-                <b>{stories.length}</b>
+                <strong>{stories.length}</strong>
                 <span>Stories</span>
+              </div>
+              <div>
+                <strong>{posts.length + reels.length + stories.length}</strong>
+                <span>Total</span>
               </div>
             </div>
 
-            <div className="fixedProfileTabs">
+            <div className="proProfileTabs">
               <button
                 type="button"
                 className={activeTab === 'posts' ? 'active' : ''}
@@ -189,47 +245,47 @@ export default function ProfilePage() {
             </div>
           </article>
 
-          <section className="fixedProfileGrid">
-            {loading && <div className="fixedProfileEmpty">Loading profile...</div>}
+          <section className="proProfileGrid">
+            {loading && <div className="proProfileEmpty">Loading profile...</div>}
 
-            {!loading &&
-              activeItems.map((item) => {
-                const media = item.mediaUrl || item.videoUrl || ''
-                const isVideo = item.mediaType === 'video' || Boolean(item.videoUrl)
+            {!loading && activeItems.map((item) => {
+              const media = item.mediaUrl || item.videoUrl || ''
+              const isVideo = item.mediaType === 'video' || Boolean(item.videoUrl)
 
-                return (
-                  <article className="fixedProfilePost" key={item.id}>
-                    {isRealMedia(media) ? (
-                      <div className="fixedProfileMedia">
-                        {isVideo ? (
-                          <video src={media} muted playsInline controls />
-                        ) : (
-                          <img src={media} alt={item.title || 'Profile content'} />
-                        )}
-                      </div>
-                    ) : (
-                      <div className="fixedProfileTextOnly">
-                        <span>{activeTab === 'reels' ? '▶' : activeTab === 'stories' ? '◉' : '✦'}</span>
-                      </div>
-                    )}
-
-                    <div className="fixedProfilePostBody">
-                      <h3>{item.title || 'Creator Content'}</h3>
-                      <p>{item.caption || 'Profile update'}</p>
-                      <small>
-                        {activeTab === 'reels'
-                          ? `▶ ${item.views || 0} views`
-                          : `♡ ${item.likes || 0} • 💬 ${item.comments || 0}`}
-                      </small>
+              return (
+                <article className="proContentCard" key={item.id}>
+                  {isRealMedia(media) ? (
+                    <div className="proContentMedia">
+                      {isVideo ? (
+                        <video src={media} muted playsInline controls />
+                      ) : (
+                        <img src={media} alt={item.title || 'Profile content'} />
+                      )}
                     </div>
-                  </article>
-                )
-              })}
+                  ) : (
+                    <div className="proContentFallback">
+                      <span>{activeTab === 'reels' ? '▶' : activeTab === 'stories' ? '◉' : '✦'}</span>
+                    </div>
+                  )}
+
+                  <div className="proContentBody">
+                    <h3>{item.title || 'Creator Content'}</h3>
+                    <p>{item.caption || 'Profile update'}</p>
+                    <small>
+                      {activeTab === 'reels'
+                        ? `▶ ${item.views || 0} views`
+                        : `♡ ${item.likes || 0} • 💬 ${item.comments || 0}`}
+                    </small>
+                  </div>
+                </article>
+              )
+            })}
 
             {!loading && activeItems.length === 0 && (
-              <div className="fixedProfileEmpty">
+              <div className="proProfileEmpty">
                 <b>No {activeTab} yet</b>
-                <span>Create content from the Create page.</span>
+                <span>{profile.isOwn ? 'Create new content from the Create page.' : 'This creator has not published content here yet.'}</span>
+                {profile.isOwn && <a href="/create">Create now</a>}
               </div>
             )}
           </section>
