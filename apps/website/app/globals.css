@@ -17166,3 +17166,189 @@ body {
     height: 54px !important;
   }
 }
+
+/* FINAL CLEAN RESPONSIVE FIX — no duplicate floating icons */
+html,
+body {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  background: #070711 !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+/* Hide every old duplicate side floating button */
+.neoSideActions,
+.vlFloatingActions,
+.floatingBell,
+.floatBell,
+.notificationFloat,
+.notificationFloating,
+.messageFloat,
+.messageFloating,
+.quickFloat,
+.quickActions,
+.quickActionButtons,
+.sideFloatingActions,
+.socialFloatingActions,
+.appFloatingActions,
+.legacyFloatingActions,
+.notifyBubble,
+.mailBubble,
+.floatingNotify,
+.floatingMessage,
+.oldCreateButton,
+.oldCreateFloat,
+.floatingCreate,
+.createFloating,
+.mobileCreateButton,
+.createFloatButton,
+.uploadFloatButton,
+.rightFloatActions,
+.rightSideActions,
+.fixedFloatingActions,
+.fabGroup,
+.fabStack,
+.actionStack,
+.floatStack,
+.bellFloat,
+.mailFloat,
+.messageBubbleFloat,
+.notificationBubbleFloat {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Main shell must stay centered */
+.neoShell {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+  background:
+    radial-gradient(circle at 0 0, rgba(255,0,184,.18), transparent 35%),
+    radial-gradient(circle at 100% 100%, rgba(0,200,255,.13), transparent 35%),
+    #070711 !important;
+}
+
+.neoPage {
+  width: min(100%, 680px) !important;
+  max-width: 680px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  padding-bottom: 150px !important;
+  overflow-x: hidden !important;
+}
+
+/* All page sections must not overflow */
+.neoPage > *,
+.neoHome,
+.neoSimplePage,
+.publicOwnerProfile,
+.realProfilePage,
+.fixedPostDetailPage,
+.realPostDetailPage,
+.simpleMessagePage,
+.searchPage,
+.createPage,
+.settingsPage,
+.notificationsPage,
+.reelsPage,
+.homePage {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* Horizontal rows scroll inside, not outside */
+.neoStories,
+.trendingRow,
+.categoryRow,
+.creatorRow,
+.searchTabs,
+.reelsRow,
+.feedRow,
+.poHighlights {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.neoStories::-webkit-scrollbar,
+.trendingRow::-webkit-scrollbar,
+.categoryRow::-webkit-scrollbar,
+.creatorRow::-webkit-scrollbar,
+.searchTabs::-webkit-scrollbar,
+.reelsRow::-webkit-scrollbar,
+.feedRow::-webkit-scrollbar,
+.poHighlights::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Cards and media must fit screen */
+section,
+article,
+header,
+footer,
+form,
+.card,
+.panel,
+.pageCard,
+.homeCard,
+.searchCard,
+.createCard,
+.settingsCard,
+.profileCard,
+.neoPostCard,
+.neoPostMedia,
+.poProfileCard {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100% !important;
+}
+
+/* Bottom nav only one */
+.neoBottomNav {
+  position: fixed !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  z-index: 9999 !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+/* Mobile hard lock */
+@media (max-width: 900px) {
+  .neoPage {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .neoBottomNav {
+    left: 10px !important;
+    right: 10px !important;
+  }
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
@@ -24,8 +24,6 @@ export default function SocialAppShell({
   title = '',
   subtitle = ''
 }: Props) {
-  const [createOpen, setCreateOpen] = useState(false)
-
   return (
     <div className="neoShell">
       <main className="neoPage">
@@ -39,27 +37,6 @@ export default function SocialAppShell({
         {children}
       </main>
 
-      <div className="neoSideActions neoOnlyFloatingActions">
-        <button
-          className="neoSideCreate"
-          type="button"
-          onClick={() => setCreateOpen(true)}
-          aria-label="Create"
-        >
-          +
-        </button>
-
-        <a href="/notifications" aria-label="Notifications">
-          🔔
-          <i>1</i>
-        </a>
-
-        <a href="/messages" aria-label="Messages">
-          ✉
-          <i>1</i>
-        </a>
-      </div>
-
       <nav className="neoBottomNav">
         {bottomNav.map((item) => (
           <a
@@ -72,27 +49,6 @@ export default function SocialAppShell({
           </a>
         ))}
       </nav>
-
-      {createOpen && (
-        <div className="neoSheetBackdrop" onClick={() => setCreateOpen(false)}>
-          <section className="neoCreateSheet" onClick={(e) => e.stopPropagation()}>
-            <div className="neoSheetHandle" />
-            <h2>Create</h2>
-            <p>Choose what you want to upload.</p>
-
-            <div className="neoCreateOptions">
-              <a href="/create?type=post"><span>▧</span><b>Post</b></a>
-              <a href="/create?type=reel"><span>▣</span><b>Reel</b></a>
-              <a href="/create?type=story"><span>◉</span><b>Story</b></a>
-              <a href="/create?type=live"><span>◎</span><b>Go Live</b></a>
-            </div>
-
-            <button type="button" onClick={() => setCreateOpen(false)}>
-              Close
-            </button>
-          </section>
-        </div>
-      )}
     </div>
   )
 }
