@@ -645,3 +645,46 @@ except ImportError:
     from .routes.follow_fixed import router as follow_fixed_router
 
 app.include_router(follow_fixed_router)
+
+
+# Real backend content routes: posts, reels, stories, media uploads
+from pathlib import Path as _ContentPath
+try:
+    from fastapi.staticfiles import StaticFiles as _StaticFiles
+except Exception:
+    _StaticFiles = None
+
+_content_media_dir = _ContentPath(__file__).resolve().parent / "media_uploads"
+_content_media_dir.mkdir(parents=True, exist_ok=True)
+
+if _StaticFiles is not None:
+    try:
+        mounted_paths = [getattr(route, "path", "") for route in app.router.routes]
+        if "/media" not in mounted_paths:
+            app.mount("/media", _StaticFiles(directory=str(_content_media_dir)), name="media")
+    except Exception:
+        pass
+
+try:
+    from routes.content_real_fixed import router as content_real_fixed_router
+except ImportError:
+    from .routes.content_real_fixed import router as content_real_fixed_router
+
+try:
+    content_paths = {
+        "/api/v1/content/home-live",
+        "/api/v1/content/reels-live",
+        "/api/v1/content/stories-live",
+        "/api/v1/content/detail",
+        "/api/v1/content/create",
+        "/api/v1/content/upload-media",
+        "/api/v1/content/seed",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in content_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(content_real_fixed_router)
