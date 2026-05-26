@@ -39,7 +39,7 @@ export default function SocialAppShell({
         {children}
       </main>
 
-      <div className="neoSideActions">
+      <div className="neoSideActions neoOnlyFloatingActions">
         <button
           className="neoSideCreate"
           type="button"
@@ -81,25 +81,10 @@ export default function SocialAppShell({
             <p>Choose what you want to upload.</p>
 
             <div className="neoCreateOptions">
-              <a href="/create?type=post">
-                <span>▧</span>
-                <b>Post</b>
-              </a>
-
-              <a href="/create?type=reel">
-                <span>▣</span>
-                <b>Reel</b>
-              </a>
-
-              <a href="/create?type=story">
-                <span>◉</span>
-                <b>Story</b>
-              </a>
-
-              <a href="/create?type=live">
-                <span>◎</span>
-                <b>Go Live</b>
-              </a>
+              <a href="/create?type=post"><span>▧</span><b>Post</b></a>
+              <a href="/create?type=reel"><span>▣</span><b>Reel</b></a>
+              <a href="/create?type=story"><span>◉</span><b>Story</b></a>
+              <a href="/create?type=live"><span>◎</span><b>Go Live</b></a>
             </div>
 
             <button type="button" onClick={() => setCreateOpen(false)}>

@@ -17078,3 +17078,91 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* REMOVE DUPLICATE FLOATING ICONS - KEEP ONLY .neoOnlyFloatingActions */
+.vlFloatingActions,
+.floatingBell,
+.floatBell,
+.notificationFloat,
+.notificationFloating,
+.messageFloat,
+.messageFloating,
+.quickFloat,
+.quickActions,
+.quickActionButtons,
+.sideFloatingActions,
+.socialFloatingActions,
+.appFloatingActions,
+.legacyFloatingActions,
+.notifyBubble,
+.mailBubble,
+.floatingNotify,
+.floatingMessage,
+.oldCreateButton,
+.oldCreateFloat,
+.floatingCreate,
+.createFloating,
+.mobileCreateButton,
+.createFloatButton,
+.uploadFloatButton,
+.rightFloatActions,
+.rightSideActions,
+.fixedFloatingActions,
+.fabGroup,
+.fabStack,
+.actionStack,
+.floatStack,
+.bellFloat,
+.mailFloat,
+.messageBubbleFloat,
+.notificationBubbleFloat {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Keep only one side action stack */
+.neoOnlyFloatingActions {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  right: 12px !important;
+  bottom: 116px !important;
+  z-index: 9998 !important;
+  gap: 10px !important;
+}
+
+.neoOnlyFloatingActions a,
+.neoOnlyFloatingActions button {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Prevent accidental extra icons inside side action stack */
+.neoOnlyFloatingActions > *:nth-child(n+4) {
+  display: none !important;
+}
+
+/* Top notification is allowed only in home header */
+.neoHomeTop .neoTopActions a {
+  display: grid !important;
+}
+
+/* Mobile clean spacing */
+@media (max-width: 600px) {
+  .neoOnlyFloatingActions {
+    right: 10px !important;
+    bottom: 116px !important;
+  }
+
+  .neoOnlyFloatingActions a,
+  .neoOnlyFloatingActions button {
+    width: 54px !important;
+    height: 54px !important;
+  }
+}
