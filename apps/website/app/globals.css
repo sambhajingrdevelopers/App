@@ -15406,3 +15406,162 @@ body:has(.publicOwnerProfile) .mainContent {
   font-weight: 900 !important;
   background: linear-gradient(135deg, #ff00b8, #673cff) !important;
 }
+
+/* FINAL MOBILE RESPONSIVE CENTER FIX */
+html,
+body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Mobile: hide desktop sidebar completely */
+@media (max-width: 900px) {
+  aside,
+  .sidebar,
+  .sideNav,
+  .desktopSidebar,
+  .vlSideNav,
+  .leftRail,
+  .adminRail,
+  .socialSidebar {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+  }
+
+  body,
+  main,
+  .vlMain,
+  .socialMain,
+  .appMain,
+  .mainContent,
+  .pageContent,
+  .contentShell,
+  .shellContent {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    overflow-x: hidden !important;
+  }
+
+  .vlMain,
+  .socialMain,
+  .appMain,
+  .mainContent,
+  .pageContent,
+  .contentShell,
+  .shellContent {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  section,
+  article,
+  header,
+  footer,
+  .card,
+  .panel,
+  .pageCard,
+  .homeCard,
+  .searchCard,
+  .createCard,
+  .profileCard,
+  .publicOwnerProfile,
+  .realProfilePage,
+  .realPostDetailPage,
+  .simpleMessagePage {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .publicOwnerProfile,
+  .realProfilePage,
+  .realPostDetailPage,
+  .simpleMessagePage,
+  .dynProfilePage,
+  .vibeProfileV2 {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  img,
+  video {
+    max-width: 100% !important;
+  }
+}
+
+/* Bottom nav should not hide content */
+body {
+  padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+@media (max-width: 900px) {
+  .bottomNav,
+  .mobileBottomNav,
+  .tabBar,
+  .socialBottomNav {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    left: 10px !important;
+    right: 10px !important;
+    margin: 0 auto !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .publicOwnerProfile,
+  .realProfilePage,
+  .realPostDetailPage,
+  .simpleMessagePage,
+  .dynProfilePage,
+  .vibeProfileV2 {
+    padding-bottom: 150px !important;
+  }
+}
+
+/* Profile header responsive */
+@media (max-width: 430px) {
+  .poProfileHeader,
+  .realProfileHeader {
+    grid-template-columns: auto 1fr auto !important;
+    gap: 10px !important;
+  }
+
+  .poProfileHeader h1,
+  .realProfileHeader h1 {
+    font-size: 30px !important;
+  }
+
+  .poRoundBtn,
+  .realProfileIcon,
+  .poHeaderActions a,
+  .poHeaderActions button,
+  .realProfileHeaderActions a {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .poCover,
+  .realCover {
+    height: 145px !important;
+  }
+
+  .poIdentity,
+  .realIdentity {
+    margin-top: -48px !important;
+  }
+
+  .poNameBox h2,
+  .realNameBlock h2 {
+    font-size: 30px !important;
+  }
+}
