@@ -1,8 +1,8 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
-type SocialAppShellProps = {
+type Props = {
   children: ReactNode
   active?: string
   title?: string
@@ -10,90 +10,104 @@ type SocialAppShellProps = {
   hideSearch?: boolean
 }
 
-const navItems = [
+const bottomNav = [
   { key: 'home', label: 'Home', href: '/home', icon: '⌂' },
-  { key: 'search', label: 'Search', href: '/search', icon: '⌕' },
-  { key: 'create', label: 'Create', href: '/create', icon: '+' },
-  { key: 'reels', label: 'Reels', href: '/reels', icon: '▶' },
+  { key: 'creators', label: 'Creators', href: '/search', icon: '👥' },
+  { key: 'reels', label: 'Reels', href: '/reels', icon: '▣' },
+  { key: 'saved', label: 'Saved', href: '/saved', icon: '♡' },
   { key: 'profile', label: 'Profile', href: '/profile', icon: '◉' }
-]
-
-const railItems = [
-  { key: 'home', href: '/home', icon: '⌂' },
-  { key: 'search', href: '/search', icon: '⌕' },
-  { key: 'create', href: '/create', icon: '+' },
-  { key: 'reels', href: '/reels', icon: '▶' },
-  { key: 'messages', href: '/messages', icon: '✉' },
-  { key: 'notifications', href: '/notifications', icon: '🔔' },
-  { key: 'profile', href: '/profile', icon: '◉' }
 ]
 
 export default function SocialAppShell({
   children,
   active = 'home',
   title = '',
-  subtitle = '',
-  hideSearch = false
-}: SocialAppShellProps) {
+  subtitle = ''
+}: Props) {
+  const [createOpen, setCreateOpen] = useState(false)
+
   return (
-    <div className="vlFixedShell">
-      <aside className="vlFixedRail">
-        <a className="vlRailLogo" href="/profile">V</a>
-
-        <nav>
-          {railItems.map((item) => (
-            <a
-              href={item.href}
-              key={item.key}
-              className={active === item.key ? 'active' : ''}
-              aria-label={item.key}
-            >
-              {item.icon}
-            </a>
-          ))}
-        </nav>
-
-        <a className="vlRailLogout" href="/login">Logout</a>
-      </aside>
-
-      <section className="vlFixedPage">
-        {(title || subtitle || !hideSearch) && (
-          <header className="vlFixedHeader">
+    <div className="neoShell">
+      <main className="neoPage">
+        {(title || subtitle) && (
+          <header className="neoPageHeader">
             {title && <h1>{title}</h1>}
             {subtitle && <p>{subtitle}</p>}
-
-            {!hideSearch && (
-              <a className="vlFixedSearch" href="/search">
-                <span>⌕</span>
-                <b>Search creators, reels, hashtags...</b>
-              </a>
-            )}
           </header>
         )}
 
         {children}
-      </section>
+      </main>
 
-      <div className="vlFloatingActions">
-        <a href="/notifications">🔔</a>
-        <a href="/messages">
+      <div className="neoSideActions">
+        <button
+          className="neoSideCreate"
+          type="button"
+          onClick={() => setCreateOpen(true)}
+          aria-label="Create"
+        >
+          +
+        </button>
+
+        <a href="/notifications" aria-label="Notifications">
+          🔔
+          <i>1</i>
+        </a>
+
+        <a href="/messages" aria-label="Messages">
           ✉
           <i>1</i>
         </a>
       </div>
 
-      <nav className="vlBottomNav">
-        {navItems.map((item) => (
+      <nav className="neoBottomNav">
+        {bottomNav.map((item) => (
           <a
             href={item.href}
             key={item.key}
-            className={active === item.key ? 'active' : ''}
+            className={`${active === item.key ? 'active' : ''} ${item.key === 'reels' ? 'reelsCenter' : ''}`}
           >
             <span>{item.icon}</span>
             <b>{item.label}</b>
           </a>
         ))}
       </nav>
+
+      {createOpen && (
+        <div className="neoSheetBackdrop" onClick={() => setCreateOpen(false)}>
+          <section className="neoCreateSheet" onClick={(e) => e.stopPropagation()}>
+            <div className="neoSheetHandle" />
+            <h2>Create</h2>
+            <p>Choose what you want to upload.</p>
+
+            <div className="neoCreateOptions">
+              <a href="/create?type=post">
+                <span>▧</span>
+                <b>Post</b>
+              </a>
+
+              <a href="/create?type=reel">
+                <span>▣</span>
+                <b>Reel</b>
+              </a>
+
+              <a href="/create?type=story">
+                <span>◉</span>
+                <b>Story</b>
+              </a>
+
+              <a href="/create?type=live">
+                <span>◎</span>
+                <b>Go Live</b>
+              </a>
+            </div>
+
+            <button type="button" onClick={() => setCreateOpen(false)}>
+              Close
+            </button>
+          </section>
+        </div>
+      )}
     </div>
   )
 }
