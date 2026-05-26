@@ -15842,3 +15842,585 @@ body {
     padding-right: 0 !important;
   }
 }
+
+/* Fixed post detail page */
+.fixedPostDetailPage {
+  width: min(100%, 640px) !important;
+  max-width: 640px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding: 8px 0 145px !important;
+}
+
+.fixedPostHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.fixedPostHeader a {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.fixedPostHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  letter-spacing: -.06em !important;
+}
+
+.fixedPostHeader p {
+  margin: 5px 0 0 !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.fixedPostState {
+  min-height: 180px !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  padding: 20px !important;
+  color: rgba(255,255,255,.68) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.fixedPostState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.fixedPostState a {
+  width: fit-content !important;
+  margin: 6px auto 0 !important;
+  padding: 11px 15px !important;
+  border-radius: 999px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg,#00c8ff,#673cff) !important;
+}
+
+.fixedPostCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(10,12,24,.9) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+
+.fixedPostUser {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 14px !important;
+}
+
+.fixedPostAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  text-decoration: none !important;
+  color: white !important;
+  font-weight: 900 !important;
+  font-size: 24px !important;
+  background: linear-gradient(135deg,#ff00b8,#673cff) !important;
+}
+
+.fixedPostUser div a {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+}
+
+.fixedPostUser div a span {
+  color: #00c8ff !important;
+}
+
+.fixedPostUser small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: rgba(255,255,255,.58) !important;
+}
+
+.fixedPostUser button {
+  border: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 24px !important;
+}
+
+.fixedPostMedia {
+  width: 100% !important;
+  min-height: 280px !important;
+  max-height: 560px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: #05050b !important;
+}
+
+.fixedPostMedia img,
+.fixedPostMedia video {
+  width: 100% !important;
+  max-height: 560px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.fixedPostMedia span {
+  color: white !important;
+  font-size: 70px !important;
+}
+
+.fixedPostBody {
+  padding: 15px !important;
+}
+
+.fixedPostBody h2 {
+  margin: 0 0 8px !important;
+  color: white !important;
+}
+
+.fixedPostBody p {
+  margin: 0 0 13px !important;
+  color: rgba(255,255,255,.68) !important;
+}
+
+.fixedPostActions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  gap: 10px !important;
+}
+
+.fixedPostActions button,
+.fixedCommentBox button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 12px 10px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.fixedCommentBox {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  padding: 0 15px 15px !important;
+}
+
+.fixedCommentBox input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.fixedCommentBox button {
+  background: linear-gradient(135deg,#ff00b8,#673cff) !important;
+}
+
+/* Fixed post detail page */
+.fixedPostDetailPage {
+  width: min(100%, 640px) !important;
+  max-width: 640px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding: 8px 0 145px !important;
+}
+
+.fixedPostHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.fixedPostHeader a {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.fixedPostHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  letter-spacing: -.06em !important;
+}
+
+.fixedPostHeader p {
+  margin: 5px 0 0 !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.fixedPostState {
+  min-height: 180px !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  padding: 20px !important;
+  color: rgba(255,255,255,.68) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.fixedPostState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.fixedPostState a {
+  width: fit-content !important;
+  margin: 6px auto 0 !important;
+  padding: 11px 15px !important;
+  border-radius: 999px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg,#00c8ff,#673cff) !important;
+}
+
+.fixedPostCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(10,12,24,.9) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+}
+
+.fixedPostUser {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  gap: 12px !important;
+  align-items: center !important;
+  padding: 14px !important;
+}
+
+.fixedPostAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  text-decoration: none !important;
+  color: white !important;
+  font-weight: 900 !important;
+  font-size: 24px !important;
+  background: linear-gradient(135deg,#ff00b8,#673cff) !important;
+}
+
+.fixedPostUser div a {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+}
+
+.fixedPostUser div a span {
+  color: #00c8ff !important;
+}
+
+.fixedPostUser small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: rgba(255,255,255,.58) !important;
+}
+
+.fixedPostUser button {
+  border: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 24px !important;
+}
+
+.fixedPostMedia {
+  width: 100% !important;
+  min-height: 280px !important;
+  max-height: 560px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: #05050b !important;
+}
+
+.fixedPostMedia img,
+.fixedPostMedia video {
+  width: 100% !important;
+  max-height: 560px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.fixedPostMedia span {
+  color: white !important;
+  font-size: 70px !important;
+}
+
+.fixedPostBody {
+  padding: 15px !important;
+}
+
+.fixedPostBody h2 {
+  margin: 0 0 8px !important;
+  color: white !important;
+}
+
+.fixedPostBody p {
+  margin: 0 0 13px !important;
+  color: rgba(255,255,255,.68) !important;
+}
+
+.fixedPostActions {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  gap: 10px !important;
+}
+
+.fixedPostActions button,
+.fixedCommentBox button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 12px 10px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.fixedCommentBox {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  padding: 0 15px 15px !important;
+}
+
+.fixedCommentBox input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.fixedCommentBox button {
+  background: linear-gradient(135deg,#ff00b8,#673cff) !important;
+}
+
+/* HARD MOBILE RESPONSIVE LOCK - stops left/right cutting */
+html,
+body,
+#__next {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: clip !important;
+  overscroll-behavior-x: none !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+.vlFixedShell {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+.vlFixedPage {
+  width: 100% !important;
+  max-width: 680px !important;
+  min-width: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  overflow-x: clip !important;
+}
+
+/* Every page wrapper must fit inside screen */
+.vlFixedPage > *,
+.publicOwnerProfile,
+.realProfilePage,
+.fixedPostDetailPage,
+.realPostDetailPage,
+.simpleMessagePage,
+.dynProfilePage,
+.vibeProfileV2,
+.reelsPage,
+.reelPage,
+.realReelsPage,
+.searchPage,
+.createPage,
+.settingsPage,
+.notificationsPage,
+.homePage {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  overflow-x: clip !important;
+}
+
+/* Cards / panels must not become wider than mobile */
+section,
+article,
+header,
+footer,
+form,
+.card,
+.panel,
+.pageCard,
+.homeCard,
+.searchCard,
+.createCard,
+.settingsCard,
+.profileCard,
+.poProfileCard,
+.poCover,
+.poStats,
+.poActions,
+.poTabs,
+.poGrid,
+.realCreatorsStrip,
+.realCreatorsRow,
+.realPostDetailCard,
+.fixedPostCard,
+.simpleChatBox {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+}
+
+/* Horizontal rows should scroll inside, not push page width */
+.realCreatorsRow,
+.poHighlights,
+.trendingRow,
+.categoryRow,
+.storyRow,
+.creatorRow,
+.searchTabs,
+.reelsRow,
+.feedRow {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+.realCreatorsRow::-webkit-scrollbar,
+.poHighlights::-webkit-scrollbar,
+.trendingRow::-webkit-scrollbar,
+.categoryRow::-webkit-scrollbar,
+.storyRow::-webkit-scrollbar,
+.creatorRow::-webkit-scrollbar,
+.searchTabs::-webkit-scrollbar,
+.reelsRow::-webkit-scrollbar,
+.feedRow::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Inputs/search bars should never overflow */
+input,
+textarea,
+select,
+button,
+.vlFixedSearch,
+.searchInput,
+.searchBar,
+.cleanSearch {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Media should fit */
+img,
+video,
+canvas,
+svg {
+  max-width: 100% !important;
+}
+
+/* Mobile final width */
+@media (max-width: 900px) {
+  .vlFixedPage {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .vlBottomNav {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .vlFloatingActions {
+    right: 12px !important;
+  }
+}
+
+/* Very small phone */
+@media (max-width: 430px) {
+  .vlFixedPage {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .vlBottomNav {
+    left: 10px !important;
+    right: 10px !important;
+  }
+
+  .poStats,
+  .realStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .poActions,
+  .realActions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .poTabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
