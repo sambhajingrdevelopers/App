@@ -688,3 +688,26 @@ except Exception:
     pass
 
 app.include_router(content_real_fixed_router)
+
+
+# Real messages routes
+try:
+    from routes.messages_real_fixed import router as messages_real_fixed_router
+except ImportError:
+    from .routes.messages_real_fixed import router as messages_real_fixed_router
+
+try:
+    message_paths = {
+        "/api/v1/messages/thread",
+        "/api/v1/messages/send",
+        "/api/v1/messages/conversations",
+        "/api/v1/messages/seed",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in message_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(messages_real_fixed_router)

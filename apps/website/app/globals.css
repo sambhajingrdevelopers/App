@@ -19660,3 +19660,638 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* PART 6 FINAL: REAL CONNECTED RESPONSIVE POST DETAIL PAGE */
+.vlxDetailPage {
+  width: 100% !important;
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 16px !important;
+  padding-bottom: 150px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxDetailHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.vlxDetailHeader > a {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 32px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+
+.vlxDetailHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 40px !important;
+  line-height: 1 !important;
+  letter-spacing: -.07em !important;
+}
+
+.vlxDetailHeader p {
+  margin: 6px 0 0 !important;
+  color: rgba(255,255,255,.64) !important;
+}
+
+.vlxDetailHeader button,
+.vlxDetailState a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 14px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxDetailState {
+  min-height: 180px !important;
+  border-radius: 28px !important;
+  padding: 22px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 9px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.65) !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxDetailState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.vlxDetailCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(12,13,28,.92) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxDetailUser {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px !important;
+}
+
+.vlxDetailAvatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxDetailAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxDetailAvatar span {
+  font-size: 23px !important;
+  font-weight: 900 !important;
+}
+
+.vlxDetailUser div {
+  min-width: 0 !important;
+}
+
+.vlxDetailUser div a {
+  display: block !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxDetailUser small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: rgba(255,255,255,.56) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxDetailUser button {
+  border: 0 !important;
+  color: rgba(255,255,255,.72) !important;
+  background: transparent !important;
+  font-size: 26px !important;
+}
+
+.vlxDetailMedia {
+  width: 100% !important;
+  min-height: 360px !important;
+  max-height: 680px !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #05050a !important;
+}
+
+.vlxDetailMedia img,
+.vlxDetailMedia video {
+  width: 100% !important;
+  max-height: 680px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.vlxDetailMedia i {
+  position: absolute !important;
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-style: normal !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  background: rgba(0,0,0,.45) !important;
+  backdrop-filter: blur(8px) !important;
+  pointer-events: none !important;
+}
+
+.vlxDetailMissing {
+  min-height: 360px !important;
+  width: 100% !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.62) !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,0,184,.14), transparent 35%),
+    rgba(255,255,255,.03) !important;
+}
+
+.vlxDetailMissing b {
+  color: white !important;
+}
+
+.vlxDetailBody {
+  padding: 14px !important;
+}
+
+.vlxDetailBody h2 {
+  margin: 0 0 6px !important;
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.vlxDetailBody p {
+  margin: 0 0 14px !important;
+  color: rgba(255,255,255,.66) !important;
+  line-height: 1.4 !important;
+}
+
+.vlxDetailActions {
+  display: grid !important;
+  grid-template-columns: repeat(4, auto) 1fr !important;
+  justify-content: start !important;
+  gap: 14px !important;
+}
+
+.vlxDetailActions button {
+  border: 0 !important;
+  padding: 0 !important;
+  color: rgba(255,255,255,.75) !important;
+  background: transparent !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+.vlxDetailActions button.active {
+  color: #ff00d4 !important;
+}
+
+.vlxCommentBox {
+  padding: 0 14px 16px !important;
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.vlxCommentBox h3 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 20px !important;
+}
+
+.vlxCommentInput {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+}
+
+.vlxCommentInput input {
+  min-width: 0 !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,.065) !important;
+}
+
+.vlxCommentInput button {
+  height: 46px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxCommentList {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.vlxCommentList p {
+  margin: 0 !important;
+  color: rgba(255,255,255,.55) !important;
+}
+
+.vlxCommentList div {
+  border-radius: 18px !important;
+  padding: 12px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.vlxCommentList b {
+  display: block !important;
+  color: white !important;
+}
+
+.vlxCommentList span {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255,255,255,.72) !important;
+}
+
+.vlxCommentList small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.45) !important;
+}
+
+@media (max-width: 430px) {
+  .vlxDetailHeader h1 {
+    font-size: 34px !important;
+  }
+
+  .vlxDetailHeader button {
+    padding: 10px 12px !important;
+  }
+
+  .vlxDetailMedia {
+    min-height: 310px !important;
+  }
+
+  .vlxDetailMissing {
+    min-height: 310px !important;
+  }
+
+  .vlxDetailActions {
+    grid-template-columns: repeat(2, auto) !important;
+  }
+}
+
+/* PART 7 FINAL: REAL CONNECTED RESPONSIVE MESSAGES PAGE */
+.vlxMessagesPage {
+  width: 100% !important;
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 16px !important;
+  padding-bottom: 150px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxMessagesHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.vlxMessagesHeader > a {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 32px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+
+.vlxMessagesHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 44px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxMessagesHeader p {
+  margin: 6px 0 0 !important;
+  color: rgba(255,255,255,.64) !important;
+}
+
+.vlxMessagesHeader button,
+.vlxRecipientBar button,
+.vlxMessageComposer button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 14px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxRecipientBar {
+  min-height: 60px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 0 14px !important;
+  border-radius: 24px !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxRecipientBar span {
+  color: #00dfff !important;
+  font-weight: 900 !important;
+}
+
+.vlxRecipientBar input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 16px !important;
+}
+
+.vlxConversationStrip {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  gap: 10px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  padding-bottom: 4px !important;
+}
+
+.vlxConversationStrip::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vlxConversationStrip button {
+  flex: 0 0 210px !important;
+  min-width: 210px !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 22px !important;
+  padding: 10px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+  text-align: left !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.vlxConversationStrip button.active {
+  border-color: rgba(255,0,184,.35) !important;
+  box-shadow: 0 0 24px rgba(255,0,184,.15) !important;
+}
+
+.vlxConversationStrip i {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-style: normal !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxConversationStrip span {
+  min-width: 0 !important;
+}
+
+.vlxConversationStrip b,
+.vlxConversationStrip small {
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxConversationStrip b {
+  color: white !important;
+}
+
+.vlxConversationStrip small {
+  margin-top: 3px !important;
+  color: rgba(255,255,255,.56) !important;
+}
+
+.vlxChatPanel {
+  min-height: 560px !important;
+  border-radius: 30px !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  overflow: hidden !important;
+  background: rgba(12,13,28,.92) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxChatTop {
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxChatAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-weight: 900 !important;
+  font-size: 23px !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxChatTop h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.vlxChatTop p {
+  margin: 4px 0 0 !important;
+  color: rgba(255,255,255,.56) !important;
+}
+
+.vlxMessageList {
+  min-height: 360px !important;
+  max-height: 520px !important;
+  overflow-y: auto !important;
+  padding: 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  scrollbar-width: none !important;
+}
+
+.vlxMessageList::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vlxMessageState {
+  min-height: 300px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 8px !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.vlxMessageState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.vlxMessageBubble {
+  max-width: 78% !important;
+  border-radius: 22px !important;
+  padding: 11px 13px !important;
+  color: white !important;
+}
+
+.vlxMessageBubble.mine {
+  align-self: flex-end !important;
+  border-bottom-right-radius: 6px !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxMessageBubble.their {
+  align-self: flex-start !important;
+  border-bottom-left-radius: 6px !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.vlxMessageBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+}
+
+.vlxMessageBubble small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.62) !important;
+  font-size: 11px !important;
+}
+
+.vlxMessageNotice {
+  margin: 0 14px !important;
+  border-radius: 16px !important;
+  padding: 10px 12px !important;
+  color: white !important;
+  background: rgba(255,0,184,.10) !important;
+  border: 1px solid rgba(255,0,184,.18) !important;
+}
+
+.vlxMessageComposer {
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxMessageComposer input {
+  min-width: 0 !important;
+  height: 48px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: white !important;
+  background: rgba(255,255,255,.065) !important;
+}
+
+.vlxMessageComposer button {
+  height: 48px !important;
+  padding: 0 18px !important;
+}
+
+.vlxMessageComposer button:disabled {
+  opacity: .6 !important;
+}
+
+@media (max-width: 430px) {
+  .vlxMessagesHeader h1 {
+    font-size: 38px !important;
+  }
+
+  .vlxMessagesHeader button {
+    padding: 10px 12px !important;
+  }
+
+  .vlxRecipientBar {
+    grid-template-columns: auto 1fr !important;
+  }
+
+  .vlxRecipientBar button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .vlxChatPanel {
+    min-height: 520px !important;
+  }
+
+  .vlxMessageBubble {
+    max-width: 88% !important;
+  }
+}
