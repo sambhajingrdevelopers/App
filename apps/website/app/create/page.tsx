@@ -20,17 +20,16 @@ function normalizeUsername(value?: string) {
   return clean.startsWith('@') ? clean : `@${clean}`
 }
 
-function mediaKindFromUrl(url: string, selectedType: CreateType) {
-  const clean = url.toLowerCase()
-
-  if (selectedType === 'reel') return 'video'
-  if (clean.includes('.mp4') || clean.includes('.webm') || clean.includes('.mov')) return 'video'
-  return 'image'
-}
-
 function validPreview(url: string) {
   const clean = String(url || '').trim()
   return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
+}
+
+function detectMediaType(url: string, selectedType: CreateType): 'image' | 'video' {
+  const clean = url.toLowerCase()
+  if (selectedType === 'reel') return 'video'
+  if (clean.includes('.mp4') || clean.includes('.webm') || clean.includes('.mov')) return 'video'
+  return 'image'
 }
 
 export default function CreatePage() {
@@ -55,37 +54,32 @@ export default function CreatePage() {
   const [createdId, setCreatedId] = useState('')
 
   useEffect(() => {
-    async function load() {
+    async function loadSession() {
       const user = await getSessionUser()
+
       setSession({
-        ...user,
-        username: normalizeUsername(user.username)
+        userId: user.userId,
+        id: user.id,
+        username: normalizeUsername(user.username),
+        name: user.name || 'Creator'
       })
 
       const params = new URLSearchParams(window.location.search)
       const requestedType = params.get('type')
 
-      if (requestedType === 'reel' || requestedType === 'story' || requestedType === 'post') {
+      if (requestedType === 'post' || requestedType === 'reel' || requestedType === 'story') {
         setType(requestedType)
+        setMediaType(requestedType === 'reel' ? 'video' : 'image')
       }
     }
 
-    load()
+    loadSession()
   }, [])
 
-  useEffect(() => {
-    if (type === 'reel') {
-      setMediaType('video')
-    }
-  }, [type])
-
-  const previewUrl = useMemo(() => {
-    return videoUrl || mediaUrl
-  }, [mediaUrl, videoUrl])
+  const previewUrl = useMemo(() => videoUrl || mediaUrl, [videoUrl, mediaUrl])
 
   async function handleFileUpload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
-
     if (!file) return
 
     setUploading(true)
@@ -121,8 +115,9 @@ export default function CreatePage() {
 
   function handleMediaUrlChange(value: string) {
     setMediaUrl(value)
-    setVideoUrl(type === 'reel' ? value : '')
-    setMediaType(mediaKindFromUrl(value, type))
+    const detected = detectMediaType(value, type)
+    setMediaType(detected)
+    setVideoUrl(detected === 'video' ? value : '')
   }
 
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
@@ -174,7 +169,7 @@ export default function CreatePage() {
         throw new Error(data.message || 'Content save failed.')
       }
 
-      const newId = data.item?.id || data.post?.id || data.reel?.id || data.story?.id || ''
+      const newId = data.item?.id || ''
       setCreatedId(newId)
       setMessage(`${type.toUpperCase()} saved to backend successfully.`)
 
@@ -193,7 +188,7 @@ export default function CreatePage() {
 
   return (
     <AuthGuard>
-      <SocialAppShell active="create" title="" subtitle="" hideSearch>
+      <SocialAppShell active="reels" title="" subtitle="" hideSearch>
         <main className="vlxCreatePage">
           <header className="vlxCreateHeader">
             <div>
@@ -205,18 +200,15 @@ export default function CreatePage() {
           </header>
 
           <nav className="vlxCreateTabs">
-            {(['post', 'reel', 'story'] as CreateType[]).map((item) => (
-              <button
-                type="button"
-                key={item}
-                onClick={() => setType(item)}
-                className={type === item ? 'active' : ''}
-              >
-                {item === 'post' && '▧ Post'}
-                {item === 'reel' && '▣ Reel'}
-                {item === 'story' && '◉ Story'}
-              </button>
-            ))}
+            <button type="button" onClick={() => setType('post')} className={type === 'post' ? 'active' : ''}>
+              Post
+            </button>
+            <button type="button" onClick={() => setType('reel')} className={type === 'reel' ? 'active' : ''}>
+              Reel
+            </button>
+            <button type="button" onClick={() => setType('story')} className={type === 'story' ? 'active' : ''}>
+              Story
+            </button>
           </nav>
 
           <section className="vlxCreateUser">
@@ -261,8 +253,8 @@ export default function CreatePage() {
                 <h2>Upload media</h2>
                 <p>
                   {type === 'reel'
-                    ? 'Upload MP4/WebM video for reels.'
-                    : 'Upload image/video or paste URL.'}
+                    ? 'Upload MP4 or WebM video for reels.'
+                    : 'Upload image or video for this content.'}
                 </p>
               </div>
 
@@ -281,7 +273,7 @@ export default function CreatePage() {
               <input
                 value={mediaUrl}
                 onChange={(event) => handleMediaUrlChange(event.target.value)}
-                placeholder={type === 'reel' ? 'https://example.com/video.mp4' : 'https://example.com/image.jpg'\}
+                placeholder="Paste image or video URL"
               />
             </label>
 
@@ -308,8 +300,7 @@ export default function CreatePage() {
                 {createdId && (
                   <div>
                     <a href={`/post/${encodeURIComponent(createdId)}`}>View Content</a>
-                    {type === 'reel' && <a href="/reels">Open Reels</a>}
-                    {type !== 'reel' && <a href="/home">Open Home</a>}
+                    {type === 'reel' ? <a href="/reels">Open Reels</a> : <a href="/home">Open Home</a>}
                   </div>
                 )}
               </section>
