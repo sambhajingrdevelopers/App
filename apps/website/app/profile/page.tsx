@@ -5,21 +5,6 @@ import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
 
-type ContentItem = {
-  id: string
-  title?: string
-  caption?: string
-  username?: string
-  user?: string
-  name?: string
-  mediaUrl?: string
-  videoUrl?: string
-  mediaType?: string
-  likes?: number | string
-  comments?: number | string
-  views?: number | string
-}
-
 type ProfileUser = {
   name: string
   username: string
@@ -34,7 +19,27 @@ type ProfileUser = {
   allowMessages: boolean
 }
 
-function normalizeUsername(value?: string | null) {
+type ContentItem = {
+  id: string
+  kind?: string
+  type?: string
+  title?: string
+  caption?: string
+  username?: string
+  user?: string
+  name?: string
+  mediaUrl?: string
+  videoUrl?: string
+  mediaType?: string
+  likes?: number | string
+  comments?: number | string
+  views?: number | string
+  createdAt?: string
+}
+
+type Tab = 'posts' | 'reels' | 'stories'
+
+function cleanUsername(value?: string | null) {
   const clean = String(value || '').trim()
   if (!clean) return '@you'
   return clean.startsWith('@') ? clean : `@${clean}`
@@ -44,19 +49,43 @@ function firstLetter(value?: string) {
   return String(value || 'V').trim().slice(0, 1).toUpperCase()
 }
 
-function isMedia(url?: string) {
+function validMedia(url?: string) {
   const clean = String(url || '').trim()
-  return clean.startsWith('http') || clean.startsWith('/') || clean.startsWith('data:')
+  return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
 }
 
-function formatCount(value: number | null | undefined) {
+function count(value: number | null | undefined) {
   if (value === null || value === undefined) return 'Private'
   if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
   if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
   return String(value)
 }
 
+function ProfileMedia({ item, tab }: { item: ContentItem; tab: Tab }) {
+  const src = item.videoUrl || item.mediaUrl || ''
+  const isVideo =
+    item.mediaType === 'video' ||
+    item.kind === 'reel' ||
+    item.type === 'reel' ||
+    Boolean(item.videoUrl)
+
+  if (!validMedia(src)) {
+    return (
+      <div className="vlxProfileFallback">
+        <span>{tab === 'reels' ? '▶' : tab === 'stories' ? '◉' : '✦'}</span>
+      </div>
+    )
+  }
+
+  if (isVideo) {
+    return <video src={src} muted playsInline preload="metadata" />
+  }
+
+  return <img src={src} alt={item.title || 'profile content'} />
+}
+
 export default function ProfilePage() {
+  const [viewerUsername, setViewerUsername] = useState('@guest')
   const [profile, setProfile] = useState<ProfileUser>({
     name: 'Creator',
     username: '@you',
@@ -74,31 +103,32 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<ContentItem[]>([])
   const [reels, setReels] = useState<ContentItem[]>([])
   const [stories, setStories] = useState<ContentItem[]>([])
-  const [tab, setTab] = useState<'posts' | 'reels' | 'stories' | 'tagged'>('posts')
+  const [tab, setTab] = useState<Tab>('posts')
   const [loading, setLoading] = useState(true)
-  const [viewerUsername, setViewerUsername] = useState('@guest')
   const [isFollowing, setIsFollowing] = useState(false)
-  const [actionMessage, setActionMessage] = useState('')
+  const [message, setMessage] = useState('')
 
   async function loadProfile() {
     setLoading(true)
+    setMessage('')
 
     try {
       const session = await getSessionUser()
       setViewerUsername(session.username)
+
       const params = new URLSearchParams(window.location.search)
-      const targetUsername = normalizeUsername(params.get('username') || session.username)
+      const target = cleanUsername(params.get('username') || session.username)
 
       const data = await fetch(
-        `/api/profile?username=${encodeURIComponent(targetUsername)}&viewer=${encodeURIComponent(session.username)}`,
+        `/api/profile?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(session.username)}`,
         { cache: 'no-store' }
       ).then((res) => res.json())
 
       const user = data.user || {}
 
-      setProfile({
-        name: user.name || targetUsername.replace('@', '') || 'Creator',
-        username: normalizeUsername(user.username || targetUsername),
+      const nextProfile: ProfileUser = {
+        name: user.name || target.replace('@', '') || 'Creator',
+        username: cleanUsername(user.username || target),
         bio: user.bio || 'Digital Creator',
         avatarUrl: user.avatarUrl || '',
         bannerUrl: user.bannerUrl || '',
@@ -108,26 +138,29 @@ export default function ProfilePage() {
         isOwner: Boolean(user.isOwner),
         isPrivate: Boolean(user.isPrivate),
         allowMessages: user.allowMessages !== false
-      })
+      }
 
+      setProfile(nextProfile)
       setPosts(Array.isArray(data.posts) ? data.posts : [])
       setReels(Array.isArray(data.reels) ? data.reels : [])
       setStories(Array.isArray(data.stories) ? data.stories : [])
 
-      if (!Boolean(user.isOwner)) {
+      if (!nextProfile.isOwner) {
         const followData = await fetch(
-          `/api/follow/status?follower=${encodeURIComponent(session.username)}&following=${encodeURIComponent(normalizeUsername(user.username || targetUsername))}`,
+          `/api/follow/status?follower=${encodeURIComponent(session.username)}&following=${encodeURIComponent(nextProfile.username)}`,
           { cache: 'no-store' }
         ).then((res) => res.json()).catch(() => ({}))
 
         setIsFollowing(Boolean(followData.isFollowing))
 
-        setProfile((prev) => ({
-          ...prev,
-          followers: followData.followers ?? prev.followers,
-          following: followData.following ?? prev.following
+        setProfile((old) => ({
+          ...old,
+          followers: followData.followers ?? old.followers,
+          following: followData.following ?? old.following
         }))
       }
+    } catch {
+      setMessage('Profile load failed.')
     } finally {
       setLoading(false)
     }
@@ -140,17 +173,13 @@ export default function ProfilePage() {
   const activeItems = useMemo(() => {
     if (tab === 'reels') return reels
     if (tab === 'stories') return stories
-    if (tab === 'tagged') return []
     return posts
   }, [tab, posts, reels, stories])
-
-  const likes = posts.reduce((sum, item) => sum + Number(item.likes || 0), 0)
-
 
   async function handleFollow() {
     if (profile.isOwner) return
 
-    setActionMessage('Updating follow...')
+    setMessage('Updating follow...')
 
     const data = await fetch('/api/follow/toggle', {
       method: 'POST',
@@ -166,14 +195,14 @@ export default function ProfilePage() {
 
     if (data.success) {
       setIsFollowing(Boolean(data.isFollowing))
-      setProfile((prev) => ({
-        ...prev,
-        followers: data.followers ?? prev.followers,
-        following: data.following ?? prev.following
+      setProfile((old) => ({
+        ...old,
+        followers: data.followers ?? old.followers,
+        following: data.following ?? old.following
       }))
     }
 
-    setActionMessage(data.message || 'Updated.')
+    setMessage(data.message || 'Updated.')
   }
 
   function handleMessage() {
@@ -185,7 +214,7 @@ export default function ProfilePage() {
 
     if (navigator.share) {
       await navigator.share({
-        title: `${profile.name} on VibeLoop`,
+        title: `${profile.name} profile`,
         text: `View ${profile.name}'s profile`,
         url
       })
@@ -193,22 +222,22 @@ export default function ProfilePage() {
     }
 
     await navigator.clipboard.writeText(url)
-    setActionMessage('Profile link copied.')
+    setMessage('Profile link copied.')
   }
 
   return (
     <AuthGuard>
       <SocialAppShell active="profile" title="" subtitle="" hideSearch>
-        <main className="publicOwnerProfile">
-          <header className="poProfileHeader">
-            <a className="poRoundBtn" href="/home">‹</a>
+        <main className="vlxProfilePage">
+          <header className="vlxProfileHeader">
+            <a href="/home">‹</a>
 
             <div>
               <h1>{profile.isOwner ? 'My Profile' : 'Profile'}</h1>
-              <p>{profile.isOwner ? 'Owner account' : 'Public creator profile'}</p>
+              <p>{profile.isOwner ? 'Owner profile' : 'Public creator profile'}</p>
             </div>
 
-            <div className="poHeaderActions">
+            <div>
               {profile.isOwner ? (
                 <>
                   <a href="/settings">⚙</a>
@@ -216,162 +245,130 @@ export default function ProfilePage() {
                 </>
               ) : (
                 <>
-                  <button type="button">↗</button>
+                  <button type="button" onClick={handleShare}>↗</button>
                   <button type="button">⋯</button>
                 </>
               )}
             </div>
           </header>
 
-          <section className="poProfileCard">
-            <div className="poCover">
-              {isMedia(profile.bannerUrl) ? <img src={profile.bannerUrl} alt="Profile banner" /> : <span />}
-            </div>
+          {loading && (
+            <section className="vlxProfileState">
+              Loading profile...
+            </section>
+          )}
 
-            <div className="poIdentity">
-              <div className="poAvatar">
-                {isMedia(profile.avatarUrl) ? (
-                  <img src={profile.avatarUrl} alt={profile.name} />
-                ) : (
-                  <b>{firstLetter(profile.name)}</b>
-                )}
-                <i />
-              </div>
-
-              <div className="poNameBox">
-                <h2>
-                  {profile.name}
-                  {profile.verified && <em>✓</em>}
-                </h2>
-                <strong>{profile.username}</strong>
-                <p>{profile.bio}</p>
-                <small>📍 India · Joined 2026</small>
-              </div>
-            </div>
-
-            <p className="poBio">
-              {profile.isPrivate && !profile.isOwner
-                ? 'This creator has a private profile.'
-                : 'Creating digital experiences that inspire and connect. Design. Code. Create.'}
-            </p>
-
-            <div className="poStats">
-              <div>
-                <b>{posts.length}</b>
-                <span>Posts</span>
-              </div>
-              <div>
-                <b>{formatCount(profile.followers)}</b>
-                <span>Followers</span>
-              </div>
-              <div>
-                <b>{formatCount(profile.following)}</b>
-                <span>Following</span>
-              </div>
-              <div>
-                <b>{reels.length}</b>
-                <span>Reels</span>
-              </div>
-            </div>
-
-            <div className="poActions">
-              {profile.isOwner ? (
-                <>
-                  <a href="/settings">Edit Profile</a>
-                  <a href="/create">Create</a>
-                  <a href="/trash">Trash</a>
-                </>
-              ) : (
-                <>
-                  <button type="button" onClick={handleFollow}>{isFollowing ? "Following" : "Follow"}</button>
-                  {profile.allowMessages && <button type="button" onClick={handleMessage}>Message</button>}
-                  <button type="button" onClick={handleShare}>Share</button>
-                </>
-              )}
-            </div>
-
-            {actionMessage && <div className="poActionMessage">{actionMessage}</div>}
-
-            <div className="poHighlights">
-              {profile.isOwner && (
-                <a href="/create">
-                  <span>+</span>
-                  <b>New</b>
-                </a>
-              )}
-
-              {['Design', 'Code', 'Work', 'Travel', 'Life'].map((item) => (
-                <button type="button" key={item}>
-                  <span>{item.slice(0, 1)}</span>
-                  <b>{item}</b>
-                </button>
-              ))}
-            </div>
-
-            <div className="poTabs">
-              <button type="button" className={tab === 'posts' ? 'active' : ''} onClick={() => setTab('posts')}>
-                ▦ Posts
-              </button>
-              <button type="button" className={tab === 'reels' ? 'active' : ''} onClick={() => setTab('reels')}>
-                ▣ Reels
-              </button>
-              <button type="button" className={tab === 'stories' ? 'active' : ''} onClick={() => setTab('stories')}>
-                ◉ Stories
-              </button>
-              <button type="button" className={tab === 'tagged' ? 'active' : ''} onClick={() => setTab('tagged')}>
-                ♡ Tagged
-              </button>
-            </div>
-          </section>
-
-          <section className="poGrid">
-            {loading && <div className="poEmpty">Loading profile...</div>}
-
-            {!loading && profile.isPrivate && !profile.isOwner && (
-              <div className="poEmpty">
-                <b>Private profile</b>
-                <span>Follow this creator to see posts, reels and stories.</span>
-              </div>
-            )}
-
-            {!loading &&
-              !(profile.isPrivate && !profile.isOwner) &&
-              activeItems.map((item) => {
-                const src = item.mediaUrl || item.videoUrl || ''
-                const isVideo = item.mediaType === 'video' || Boolean(item.videoUrl)
-
-                return (
-                  <article className="poPost" key={item.id}>
-                    <a href={`/post/${encodeURIComponent(item.id)}`} className="poPostMedia">
-                      {isMedia(src) ? (
-                        isVideo ? (
-                          <video src={src} muted playsInline />
-                        ) : (
-                          <img src={src} alt={item.title || 'Profile content'} />
-                        )
-                      ) : (
-                        <span>{tab === 'reels' ? '▶' : tab === 'stories' ? '◉' : '✦'}</span>
-                      )}
-                    </a>
-
-                    <div className="poPostText">
-                      <h3>{item.title || 'Creator Content'}</h3>
-                      <p>{item.caption || 'Profile update'}</p>
-                    </div>
-                  </article>
-                )
-              })}
-
-            {!loading &&
-              !(profile.isPrivate && !profile.isOwner) &&
-              activeItems.length === 0 && (
-                <div className="poEmpty">
-                  <b>No {tab} yet</b>
-                  <span>{profile.isOwner ? 'Create your first content.' : 'This creator has not published here yet.'}</span>
-                  {profile.isOwner && <a href="/create">Create now</a>}
+          {!loading && (
+            <>
+              <section className="vlxProfileCard">
+                <div className="vlxProfileCover">
+                  {validMedia(profile.bannerUrl) ? (
+                    <img src={profile.bannerUrl} alt="Profile banner" />
+                  ) : (
+                    <span />
+                  )}
                 </div>
-              )}
-          </section>
+
+                <div className="vlxProfileIdentity">
+                  <div className="vlxProfileAvatar">
+                    {validMedia(profile.avatarUrl) ? (
+                      <img src={profile.avatarUrl} alt={profile.name} />
+                    ) : (
+                      <b>{firstLetter(profile.name)}</b>
+                    )}
+                    <i />
+                  </div>
+
+                  <div className="vlxProfileInfo">
+                    <h2>
+                      {profile.name}
+                      {profile.verified && <em>✓</em>}
+                    </h2>
+                    <strong>{profile.username}</strong>
+                    <p>{profile.bio}</p>
+                    <small>📍 India · Creator account</small>
+                  </div>
+                </div>
+
+                <p className="vlxProfileBio">
+                  {profile.isPrivate && !profile.isOwner
+                    ? 'This creator has a private profile.'
+                    : 'Creating digital experiences that inspire and connect.'}
+                </p>
+
+                <div className="vlxProfileStats">
+                  <div><b>{posts.length}</b><span>Posts</span></div>
+                  <div><b>{count(profile.followers)}</b><span>Followers</span></div>
+                  <div><b>{count(profile.following)}</b><span>Following</span></div>
+                  <div><b>{reels.length}</b><span>Reels</span></div>
+                </div>
+
+                <div className="vlxProfileActions">
+                  {profile.isOwner ? (
+                    <>
+                      <a href="/settings">Edit Profile</a>
+                      <a href="/create">Create</a>
+                      <a href="/trash">Trash</a>
+                    </>
+                  ) : (
+                    <>
+                      <button type="button" onClick={handleFollow}>
+                        {isFollowing ? 'Following' : 'Follow'}
+                      </button>
+                      {profile.allowMessages && (
+                        <button type="button" onClick={handleMessage}>
+                          Message
+                        </button>
+                      )}
+                      <button type="button" onClick={handleShare}>
+                        Share
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {message && <div className="vlxProfileMessage">{message}</div>}
+
+                <div className="vlxProfileTabs">
+                  <button type="button" onClick={() => setTab('posts')} className={tab === 'posts' ? 'active' : ''}>
+                    Posts
+                  </button>
+                  <button type="button" onClick={() => setTab('reels')} className={tab === 'reels' ? 'active' : ''}>
+                    Reels
+                  </button>
+                  <button type="button" onClick={() => setTab('stories')} className={tab === 'stories' ? 'active' : ''}>
+                    Stories
+                  </button>
+                </div>
+              </section>
+
+              <section className="vlxProfileGrid">
+                {profile.isPrivate && !profile.isOwner ? (
+                  <div className="vlxProfileState">
+                    <b>Private profile</b>
+                    <span>Follow this creator to see posts and reels.</span>
+                  </div>
+                ) : activeItems.length === 0 ? (
+                  <div className="vlxProfileState">
+                    <b>No {tab} yet</b>
+                    <span>{profile.isOwner ? 'Create your first content.' : 'This creator has not posted yet.'}</span>
+                    {profile.isOwner && <a href="/create">Create now</a>}
+                  </div>
+                ) : (
+                  activeItems.map((item) => (
+                    <a href={`/post/${encodeURIComponent(item.id)}`} className="vlxProfilePost" key={item.id}>
+                      <div>
+                        <ProfileMedia item={item} tab={tab} />
+                        {tab === 'reels' && <em>▶</em>}
+                      </div>
+                      <h3>{item.title || tab}</h3>
+                      <p>{item.caption || 'Profile content'}</p>
+                    </a>
+                  ))
+                )}
+              </section>
+            </>
+          )}
         </main>
       </SocialAppShell>
     </AuthGuard>

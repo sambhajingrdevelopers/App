@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const BACKEND_URL = process.env.EC2_BACKEND_URL || "http://43.205.145.63:8003"
+const BACKEND_URL =
+  process.env.EC2_BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "http://43.205.145.63:8003"
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,7 +11,9 @@ export async function POST(request: NextRequest) {
 
     const res = await fetch(`${BACKEND_URL}/api/v1/follow/toggle`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(body),
       cache: "no-store"
     })
