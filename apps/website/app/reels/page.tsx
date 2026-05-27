@@ -17,18 +17,20 @@ type ReelItem = {
   likes?: number | string
   comments?: number | string
   views?: number | string
+  createdAt?: string
+}
+
+function username(value?: string) {
+  const clean = String(value || '').trim()
+  if (!clean) return ''
+  return clean.startsWith('@') ? clean : `@${clean}`
 }
 
 function firstLetter(value?: string) {
   return String(value || 'V').trim().slice(0, 1).toUpperCase()
 }
 
-function cleanUsername(value?: string) {
-  const clean = String(value || '@creator').trim()
-  return clean.startsWith('@') ? clean : `@${clean}`
-}
-
-function isVideoUrl(url?: string) {
+function validMedia(url?: string) {
   const clean = String(url || '').trim()
   return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
 }
@@ -36,11 +38,11 @@ function isVideoUrl(url?: string) {
 export default function ReelsPage() {
   const [reels, setReels] = useState<ReelItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   async function loadReels() {
     setLoading(true)
-    setMessage('')
+    setError('')
 
     try {
       const data = await fetch('/api/reels', {
@@ -51,12 +53,12 @@ export default function ReelsPage() {
 
       setReels(list)
 
-      if (list.length === 0) {
-        setMessage('No backend reels found. Run backend seed or upload a reel.')
+      if (!data.success) {
+        setError(data.message || 'Reels could not load.')
       }
     } catch {
-      setMessage('Reels API failed. Backend may not be running.')
       setReels([])
+      setError('Backend connection failed.')
     } finally {
       setLoading(false)
     }
@@ -69,11 +71,11 @@ export default function ReelsPage() {
   return (
     <AuthGuard>
       <SocialAppShell active="reels" title="" subtitle="" hideSearch>
-        <main className="realBackendReelsPage">
-          <header className="realBackendReelsHeader">
+        <main className="cleanReelsPage">
+          <header className="cleanReelsHeader">
             <div>
               <h1>Reels</h1>
-              <p>Backend video reels from real content database.</p>
+              <p>Watch latest video reels.</p>
             </div>
 
             <button type="button" onClick={loadReels}>
@@ -82,67 +84,67 @@ export default function ReelsPage() {
           </header>
 
           {loading && (
-            <section className="realReelsState">
-              Loading backend reels...
+            <section className="cleanReelsEmpty">
+              Loading reels...
             </section>
           )}
 
           {!loading && reels.length === 0 && (
-            <section className="realReelsState">
-              <b>No reels yet</b>
-              <span>{message}</span>
+            <section className="cleanReelsEmpty">
+              <b>No reels found</b>
+              <span>{error || 'Upload a reel to show it here.'}</span>
               <a href="/create?type=reel">Upload Reel</a>
             </section>
           )}
 
-          <section className="realReelsList">
+          <section className="cleanReelsGrid">
             {reels.map((reel) => {
-              const username = cleanUsername(reel.username || reel.user || reel.name)
-              const creatorName = reel.name || username.replace('@', '')
+              const handle = username(reel.username || reel.user || reel.name)
+              const displayName = reel.name || handle || 'Creator'
               const video = reel.videoUrl || reel.mediaUrl || ''
+              const title = reel.title || 'Reel'
+              const caption = reel.caption || ''
 
               return (
-                <article className="realReelCard" key={reel.id}>
-                  <div className="realReelTop">
-                    <a href={`/profile?username=${encodeURIComponent(username)}`} className="realReelAvatar">
-                      {firstLetter(creatorName)}
+                <article className="cleanReelCard" key={reel.id}>
+                  <header className="cleanReelUser">
+                    <a
+                      href={handle ? `/profile?username=${encodeURIComponent(handle)}` : '/profile'}
+                      className="cleanReelAvatar"
+                    >
+                      {firstLetter(displayName)}
                     </a>
 
                     <div>
-                      <a href={`/profile?username=${encodeURIComponent(username)}`}>
-                        {username} <span>✓</span>
+                      <a href={handle ? `/profile?username=${encodeURIComponent(handle)}` : '/profile'}>
+                        {displayName}
                       </a>
-                      <small>Backend reel · {reel.views || 0} views</small>
+                      {handle && <small>{handle}</small>}
                     </div>
 
                     <button type="button">⋮</button>
-                  </div>
+                  </header>
 
-                  <a href={`/post/${encodeURIComponent(reel.id)}`} className="realReelVideoBox">
-                    {isVideoUrl(video) ? (
-                      <video
-                        src={video}
-                        controls
-                        playsInline
-                        preload="metadata"
-                      />
+                  <a href={`/post/${encodeURIComponent(reel.id)}`} className="cleanReelMedia">
+                    {validMedia(video) ? (
+                      <video src={video} controls playsInline preload="metadata" />
                     ) : (
-                      <div className="realReelMissing">
-                        <b>Video missing</b>
-                        <span>{reel.title || 'Reel video not available'}</span>
+                      <div>
+                        <b>Video unavailable</b>
+                        <span>Media URL is missing from backend.</span>
                       </div>
                     )}
                   </a>
 
-                  <div className="realReelBody">
-                    <h2>{reel.title || 'Backend Reel'}</h2>
-                    <p>{reel.caption || 'Video reel loaded from backend.'}</p>
+                  <div className="cleanReelInfo">
+                    <h2>{title}</h2>
+                    {caption && <p>{caption}</p>}
 
-                    <div className="realReelActions">
+                    <div className="cleanReelActions">
                       <button type="button">♡ {reel.likes || 0}</button>
                       <button type="button">💬 {reel.comments || 0}</button>
-                      <button type="button">↗ Share</button>
-                      <button type="button">🔖</button>
+                      <button type="button">▶ {reel.views || 0}</button>
+                      <button type="button">↗</button>
                     </div>
                   </div>
                 </article>
