@@ -4,495 +4,276 @@ import { useEffect, useMemo, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 
-type SearchResult = {
+type Creator = {
   id?: string
-  type?: string
-  title?: string
   name?: string
   username?: string
-  caption?: string
+  avatarUrl?: string
   bio?: string
-  mediaUrl?: string
-  avatarUrl?: string
-  views?: string | number
-  likes?: string | number
+  verified?: boolean
+  followers?: number | string
 }
 
-type DiscoverItem = {
+type ContentItem = {
   id: string
-  type: 'creator' | 'post' | 'reel' | 'story' | 'hashtag'
-  title: string
-  subtitle: string
+  kind?: string
+  type?: string
+  title?: string
+  caption?: string
   username?: string
+  user?: string
+  name?: string
   mediaUrl?: string
-  avatarUrl?: string
+  videoUrl?: string
+  mediaType?: string
+  likes?: number | string
+  views?: number | string
 }
 
-const categories = ['For you', 'Creators', 'Posts', 'Reels', 'Stories']
-
-const trendingTopics = [
-  { title: 'Business Website', meta: '24.1K posts' },
-  { title: 'App Design', meta: '18.7K posts' },
-  { title: '3D UI', meta: '12.9K posts' },
-  { title: 'Brand Growth', meta: '9.4K posts' }
-]
-
-const fallbackCreators = [
-  { name: 'Sambhajingr Dev', username: '@sambhajingr' },
-  { name: 'Design Studio', username: '@design.studio' },
-  { name: 'Creative Hub', username: '@creativehub' },
-  { name: 'VibeLoop Creator', username: '@vibeloop' }
-]
-
-function normalizeUsername(value?: string) {
-  const clean = String(value || '').trim()
-  if (!clean) return ''
-  return clean.startsWith('@') ? clean : `@${clean}`
-}
+type Tab = 'all' | 'creators' | 'posts' | 'reels' | 'stories'
 
 function firstLetter(value?: string) {
   return String(value || 'V').trim().slice(0, 1).toUpperCase()
 }
 
-function isRealMedia(url?: string) {
-  if (!url) return false
-  const clean = String(url).trim()
-  return clean.startsWith('http') || clean.startsWith('/') || clean.startsWith('data:')
+function cleanUsername(value?: string) {
+  const clean = String(value || '').trim()
+  if (!clean) return '@creator'
+  return clean.startsWith('@') ? clean : `@${clean}`
+}
+
+function validMedia(url?: string) {
+  const clean = String(url || '').trim()
+  return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
+}
+
+function SearchMedia({ item }: { item: ContentItem }) {
+  const src = item.videoUrl || item.mediaUrl || ''
+  const isVideo =
+    item.mediaType === 'video' ||
+    item.kind === 'reel' ||
+    item.type === 'reel' ||
+    Boolean(item.videoUrl)
+
+  if (!validMedia(src)) {
+    return (
+      <div className="vlxSearchFallback">
+        <span>{isVideo ? '▶' : '✦'}</span>
+      </div>
+    )
+  }
+
+  if (isVideo) {
+    return <video src={src} muted playsInline preload="metadata" />
+  }
+
+  return <img src={src} alt={item.title || 'content'} />
 }
 
 export default function SearchPage() {
   const [query, setQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState('For you')
-  const [results, setResults] = useState<SearchResult[]>([])
-  const [discover, setDiscover] = useState<DiscoverItem[]>([])
-  const [recent, setRecent] = useState<string[]>([])
+  const [tab, setTab] = useState<Tab>('all')
+  const [creators, setCreators] = useState<Creator[]>([])
+  const [posts, setPosts] = useState<ContentItem[]>([])
+  const [reels, setReels] = useState<ContentItem[]>([])
+  const [stories, setStories] = useState<ContentItem[]>([])
+  const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [followLoading, setFollowLoading] = useState('')
 
-  // AUTO_REAL_USER_SEARCH
-  useEffect(() => {
-    const clean = query.trim()
-
-    if (!clean) {
-      setResults([])
-      setMessage('')
-      return
-    }
-
-    const timer = setTimeout(() => {
-      searchNow(clean)
-    }, 450)
-
-    return () => clearTimeout(timer)
-  }, [query])
-
-
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('vibeloop_recent_searches') || '[]')
-    if (Array.isArray(saved)) setRecent(saved.slice(0, 6))
-
-    Promise.all([
-      fetch('/api/feed', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-      fetch('/api/reels', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-      fetch('/api/home/online-following', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({}))
-    ]).then(([feedData, reelData, onlineData]) => {
-      const postItems: DiscoverItem[] = (feedData.posts || []).slice(0, 4).map((post: any) => ({
-        id: post.id,
-        type: 'post',
-        title: post.title || 'Creator Post',
-        subtitle: post.caption || 'Live post',
-        username: post.user || post.username || '@creator',
-        mediaUrl: post.mediaUrl
-      }))
-
-      const reelItems: DiscoverItem[] = (reelData.reels || feedData.reels || []).slice(0, 4).map((reel: any) => ({
-        id: reel.id,
-        type: 'reel',
-        title: reel.title || 'Creator Reel',
-        subtitle: `${reel.views || 0} views`,
-        username: reel.username || reel.creator || '@creator',
-        mediaUrl: reel.videoUrl || reel.mediaUrl
-      }))
-
-      const creatorItems: DiscoverItem[] = (onlineData.users || []).slice(0, 5).map((user: any) => ({
-        id: user.id || user.username,
-        type: 'creator',
-        title: user.name || user.username || 'Creator',
-        subtitle: user.username || '@creator',
-        username: user.username,
-        avatarUrl: user.avatarUrl
-      }))
-
-      setDiscover([...creatorItems, ...reelItems, ...postItems])
-    })
-  }, [])
-
-  const popularCreators = useMemo(() => {
-    const liveCreators = discover.filter((item) => item.type === 'creator')
-
-    if (liveCreators.length) {
-      return liveCreators.slice(0, 5)
-    }
-
-    return fallbackCreators.map((creator, index) => ({
-      id: `fallback-${index}`,
-      type: 'creator' as const,
-      title: creator.name,
-      subtitle: creator.username,
-      username: creator.username
-    }))
-  }, [discover])
-
-  const suggestedItems = useMemo(() => {
-    const items = discover.filter((item) => item.type !== 'creator').slice(0, 6)
-
-    if (items.length) return items
-
-    return [
-      {
-        id: 'trend-post',
-        type: 'post' as const,
-        title: 'Premium Website Showcase',
-        subtitle: 'by @sambhajingr',
-        username: '@sambhajingr',
-        mediaUrl: ''
-      },
-      {
-        id: 'trend-reel',
-        type: 'reel' as const,
-        title: '3D UI Motion Preview',
-        subtitle: '124K views',
-        username: '@design.studio',
-        mediaUrl: ''
-      },
-      {
-        id: 'trend-hashtag',
-        type: 'hashtag' as const,
-        title: '#AdvancedDesign',
-        subtitle: '18.7K posts',
-        username: '',
-        mediaUrl: ''
-      }
-    ]
-  }, [discover])
-
-  const reelSuggestions = useMemo(() => {
-    const liveReels = discover.filter((item) => item.type === 'reel').slice(0, 6)
-
-    if (liveReels.length) return liveReels
-
-    return [
-      {
-        id: 'reel-website-preview',
-        type: 'reel' as const,
-        title: 'Website Preview Motion',
-        subtitle: '1.2K views',
-        username: '@sambhajingrdevelopers',
-        mediaUrl: ''
-      },
-      {
-        id: 'reel-ui-motion',
-        type: 'reel' as const,
-        title: '3D UI Motion Preview',
-        subtitle: '940 views',
-        username: '@design.studio',
-        mediaUrl: ''
-      },
-      {
-        id: 'reel-workflow',
-        type: 'reel' as const,
-        title: 'Creative Workflow',
-        subtitle: '720 views',
-        username: '@creativehub',
-        mediaUrl: ''
-      }
-    ]
-  }, [discover])
-
-  function saveRecent(value: string) {
-    const clean = value.trim()
-    if (!clean) return
-
-    const next = [clean, ...recent.filter((item) => item !== clean)].slice(0, 6)
-    setRecent(next)
-    localStorage.setItem('vibeloop_recent_searches', JSON.stringify(next))
-  }
-
-  async function searchNow(nextQuery = query) {
-    const cleanQuery = nextQuery.trim()
-
-    if (!cleanQuery) {
-      setResults([])
-      setMessage('Type something to search.')
-      return
-    }
-
+  async function loadSearch(searchText = query) {
     setLoading(true)
-    setMessage('Searching...')
-    saveRecent(cleanQuery)
+    setMessage('')
 
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`, {
+      const data = await fetch(`/api/search/all?q=${encodeURIComponent(searchText)}`, {
         cache: 'no-store'
-      })
+      }).then((res) => res.json())
 
-      const data = await response.json()
+      setCreators(Array.isArray(data.creators) ? data.creators : [])
+      setPosts(Array.isArray(data.posts) ? data.posts : [])
+      setReels(Array.isArray(data.reels) ? data.reels : [])
+      setStories(Array.isArray(data.stories) ? data.stories : [])
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Search failed.')
+      if (!data.success) {
+        setMessage(data.message || 'Search failed.')
       }
-
-      const list = Array.isArray(data.results) ? data.results : []
-      setResults(list)
-      setMessage(list.length ? '' : 'No result found.')
-    } catch (error: any) {
-      setResults([])
-      setMessage(error?.message || 'Search failed.')
+    } catch {
+      setCreators([])
+      setPosts([])
+      setReels([])
+      setStories([])
+      setMessage('Backend search connection failed.')
     } finally {
       setLoading(false)
     }
   }
 
-  async function followCreator(username?: string) {
-    const target = normalizeUsername(username || query)
+  useEffect(() => {
+    loadSearch('')
+  }, [])
 
-    if (!target) {
-      setMessage('Enter creator username to follow.')
-      return
-    }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadSearch(query)
+    }, 350)
 
-    setFollowLoading(target)
-    setMessage('Updating follow status...')
+    return () => clearTimeout(timer)
+  }, [query])
 
-    try {
-      const response = await fetch('/api/follow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ following: target })
-      })
+  const totalResults = creators.length + posts.length + reels.length + stories.length
 
-      const data = await response.json()
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Follow action failed.')
-      }
-
-      setMessage(data.message || 'Follow status updated.')
-    } catch (error: any) {
-      setMessage(error?.message || 'Follow action failed.')
-    } finally {
-      setFollowLoading('')
-    }
-  }
+  const contentItems = useMemo(() => {
+    if (tab === 'posts') return posts
+    if (tab === 'reels') return reels
+    if (tab === 'stories') return stories
+    return [...posts, ...reels, ...stories]
+  }, [tab, posts, reels, stories])
 
   return (
     <AuthGuard>
-      <SocialAppShell active="search" title="" subtitle="">
-        <section className="premiumSearchPage">
-          <header className="premiumSearchHero">
+      <SocialAppShell active="creators" title="" subtitle="" hideSearch>
+        <main className="vlxSearchPage">
+          <header className="vlxSearchHeader">
             <div>
               <h1>Search</h1>
-              <p>Discover creators, content and trends.</p>
+              <p>Find creators, posts, reels and stories from backend.</p>
             </div>
-            <button type="button" aria-label="Smart discovery">✧</button>
           </header>
 
-          <section className="premiumSearchBar">
-            <span className="premiumSearchIcon">⌕</span>
+          <form className="vlxSearchBox" onSubmit={(e) => e.preventDefault()}>
+            <span>⌕</span>
             <input
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') searchNow()
-              }}
-              placeholder="Search creators, posts, reels, hashtags..."
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search creators, posts, reels..."
             />
-            <button type="button" onClick={() => searchNow()} disabled={loading} aria-label="Search">
-              {loading ? '…' : '↵'}
-            </button>
-            <button type="button" onClick={() => followCreator()} disabled={Boolean(followLoading)} aria-label="Follow creator">
-              +
-            </button>
-          </section>
+            {query && (
+              <button type="button" onClick={() => setQuery('')}>
+                ×
+              </button>
+            )}
+          </form>
 
-          <nav className="premiumCategoryChips">
-            {categories.map((category) => (
+          <nav className="vlxSearchTabs">
+            {[
+              ['all', 'All'],
+              ['creators', 'Creators'],
+              ['posts', 'Posts'],
+              ['reels', 'Reels'],
+              ['stories', 'Stories']
+            ].map(([key, label]) => (
               <button
+                key={key}
                 type="button"
-                className={activeCategory === category ? 'active' : ''}
-                onClick={() => setActiveCategory(category)}
-                key={category}
+                onClick={() => setTab(key as Tab)}
+                className={tab === key ? 'active' : ''}
               >
-                {category}
+                {label}
               </button>
             ))}
           </nav>
 
-          {message && <div className="premiumSearchMessage">{message}</div>}
+          <section className="vlxSearchStats">
+            <div>
+              <b>{creators.length}</b>
+              <span>Creators</span>
+            </div>
+            <div>
+              <b>{posts.length}</b>
+              <span>Posts</span>
+            </div>
+            <div>
+              <b>{reels.length}</b>
+              <span>Reels</span>
+            </div>
+            <div>
+              <b>{stories.length}</b>
+              <span>Stories</span>
+            </div>
+          </section>
 
-          {results.length > 0 && (
-            <section className="premiumSearchResults">
-              <div className="premiumSectionTitle">
-                <h2>Results</h2>
+          {loading && (
+            <section className="vlxSearchState">
+              Loading backend search...
+            </section>
+          )}
+
+          {!loading && totalResults === 0 && (
+            <section className="vlxSearchState">
+              <b>No result found</b>
+              <span>{message || 'Try another keyword or add backend data.'}</span>
+            </section>
+          )}
+
+          {!loading && (tab === 'all' || tab === 'creators') && creators.length > 0 && (
+            <section className="vlxCreatorSection">
+              <div className="vlxSectionTitle">
+                <h2>Creators</h2>
+                <span>{creators.length}</span>
               </div>
 
-              <div className="premiumResultList">
-                {results.map((item, index) => {
-                  const username = normalizeUsername(item.username || item.name)
-                  const title = item.title || item.name || username || 'Creator'
-                  const caption = item.caption || item.bio || 'Creator content'
-                  const type = item.type || 'creator'
+              <div className="vlxCreatorGrid">
+                {creators.map((creator) => {
+                  const handle = cleanUsername(creator.username || creator.name)
 
                   return (
-                    <article className="premiumResultItem" key={item.id || `${username}-${index}`}>
-                      <div className="premiumMiniAvatar">
-                        {isRealMedia(item.avatarUrl || item.mediaUrl) ? (
-                          <img src={item.avatarUrl || item.mediaUrl} alt={title} />
+                    <a
+                      className="vlxCreatorCard"
+                      href={`/profile?username=${encodeURIComponent(handle)}`}
+                      key={creator.id || handle}
+                    >
+                      <div className="vlxCreatorAvatar">
+                        {validMedia(creator.avatarUrl) ? (
+                          <img src={creator.avatarUrl} alt={creator.name || handle} />
                         ) : (
-                          <span>{firstLetter(title)}</span>
+                          <span>{firstLetter(creator.name || handle)}</span>
                         )}
+                        {creator.verified !== false && <i>✓</i>}
                       </div>
 
                       <div>
-                        <small>{String(type).toUpperCase()} • {username}</small>
-                        <h3>{title}</h3>
-                        <p>{caption}</p>
+                        <h3>{creator.name || handle}</h3>
+                        <p>{handle}</p>
+                        {creator.bio && <small>{creator.bio}</small>}
                       </div>
-
-                      {username && (
-                        <button
-                          type="button"
-                          onClick={() => followCreator(username)}
-                          disabled={followLoading === username}
-                        >
-                          {followLoading === username ? '...' : 'Follow'}
-                        </button>
-                      )}
-                    </article>
+                    </a>
                   )
                 })}
               </div>
             </section>
           )}
 
-          <section className="premiumTrendingSection">
-            <div className="premiumSectionTitle">
-              <h2>Trending now</h2>
-              <a href="/search">See all</a>
-            </div>
+          {!loading && tab !== 'creators' && contentItems.length > 0 && (
+            <section className="vlxSearchContent">
+              <div className="vlxSectionTitle">
+                <h2>{tab === 'all' ? 'Content' : tab}</h2>
+                <span>{contentItems.length}</span>
+              </div>
 
-            <div className="premiumTrendingScroller">
-              {trendingTopics.map((topic) => (
-                <button
-                  type="button"
-                  className="premiumTrendCard"
-                  onClick={() => {
-                    setQuery(topic.title)
-                    searchNow(topic.title)
-                  }}
-                  key={topic.title}
-                >
-                  <span>#</span>
-                  <div>
-                    <b>{topic.title}</b>
-                    <small>{topic.meta}</small>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </section>
+              <div className="vlxContentGrid">
+                {contentItems.map((item) => {
+                  const kind = item.kind || item.type || (item.videoUrl ? 'reel' : 'post')
 
-          <section className="premiumCreatorsPanel">
-            <div className="premiumSectionTitle">
-              <h2>Popular creators</h2>
-              <a href="/search">See all</a>
-            </div>
+                  return (
+                    <a
+                      href={`/post/${encodeURIComponent(item.id)}`}
+                      className="vlxContentCard"
+                      key={item.id}
+                    >
+                      <div>
+                        <SearchMedia item={item} />
+                        {kind === 'reel' && <em>▶</em>}
+                      </div>
 
-            <div className="premiumCreatorRow">
-              {popularCreators.map((creator) => (
-                <button
-                  type="button"
-                  className="premiumCreator"
-                  onClick={() => followCreator(creator.username || creator.subtitle)}
-                  key={creator.id}
-                >
-                  <div>
-                    {isRealMedia(creator.avatarUrl) ? (
-                      <img src={creator.avatarUrl} alt={creator.title} />
-                    ) : (
-                      <span>{firstLetter(creator.title)}</span>
-                    )}
-                    <i>✓</i>
-                  </div>
-                  <b>{creator.title}</b>
-                  <small>{creator.subtitle}</small>
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <section className="premiumSuggestedPanel premiumReelsPanel">
-            <div className="premiumSectionTitle">
-              <h2>Reels for you</h2>
-              <a href="/search">See all</a>
-            </div>
-
-            <div className="premiumSuggestionGrid">
-              {reelSuggestions.slice(0, 6).map((item) => (
-                <article className="premiumSuggestionCard" key={item.id}>
-                  <div className="premiumSuggestionMedia">
-                    {isRealMedia(item.mediaUrl) ? (
-                      item.type === 'reel' ? (
-                        <video src={item.mediaUrl} muted playsInline />
-                      ) : (
-                        <img src={item.mediaUrl} alt={item.title} />
-                      )
-                    ) : (
-                      <span>{item.type === 'hashtag' ? '#' : firstLetter(item.title)}</span>
-                    )}
-                    <em>{item.type}</em>
-                  </div>
-
-                  <h3>{item.title}</h3>
-                  <p>{item.subtitle}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="premiumRecentPanel">
-            <div className="premiumSectionTitle">
-              <h2>Recent searches</h2>
-              {recent.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRecent([])
-                    localStorage.removeItem('vibeloop_recent_searches')
-                  }}
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-
-            <div className="premiumRecentChips">
-              {(recent.length ? recent : ['app design', 'business website', '3D UI', 'creator']).map((item) => (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setQuery(item)
-                    searchNow(item)
-                  }}
-                  key={item}
-                >
-                  ◷ {item}
-                </button>
-              ))}
-            </div>
-          </section>
-        </section>
+                      <h3>{item.title || kind}</h3>
+                      <p>{cleanUsername(item.username || item.user || item.name)}</p>
+                    </a>
+                  )
+                })}
+              </div>
+            </section>
+          )}
+        </main>
       </SocialAppShell>
     </AuthGuard>
   )
