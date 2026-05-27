@@ -1,176 +1,239 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import AuthGuard from '../../components/AuthGuard';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react'
+import AuthGuard from '../../components/AuthGuard'
+import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
-import SocialAppShell from '../../components/SocialAppShell';
 
-type ContentType = 'post' | 'reel' | 'story';
-type MediaType = 'image' | 'video';
+type CreateType = 'post' | 'reel' | 'story'
+
+type SessionUser = {
+  userId: string
+  id: string
+  username: string
+  name: string
+}
+
+function normalizeUsername(value?: string) {
+  const clean = String(value || '').trim()
+  if (!clean) return '@you'
+  return clean.startsWith('@') ? clean : `@${clean}`
+}
+
+function mediaKindFromUrl(url: string, selectedType: CreateType) {
+  const clean = url.toLowerCase()
+
+  if (selectedType === 'reel') return 'video'
+  if (clean.includes('.mp4') || clean.includes('.webm') || clean.includes('.mov')) return 'video'
+  return 'image'
+}
+
+function validPreview(url: string) {
+  const clean = String(url || '').trim()
+  return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
+}
 
 export default function CreatePage() {
-  const [sessionUser, setSessionUser] = useState({ userId: 'USR-YOU', id: 'USR-YOU', username: '@you', name: 'Creator' })
+  const [session, setSession] = useState<SessionUser>({
+    userId: 'USR-YOU',
+    id: 'USR-YOU',
+    username: '@you',
+    name: 'Creator'
+  })
 
-  const [type, setType] = useState<ContentType>('post');
-  const [title, setTitle] = useState('');
-  const [caption, setCaption] = useState('');
-  const [location, setLocation] = useState('VibeLoop');
-  const [mediaUrl, setMediaUrl] = useState('');
-  const [mediaType, setMediaType] = useState<MediaType>('image');
-  const [message, setMessage] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [creating, setCreating] = useState(false);
+  const [type, setType] = useState<CreateType>('post')
+  const [title, setTitle] = useState('')
+  const [caption, setCaption] = useState('')
+  const [location, setLocation] = useState('VibeLoop')
+  const [mediaUrl, setMediaUrl] = useState('')
+  const [videoUrl, setVideoUrl] = useState('')
+  const [mediaType, setMediaType] = useState<'image' | 'video'>('image')
+  const [selectedFileName, setSelectedFileName] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState('')
+  const [createdId, setCreatedId] = useState('')
 
-  const canPublish =
-    Boolean(title.trim() || caption.trim()) &&
-    (type === 'post' || Boolean(mediaUrl));
+  useEffect(() => {
+    async function load() {
+      const user = await getSessionUser()
+      setSession({
+        ...user,
+        username: normalizeUsername(user.username)
+      })
 
-  async function uploadFile(file: File) {
-    setUploading(true);
-    setMessage('Uploading your media securely...');
+      const params = new URLSearchParams(window.location.search)
+      const requestedType = params.get('type')
+
+      if (requestedType === 'reel' || requestedType === 'story' || requestedType === 'post') {
+        setType(requestedType)
+      }
+    }
+
+    load()
+  }, [])
+
+  useEffect(() => {
+    if (type === 'reel') {
+      setMediaType('video')
+    }
+  }, [type])
+
+  const previewUrl = useMemo(() => {
+    return videoUrl || mediaUrl
+  }, [mediaUrl, videoUrl])
+
+  async function handleFileUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+
+    if (!file) return
+
+    setUploading(true)
+    setMessage('')
+    setCreatedId('')
+    setSelectedFileName(file.name)
 
     try {
-      const isVideo = file.type.startsWith('video/');
-      const isImage = file.type.startsWith('image/');
+      const formData = new FormData()
+      formData.append('file', file)
 
-      if (!isVideo && !isImage) {
-        throw new Error('Please upload an image or video file.');
-      }
-
-      if (type === 'reel' && !isVideo) {
-        throw new Error('Reels need a video file.');
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/content/upload', {
         method: 'POST',
         body: formData
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Upload failed.');
+        throw new Error(data.message || 'Upload failed.')
       }
 
-      setMediaUrl(data.mediaUrl);
-      setMediaType(data.mediaType === 'video' ? 'video' : 'image');
-      setMessage('Media uploaded successfully. You can publish now.');
+      setMediaUrl(data.mediaUrl || '')
+      setVideoUrl(data.videoUrl || '')
+      setMediaType(data.mediaType === 'video' ? 'video' : 'image')
+      setMessage('Media uploaded successfully.')
     } catch (error: any) {
-      setMessage(error?.message || 'Upload failed.');
+      setMessage(error?.message || 'Upload failed.')
     } finally {
-      setUploading(false);
+      setUploading(false)
     }
   }
 
-  async function publishContent() {
-    if (!title.trim() && !caption.trim()) {
-      setMessage('Add a title or caption first.');
-      return;
-    }
+  function handleMediaUrlChange(value: string) {
+    setMediaUrl(value)
+    setVideoUrl(type === 'reel' ? value : '')
+    setMediaType(mediaKindFromUrl(value, type))
+  }
 
-    if ((type === 'reel' || type === 'story') && !mediaUrl) {
-      setMessage(type === 'reel' ? 'Upload a video for your reel first.' : 'Upload media for your story first.');
-      return;
-    }
+  async function handleCreate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
 
-    setCreating(true);
-    setMessage('Publishing your content...');
-
-    const payload = {
-      title: title.trim() || (type === 'post' ? 'New Post' : type === 'reel' ? 'New Reel' : 'New Story'),
-      caption: caption.trim(),
-      location: location.trim() || 'VibeLoop',
-      mediaUrl,
-      mediaType,
-      username: '{sessionUser.username}',
-      name: 'Creator',
-      color: type === 'post' ? 'pink' : type === 'reel' ? 'purple' : 'orange'
-    };
+    setSaving(true)
+    setMessage('')
+    setCreatedId('')
 
     try {
-      const response = await fetch(`/api/content/${type}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      const finalMediaUrl = mediaUrl.trim()
+      const finalVideoUrl = videoUrl.trim() || (mediaType === 'video' ? finalMediaUrl : '')
 
-      const data = await response.json();
+      if (!title.trim()) {
+        throw new Error('Title is required.')
+      }
+
+      if (!finalMediaUrl && !finalVideoUrl) {
+        throw new Error('Upload media or paste media URL.')
+      }
+
+      const response = await fetch('/api/content/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          kind: type,
+          type,
+          title: title.trim(),
+          caption: caption.trim(),
+          location: location.trim() || 'VibeLoop',
+          username: session.username,
+          user: session.username,
+          name: session.name,
+          userId: session.userId,
+          mediaUrl: finalMediaUrl || finalVideoUrl,
+          videoUrl: finalVideoUrl,
+          mediaType,
+          likes: 0,
+          comments: 0,
+          views: 0
+        })
+      })
+
+      const data = await response.json()
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Publish failed.');
+        throw new Error(data.message || 'Content save failed.')
       }
 
-      setMessage(`${type.toUpperCase()} published successfully.`);
+      const newId = data.item?.id || data.post?.id || data.reel?.id || data.story?.id || ''
+      setCreatedId(newId)
+      setMessage(`${type.toUpperCase()} saved to backend successfully.`)
 
-      if (type === 'post') {
-        window.location.href = `/post/${encodeURIComponent(data.post.id)}`;
-      } else if (type === 'reel') {
-        window.location.href = `/reel/${encodeURIComponent(data.reel.id)}`;
-      } else {
-        window.location.href = `/story/${encodeURIComponent(data.story.id)}`;
-      }
+      setTitle('')
+      setCaption('')
+      setMediaUrl('')
+      setVideoUrl('')
+      setSelectedFileName('')
+      setMediaType(type === 'reel' ? 'video' : 'image')
     } catch (error: any) {
-      setMessage(error?.message || 'Publish failed.');
+      setMessage(error?.message || 'Content save failed.')
     } finally {
-      setCreating(false);
-    }
-  }
-
-  function selectType(nextType: ContentType) {
-    setType(nextType);
-    setMessage('');
-
-    if (nextType === 'reel' && mediaType === 'image' && mediaUrl) {
-      setMessage('Reels work best with video. Upload a video before publishing.');
+      setSaving(false)
     }
   }
 
   return (
     <AuthGuard>
-      <SocialAppShell
-        active="create"
-        title="Create"
-        subtitle="Upload posts, reels and stories with secure media uploads."
-      >
-        <section className="createHero">
-          <div>
-            <span>Creator Studio</span>
-            <h2>Create real social content</h2>
-            <p>Upload media once, then publish your post, reel or story.</p>
-          </div>
+      <SocialAppShell active="create" title="" subtitle="" hideSearch>
+        <main className="vlxCreatePage">
+          <header className="vlxCreateHeader">
+            <div>
+              <h1>Create</h1>
+              <p>Upload post, reel or story directly to backend.</p>
+            </div>
 
-          <button type="button" onClick={publishContent} disabled={creating || uploading || !canPublish}>
-            {creating ? 'Publishing...' : 'Publish'}
-          </button>
-        </section>
+            <a href="/home">Home</a>
+          </header>
 
-        {message && <div className="vlSettingsMessage">{message}</div>}
+          <nav className="vlxCreateTabs">
+            {(['post', 'reel', 'story'] as CreateType[]).map((item) => (
+              <button
+                type="button"
+                key={item}
+                onClick={() => setType(item)}
+                className={type === item ? 'active' : ''}
+              >
+                {item === 'post' && '▧ Post'}
+                {item === 'reel' && '▣ Reel'}
+                {item === 'story' && '◉ Story'}
+              </button>
+            ))}
+          </nav>
 
-        <section className="createTabs">
-          <button type="button" className={type === 'post' ? 'active' : ''} onClick={() => selectType('post')}>
-            Post
-          </button>
-          <button type="button" className={type === 'reel' ? 'active' : ''} onClick={() => selectType('reel')}>
-            Reel
-          </button>
-          <button type="button" className={type === 'story' ? 'active' : ''} onClick={() => selectType('story')}>
-            Story
-          </button>
-        </section>
+          <section className="vlxCreateUser">
+            <div>{session.name.slice(0, 1).toUpperCase()}</div>
+            <span>
+              <b>{session.name}</b>
+              <small>{session.username}</small>
+            </span>
+          </section>
 
-        <section className="createGrid">
-          <div className="createPanel">
-            <h3>Content Details</h3>
-
+          <form className="vlxCreateForm" onSubmit={handleCreate}>
             <label>
               Title
               <input
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder={type === 'post' ? 'Post title...' : type === 'reel' ? 'Reel title...' : 'Story title...'}
+                placeholder={`Enter ${type} title`}
               />
             </label>
 
@@ -179,87 +242,85 @@ export default function CreatePage() {
               <textarea
                 value={caption}
                 onChange={(event) => setCaption(event.target.value)}
-                placeholder="Write a caption..."
+                placeholder="Write caption..."
+                rows={4}
               />
             </label>
-
-            {type === 'post' && (
-              <label>
-                Location
-                <input
-                  value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  placeholder="Location..."
-                />
-              </label>
-            )}
 
             <label>
-              Media Link
+              Location
               <input
-                value={mediaUrl}
-                onChange={(event) => {
-                  setMediaUrl(event.target.value);
-                  if (event.target.value.match(/\.(mp4|mov|webm)(\?|$)/i)) {
-                    setMediaType('video');
-                  }
-                }}
-                placeholder="Upload media or paste a media link..."
+                value={location}
+                onChange={(event) => setLocation(event.target.value)}
+                placeholder="Location"
               />
             </label>
 
-            <div className="createPublishInfo">
-              <b>Publishing as {sessionUser.username}</b>
-              <span>
-                Your new {type} will appear automatically in the live feed after publishing.
-              </span>
-            </div>
+            <div className="vlxUploadBox">
+              <div>
+                <h2>Upload media</h2>
+                <p>
+                  {type === 'reel'
+                    ? 'Upload MP4/WebM video for reels.'
+                    : 'Upload image/video or paste URL.'}
+                </p>
+              </div>
 
-            <button type="button" onClick={publishContent} disabled={creating || uploading || !canPublish}>
-              {creating ? 'Publishing...' : `Publish ${type}`}
-            </button>
-          </div>
-
-          <div className="createPanel">
-            <h3>Upload Media</h3>
-
-            <label className="createUploader">
               <input
                 type="file"
                 accept={type === 'reel' ? 'video/*' : 'image/*,video/*'}
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) uploadFile(file);
-                }}
+                onChange={handleFileUpload}
               />
 
-              <div>
-                <b>{uploading ? 'Uploading...' : 'Choose File'}</b>
-                <span>
-                  {type === 'reel'
-                    ? 'Upload a video for your reel.'
-                    : 'Upload an image or video for your content.'}
-                </span>
-              </div>
+              {selectedFileName && <small>{selectedFileName}</small>}
+              {uploading && <small>Uploading media...</small>}
+            </div>
+
+            <label>
+              Or paste media URL
+              <input
+                value={mediaUrl}
+                onChange={(event) => handleMediaUrlChange(event.target.value)}
+                placeholder={type === 'reel' ? 'https://example.com/video.mp4' : 'https://example.com/image.jpg'\}
+              />
             </label>
 
-            <div className="createPreview">
-              {mediaUrl ? (
-                mediaType === 'video' ? (
-                  <video src={mediaUrl} controls />
-                ) : (
-                  <img src={mediaUrl} alt="Preview" />
-                )
-              ) : (
+            {previewUrl && (
+              <section className="vlxCreatePreview">
+                <h2>Preview</h2>
+
                 <div>
-                  <b>No media selected</b>
-                  <span>Upload a file to preview it here.</span>
+                  {mediaType === 'video' ? (
+                    <video src={previewUrl} controls playsInline />
+                  ) : validPreview(previewUrl) ? (
+                    <img src={previewUrl} alt="Preview" />
+                  ) : (
+                    <span>Invalid preview URL</span>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-        </section>
+              </section>
+            )}
+
+            {message && (
+              <section className={`vlxCreateMessage ${createdId ? 'success' : ''}`}>
+                {message}
+
+                {createdId && (
+                  <div>
+                    <a href={`/post/${encodeURIComponent(createdId)}`}>View Content</a>
+                    {type === 'reel' && <a href="/reels">Open Reels</a>}
+                    {type !== 'reel' && <a href="/home">Open Home</a>}
+                  </div>
+                )}
+              </section>
+            )}
+
+            <button className="vlxCreateSubmit" type="submit" disabled={saving || uploading}>
+              {saving ? 'Saving...' : `Publish ${type}`}
+            </button>
+          </form>
+        </main>
       </SocialAppShell>
     </AuthGuard>
-  );
+  )
 }
