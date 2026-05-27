@@ -17352,3 +17352,84 @@ svg {
     right: 10px !important;
   }
 }
+
+/* FINAL SCROLL UNLOCK FIX */
+html,
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  position: static !important;
+  touch-action: auto !important;
+  overscroll-behavior-y: auto !important;
+}
+
+body {
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* App shell must allow page scroll */
+.neoShell {
+  position: relative !important;
+  height: auto !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  touch-action: auto !important;
+}
+
+/* Main page should scroll naturally */
+.neoPage {
+  position: relative !important;
+  height: auto !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  padding-bottom: 160px !important;
+}
+
+/* Unlock all platform pages */
+.neoHome,
+.neoSimplePage,
+.publicOwnerProfile,
+.realProfilePage,
+.fixedPostDetailPage,
+.realPostDetailPage,
+.simpleMessagePage,
+.searchPage,
+.createPage,
+.settingsPage,
+.notificationsPage,
+.reelsPage,
+.homePage,
+main,
+section {
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+/* Keep horizontal story/category rows scrollable */
+.neoStories,
+.trendingRow,
+.categoryRow,
+.creatorRow,
+.searchTabs,
+.reelsRow,
+.feedRow,
+.poHighlights {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Bottom nav fixed, content scrolls behind safely */
+.neoBottomNav {
+  position: fixed !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  left: 10px !important;
+  right: 10px !important;
+  z-index: 9999 !important;
+}
+
