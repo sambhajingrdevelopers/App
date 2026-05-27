@@ -9,6 +9,7 @@ type Creator = {
   name?: string
   username?: string
   avatarUrl?: string
+  verified?: boolean
 }
 
 type FeedItem = {
@@ -20,6 +21,7 @@ type FeedItem = {
   username?: string
   user?: string
   name?: string
+  avatarUrl?: string
   mediaUrl?: string
   videoUrl?: string
   mediaType?: string
@@ -33,26 +35,44 @@ function firstLetter(value?: string) {
   return String(value || 'V').trim().slice(0, 1).toUpperCase()
 }
 
-function isMedia(url?: string) {
-  const clean = String(url || '').trim()
-  return clean.startsWith('http') || clean.startsWith('/') || clean.startsWith('data:')
-}
-
-function usernameOf(item: FeedItem) {
-  const clean = String(item.username || item.user || item.name || '@creator').trim()
+function cleanUsername(value?: string) {
+  const clean = String(value || '').trim()
+  if (!clean) return '@creator'
   return clean.startsWith('@') ? clean : `@${clean}`
 }
 
-function MediaBlock({ item }: { item: FeedItem }) {
-  const src = item.mediaUrl || item.videoUrl || ''
-  const isVideo = item.mediaType === 'video' || item.kind === 'reel' || item.type === 'reel' || Boolean(item.videoUrl)
-  const [ok, setOk] = useState(Boolean(isMedia(src)))
+function validMedia(url?: string) {
+  const clean = String(url || '').trim()
+  return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
+}
 
-  if (!ok) {
+function timeLabel(value?: string) {
+  if (!value) return 'now'
+  const time = new Date(value).getTime()
+  if (Number.isNaN(time)) return 'now'
+
+  const diff = Date.now() - time
+  const min = Math.max(1, Math.floor(diff / 60000))
+  if (min < 60) return `${min}m ago`
+  const hr = Math.floor(min / 60)
+  if (hr < 24) return `${hr}h ago`
+  return `${Math.floor(hr / 24)}d ago`
+}
+
+function HomeMedia({ item }: { item: FeedItem }) {
+  const src = item.videoUrl || item.mediaUrl || ''
+  const [failed, setFailed] = useState(!validMedia(src))
+  const isVideo =
+    item.mediaType === 'video' ||
+    item.kind === 'reel' ||
+    item.type === 'reel' ||
+    Boolean(item.videoUrl)
+
+  if (failed) {
     return (
-      <div className="neoMediaFallback">
-        <span>Media loading failed</span>
-        <small>{item.title || 'Content preview unavailable'}</small>
+      <div className="vlxMediaFallback">
+        <b>Media unavailable</b>
+        <span>Backend media URL missing or failed.</span>
       </div>
     )
   }
@@ -60,11 +80,11 @@ function MediaBlock({ item }: { item: FeedItem }) {
   if (isVideo) {
     return (
       <video
-        src={item.videoUrl || item.mediaUrl}
+        src={src}
         controls
         playsInline
-        muted
-        onError={() => setOk(false)}
+        preload="metadata"
+        onError={() => setFailed(true)}
       />
     )
   }
@@ -73,40 +93,45 @@ function MediaBlock({ item }: { item: FeedItem }) {
     <img
       src={src}
       alt={item.title || 'post'}
-      onError={() => setOk(false)}
+      onError={() => setFailed(true)}
     />
   )
 }
 
 export default function HomePage() {
   const [searchOpen, setSearchOpen] = useState(false)
-  const [search, setSearch] = useState('')
+  const [query, setQuery] = useState('')
   const [creators, setCreators] = useState<Creator[]>([])
   const [posts, setPosts] = useState<FeedItem[]>([])
   const [reels, setReels] = useState<FeedItem[]>([])
   const [stories, setStories] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   async function loadHome() {
     setLoading(true)
+    setError('')
 
     try {
       const [feedData, creatorsData] = await Promise.all([
-        fetch('/api/feed', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-        fetch('/api/home/online-following', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({}))
+        fetch('/api/feed', { cache: 'no-store' }).then((r) => r.json()),
+        fetch('/api/home/online-following', { cache: 'no-store' }).then((r) => r.json())
       ])
 
       setPosts(Array.isArray(feedData.posts) ? feedData.posts : [])
       setReels(Array.isArray(feedData.reels) ? feedData.reels : [])
       setStories(Array.isArray(feedData.stories) ? feedData.stories : [])
+      setCreators(Array.isArray(creatorsData.users) ? creatorsData.users : [])
 
-      const list = Array.isArray(creatorsData.users)
-        ? creatorsData.users
-        : Array.isArray(creatorsData.creators)
-          ? creatorsData.creators
-          : []
-
-      setCreators(list)
+      if (!feedData.success) {
+        setError(feedData.message || 'Backend feed failed.')
+      }
+    } catch {
+      setError('Backend connection failed.')
+      setPosts([])
+      setReels([])
+      setStories([])
+      setCreators([])
     } finally {
       setLoading(false)
     }
@@ -116,60 +141,63 @@ export default function HomePage() {
     loadHome()
   }, [])
 
-  const mixedFeed = useMemo(() => {
-    const items = [...posts, ...reels]
-    return items.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
-  }, [posts, reels])
+  const feed = useMemo(() => {
+    const mixed = [...posts, ...reels]
+    const q = query.trim().toLowerCase()
 
-  const filteredFeed = useMemo(() => {
-    const q = search.trim().toLowerCase()
+    const sorted = mixed.sort((a, b) =>
+      String(b.createdAt || '').localeCompare(String(a.createdAt || ''))
+    )
 
-    if (!q) return mixedFeed
+    if (!q) return sorted
 
-    return mixedFeed.filter((item) => {
-      return [
+    return sorted.filter((item) =>
+      [
         item.title,
         item.caption,
         item.username,
         item.user,
         item.name
       ].some((value) => String(value || '').toLowerCase().includes(q))
-    })
-  }, [mixedFeed, search])
+    )
+  }, [posts, reels, query])
 
   return (
     <AuthGuard>
       <SocialAppShell active="home" title="" subtitle="" hideSearch>
-        <section className="neoHome">
-          <header className="neoHomeTop">
-            <a href="/home" className="neoBrand">
+        <main className="vlxHome">
+          <header className="vlxHomeHeader">
+            <a href="/home" className="vlxLogo">
               Vibe<span>Loop</span>
             </a>
 
-            <div className="neoTopActions">
+            <div className="vlxTopActions">
               <button
                 type="button"
-                onClick={() => setSearchOpen((v) => !v)}
+                onClick={() => setSearchOpen((old) => !old)}
                 className={searchOpen ? 'active' : ''}
                 aria-label="Search"
               >
                 ⚡⌕
               </button>
 
-              <a href="/notifications">
+              <a href="/notifications" aria-label="Notifications">
                 🔔
-                <i>1</i>
+              </a>
+
+              <a href="/messages" aria-label="Messages">
+                ✉
               </a>
             </div>
           </header>
 
           {searchOpen && (
-            <form className="neoExpSearch" onSubmit={(e) => e.preventDefault()}>
+            <form className="vlxSearchBar" onSubmit={(e) => e.preventDefault()}>
               <span>⌕</span>
               <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search creators, posts, reels..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search posts, reels, creators..."
                 autoFocus
               />
               <button type="button" onClick={() => setSearchOpen(false)}>
@@ -178,89 +206,104 @@ export default function HomePage() {
             </form>
           )}
 
-          <section className="neoStories">
-            <a className="neoStoryCreate" href="/create?type=story">
+          <section className="vlxStories" aria-label="Stories">
+            <a className="vlxCreateStory" href="/create?type=story">
               <span>+</span>
               <b>Create</b>
             </a>
 
-            {creators.map((creator, index) => {
-              const username = creator.username || creator.name || '@creator'
+            {creators.map((creator) => {
+              const handle = cleanUsername(creator.username || creator.name)
 
               return (
                 <a
-                  className="neoStory"
-                  href={`/profile?username=${encodeURIComponent(username)}`}
-                  key={creator.id || username || index}
+                  className="vlxStory"
+                  href={`/profile?username=${encodeURIComponent(handle)}`}
+                  key={creator.id || handle}
                 >
                   <div>
-                    {isMedia(creator.avatarUrl) ? (
-                      <img src={creator.avatarUrl} alt={creator.name || username} />
+                    {validMedia(creator.avatarUrl) ? (
+                      <img src={creator.avatarUrl} alt={creator.name || handle} />
                     ) : (
-                      <span>{firstLetter(creator.name || username)}</span>
+                      <span>{firstLetter(creator.name || handle)}</span>
                     )}
                     <i />
                   </div>
-                  <b>{creator.name || username}</b>
+                  <b>{creator.name || handle}</b>
                 </a>
               )
             })}
           </section>
 
-          {loading && <div className="neoHomeState">Loading feed...</div>}
-
-          {!loading && filteredFeed.length === 0 && (
-            <div className="neoHomeState">
-              <b>No posts yet</b>
-              <span>Create a post/reel or follow creators.</span>
-              <a href="/create">Create now</a>
-            </div>
+          {loading && (
+            <section className="vlxState">
+              Loading backend feed...
+            </section>
           )}
 
-          <section className="neoFeed">
-            {filteredFeed.map((item) => {
-              const username = usernameOf(item)
-              const name = item.name || username.replace('@', '') || 'Creator'
-              const isReel = item.kind === 'reel' || item.type === 'reel'
+          {!loading && feed.length === 0 && (
+            <section className="vlxState">
+              <b>No content found</b>
+              <span>{error || 'Upload posts/reels or seed backend content.'}</span>
+              <div>
+                <a href="/create?type=post">Create Post</a>
+                <button type="button" onClick={loadHome}>Refresh</button>
+              </div>
+            </section>
+          )}
+
+          <section className="vlxFeed">
+            {feed.map((item) => {
+              const handle = cleanUsername(item.username || item.user || item.name)
+              const displayName = item.name || handle.replace('@', '') || 'Creator'
+              const kind = item.kind || item.type || (item.videoUrl ? 'reel' : 'post')
+              const isReel = kind === 'reel'
 
               return (
-                <article className="neoPostCard" key={item.id}>
-                  <header className="neoPostHead">
-                    <a href={`/profile?username=${encodeURIComponent(username)}`} className="neoPostAvatar">
-                      {firstLetter(name)}
+                <article className="vlxPost" key={item.id}>
+                  <header className="vlxPostHeader">
+                    <a
+                      href={`/profile?username=${encodeURIComponent(handle)}`}
+                      className="vlxAvatar"
+                    >
+                      {validMedia(item.avatarUrl) ? (
+                        <img src={item.avatarUrl} alt={displayName} />
+                      ) : (
+                        <span>{firstLetter(displayName)}</span>
+                      )}
                     </a>
 
                     <div>
-                      <a href={`/profile?username=${encodeURIComponent(username)}`}>
-                        {username} <span>✓</span>
+                      <a href={`/profile?username=${encodeURIComponent(handle)}`}>
+                        {handle} <em>✓</em>
                       </a>
-                      <small>{isReel ? 'Reel' : 'Post'} · 2h ago</small>
+                      <small>{isReel ? 'Reel' : 'Post'} · {timeLabel(item.createdAt)}</small>
                     </div>
 
                     <button type="button">⋮</button>
                   </header>
 
-                  <a href={`/post/${encodeURIComponent(item.id)}`} className="neoPostMedia">
-                    <MediaBlock item={item} />
-                    {isReel && <em>▶</em>}
+                  <a href={`/post/${encodeURIComponent(item.id)}`} className="vlxPostMedia">
+                    <HomeMedia item={item} />
+                    {isReel && <i>▶</i>}
                   </a>
 
-                  <div className="neoPostBody">
-                    <h2>{item.title || (isReel ? 'New Reel' : 'New Post')}</h2>
-                    <p>{item.caption || 'Creator update'}</p>
+                  <div className="vlxPostBody">
+                    <h2>{item.title || (isReel ? 'Reel' : 'Post')}</h2>
+                    {item.caption && <p>{item.caption}</p>}
 
-                    <div className="neoPostActions">
+                    <div className="vlxPostActions">
                       <button type="button">♡ {item.likes || 0}</button>
                       <button type="button">💬 {item.comments || 0}</button>
-                      <button type="button">↗ Share</button>
-                      <button type="button">🔖</button>
+                      <button type="button">▶ {item.views || 0}</button>
+                      <button type="button">↗</button>
                     </div>
                   </div>
                 </article>
               )
             })}
           </section>
-        </section>
+        </main>
       </SocialAppShell>
     </AuthGuard>
   )

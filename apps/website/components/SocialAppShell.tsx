@@ -10,7 +10,7 @@ type Props = {
   hideSearch?: boolean
 }
 
-const bottomNav = [
+const navItems = [
   { key: 'home', label: 'Home', href: '/home', icon: '⌂' },
   { key: 'creators', label: 'Creators', href: '/search', icon: '👥' },
   { key: 'reels', label: 'Reels', href: '/reels', icon: '▣' },
@@ -25,10 +25,10 @@ export default function SocialAppShell({
   subtitle = ''
 }: Props) {
   return (
-    <div className="neoShell">
-      <main className="neoPage">
+    <div className="vlxShell">
+      <main className="vlxPage">
         {(title || subtitle) && (
-          <header className="neoPageHeader">
+          <header className="vlxPageHeader">
             {title && <h1>{title}</h1>}
             {subtitle && <p>{subtitle}</p>}
           </header>
@@ -37,12 +37,12 @@ export default function SocialAppShell({
         {children}
       </main>
 
-      <nav className="neoBottomNav">
-        {bottomNav.map((item) => (
+      <nav className="vlxBottomNav">
+        {navItems.map((item) => (
           <a
-            href={item.href}
             key={item.key}
-            className={`${active === item.key ? 'active' : ''} ${item.key === 'reels' ? 'reelsCenter' : ''}`}
+            href={item.href}
+            className={`${active === item.key ? 'active' : ''} ${item.key === 'reels' ? 'centerReel' : ''}`}
           >
             <span>{item.icon}</span>
             <b>{item.label}</b>
