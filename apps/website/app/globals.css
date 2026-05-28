@@ -22500,3 +22500,390 @@ body {
     height: 52px !important;
   }
 }
+
+/* PART 16: REAL CONNECTED RESPONSIVE SEARCH PAGE */
+.vlxRealSearchPage {
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 15px !important;
+  padding-bottom: 132px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxRealSearchHeader {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.vlxRealSearchHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 48px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxRealSearchHeader p {
+  margin: 7px 0 0 !important;
+  color: rgba(255,255,255,.64) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxRealSearchHeader button,
+.vlxRealSearchBar button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 15px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxRealSearchBar {
+  min-height: 62px !important;
+  border-radius: 999px !important;
+  padding: 0 12px 0 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxRealSearchBar span {
+  color: rgba(255,255,255,.65) !important;
+  font-size: 25px !important;
+}
+
+.vlxRealSearchBar input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 16px !important;
+}
+
+.vlxRealSearchTabs {
+  width: 100% !important;
+  display: flex !important;
+  gap: 10px !important;
+  overflow-x: auto !important;
+  padding-bottom: 4px !important;
+  scrollbar-width: none !important;
+}
+
+.vlxRealSearchTabs::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vlxRealSearchTabs button {
+  flex: 0 0 auto !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 999px !important;
+  padding: 11px 18px !important;
+  color: rgba(255,255,255,.72) !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.045) !important;
+}
+
+.vlxRealSearchTabs button.active {
+  color: white !important;
+  border-color: rgba(255,0,184,.24) !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxRealSearchNotice {
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+  font-weight: 850 !important;
+}
+
+.vlxRealSearchState,
+.vlxRealSearchEmpty {
+  min-height: 130px !important;
+  border-radius: 26px !important;
+  padding: 20px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.62) !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxRealSearchSection {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.vlxRealSearchSectionTitle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.vlxRealSearchSectionTitle h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 28px !important;
+  letter-spacing: -.06em !important;
+  text-transform: capitalize !important;
+}
+
+.vlxRealSearchSectionTitle span {
+  min-width: 36px !important;
+  height: 30px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  background: rgba(255,255,255,.08) !important;
+  font-weight: 900 !important;
+}
+
+.vlxRealCreatorList {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.vlxRealCreatorCard {
+  border-radius: 26px !important;
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 13px !important;
+  background: rgba(12,13,28,.92) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxRealCreatorAvatar {
+  width: 76px !important;
+  height: 76px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxRealCreatorAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxRealCreatorAvatar b {
+  font-size: 30px !important;
+}
+
+.vlxRealCreatorAvatar i {
+  position: absolute !important;
+  right: 7px !important;
+  bottom: 7px !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 50% !important;
+  background: #00e699 !important;
+  border: 3px solid #090914 !important;
+}
+
+.vlxRealCreatorCard > div {
+  min-width: 0 !important;
+}
+
+.vlxRealCreatorCard > div > a {
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 19px !important;
+  font-weight: 950 !important;
+}
+
+.vlxRealCreatorCard em,
+.vlxRealContentUser em {
+  margin-left: 5px !important;
+  color: #00dfff !important;
+  font-style: normal !important;
+}
+
+.vlxRealCreatorCard p {
+  margin: 4px 0 !important;
+  color: #00dfff !important;
+  font-weight: 850 !important;
+}
+
+.vlxRealCreatorCard small {
+  color: rgba(255,255,255,.58) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxRealCreatorCard div div {
+  margin-top: 10px !important;
+  display: flex !important;
+  gap: 9px !important;
+  flex-wrap: wrap !important;
+}
+
+.vlxRealCreatorCard div div a,
+.vlxRealContentActions a,
+.vlxRealContentActions button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 9px 13px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.vlxRealCreatorCard div div a:last-child,
+.vlxRealContentActions button {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxRealContentGrid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 13px !important;
+}
+
+.vlxRealContentCard {
+  overflow: hidden !important;
+  border-radius: 26px !important;
+  background: rgba(12,13,28,.92) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxRealContentMedia {
+  min-height: 210px !important;
+  max-height: 320px !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-decoration: none !important;
+  background: #05050a !important;
+}
+
+.vlxRealContentMedia img,
+.vlxRealContentMedia video {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 320px !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.vlxRealContentMedia > span {
+  position: absolute !important;
+  left: 10px !important;
+  top: 10px !important;
+  border-radius: 999px !important;
+  padding: 6px 9px !important;
+  color: white !important;
+  background: rgba(0,0,0,.45) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-transform: capitalize !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.vlxSearchMediaFallback {
+  width: 100% !important;
+  min-height: 210px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,0,184,.18), transparent 40%),
+    rgba(255,255,255,.03) !important;
+}
+
+.vlxSearchMediaFallback b {
+  font-size: 36px !important;
+}
+
+.vlxRealContentBody {
+  padding: 12px !important;
+}
+
+.vlxRealContentUser {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+}
+
+.vlxRealContentBody h3 {
+  margin: 8px 0 5px !important;
+  color: white !important;
+  font-size: 18px !important;
+  line-height: 1.15 !important;
+}
+
+.vlxRealContentBody p {
+  margin: 0 0 8px !important;
+  color: rgba(255,255,255,.62) !important;
+  line-height: 1.35 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.vlxRealContentBody small {
+  color: rgba(255,255,255,.46) !important;
+}
+
+.vlxRealContentActions {
+  margin-top: 11px !important;
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+@media (max-width: 560px) {
+  .vlxRealSearchHeader h1 {
+    font-size: 40px !important;
+  }
+
+  .vlxRealSearchHeader {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vlxRealSearchHeader button {
+    width: fit-content !important;
+  }
+
+  .vlxRealSearchBar {
+    grid-template-columns: auto 1fr !important;
+    border-radius: 26px !important;
+    padding: 11px 14px !important;
+  }
+
+  .vlxRealSearchBar button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .vlxRealContentGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vlxRealContentMedia,
+  .vlxSearchMediaFallback {
+    min-height: 260px !important;
+  }
+}
