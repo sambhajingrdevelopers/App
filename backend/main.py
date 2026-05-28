@@ -782,3 +782,24 @@ except Exception:
     pass
 
 app.include_router(messages_secure_real_router)
+
+
+# Real follow routes
+try:
+    from routes.follow_real_fixed import router as follow_real_fixed_router
+except ImportError:
+    from .routes.follow_real_fixed import router as follow_real_fixed_router
+
+try:
+    follow_paths = {
+        "/api/v1/follow/status",
+        "/api/v1/follow/toggle",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in follow_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(follow_real_fixed_router)

@@ -22887,3 +22887,378 @@ body {
     min-height: 260px !important;
   }
 }
+
+/* PART 17: REAL FINAL RESPONSIVE PROFILE PAGE */
+.vlxFinalProfilePage {
+  width: 100% !important;
+  max-width: 780px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 15px !important;
+  padding-bottom: 132px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxFinalProfileHero {
+  overflow: hidden !important;
+  border-radius: 32px !important;
+  background: rgba(12,13,28,.94) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxFinalProfileCover {
+  height: 220px !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255,0,184,.30), transparent 35%),
+    linear-gradient(135deg, #00c8ff, #673cff 65%, #ff00b8) !important;
+}
+
+.vlxFinalProfileCover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxFinalProfileCover span {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.vlxFinalProfileMain {
+  padding: 0 18px !important;
+  margin-top: -60px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: end !important;
+  gap: 16px !important;
+}
+
+.vlxFinalProfileAvatar {
+  width: 124px !important;
+  height: 124px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border: 6px solid #0a0b16 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxFinalProfileAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxFinalProfileAvatar b {
+  color: white !important;
+  font-size: 52px !important;
+}
+
+.vlxFinalProfileAvatar i {
+  position: absolute !important;
+  right: 7px !important;
+  bottom: 9px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: #00e699 !important;
+  border: 4px solid #0a0b16 !important;
+}
+
+.vlxFinalProfileInfo {
+  min-width: 0 !important;
+}
+
+.vlxFinalProfileInfo h1 {
+  margin: 0 !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  font-size: 40px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxFinalProfileInfo h1 em {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+  font-style: normal !important;
+  font-size: 15px !important;
+}
+
+.vlxFinalProfileInfo p {
+  margin: 6px 0 !important;
+  color: #00dfff !important;
+  font-weight: 950 !important;
+  font-size: 18px !important;
+}
+
+.vlxFinalProfileInfo small {
+  color: rgba(255,255,255,.66) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxFinalProfileStats {
+  padding: 18px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.vlxFinalProfileStats div {
+  border-radius: 20px !important;
+  padding: 14px 8px !important;
+  text-align: center !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.vlxFinalProfileStats b {
+  display: block !important;
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.vlxFinalProfileStats span {
+  display: block !important;
+  color: rgba(255,255,255,.56) !important;
+  font-size: 12px !important;
+  margin-top: 3px !important;
+}
+
+.vlxFinalProfileActions {
+  padding: 0 18px 18px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.vlxFinalProfileActions a,
+.vlxFinalProfileActions button {
+  min-width: 0 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  min-height: 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxFinalProfileActions a:nth-child(3),
+.vlxFinalProfileActions button:nth-child(3) {
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxFinalProfilePrivate,
+.vlxFinalProfileNotice {
+  margin: 0 18px 18px !important;
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+  font-weight: 850 !important;
+}
+
+.vlxFinalProfileTabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxFinalProfileTabs button {
+  border: 0 !important;
+  padding: 15px 10px !important;
+  color: rgba(255,255,255,.62) !important;
+  background: transparent !important;
+  font-weight: 950 !important;
+}
+
+.vlxFinalProfileTabs button.active {
+  color: white !important;
+  background: linear-gradient(135deg, rgba(255,0,184,.32), rgba(103,60,255,.32)) !important;
+}
+
+.vlxFinalProfileGrid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.vlxFinalProfilePost {
+  overflow: hidden !important;
+  border-radius: 26px !important;
+  background: rgba(12,13,28,.94) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxFinalProfilePost > a {
+  min-height: 240px !important;
+  max-height: 320px !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #05050a !important;
+  text-decoration: none !important;
+}
+
+.vlxFinalProfilePost img,
+.vlxFinalProfilePost video {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 320px !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.vlxFinalProfilePost > a > span {
+  position: absolute !important;
+  left: 10px !important;
+  top: 10px !important;
+  border-radius: 999px !important;
+  padding: 6px 9px !important;
+  color: white !important;
+  background: rgba(0,0,0,.45) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-transform: capitalize !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.vlxFinalProfileFallback {
+  width: 100% !important;
+  min-height: 240px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,0,184,.18), transparent 40%),
+    rgba(255,255,255,.03) !important;
+}
+
+.vlxFinalProfileFallback b {
+  font-size: 36px !important;
+}
+
+.vlxFinalProfilePost > div {
+  padding: 12px !important;
+}
+
+.vlxFinalProfilePost h2 {
+  margin: 0 0 6px !important;
+  color: white !important;
+  font-size: 20px !important;
+  line-height: 1.15 !important;
+}
+
+.vlxFinalProfilePost p {
+  margin: 0 0 8px !important;
+  color: rgba(255,255,255,.62) !important;
+  line-height: 1.35 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.vlxFinalProfilePost small {
+  color: rgba(255,255,255,.46) !important;
+}
+
+.vlxFinalProfilePost > div > div {
+  margin-top: 11px !important;
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.vlxFinalProfilePost a,
+.vlxFinalProfilePost button,
+.vlxFinalProfileState a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 9px 13px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.vlxFinalProfilePost button:nth-child(2) {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxFinalProfileState {
+  min-height: 180px !important;
+  border-radius: 28px !important;
+  padding: 22px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 9px !important;
+  color: rgba(255,255,255,.66) !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxFinalProfileState b {
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.vlxFinalProfileState a {
+  width: fit-content !important;
+  margin: 0 auto !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+@media (max-width: 560px) {
+  .vlxFinalProfileCover {
+    height: 180px !important;
+  }
+
+  .vlxFinalProfileMain {
+    grid-template-columns: 1fr !important;
+    margin-top: -54px !important;
+    gap: 8px !important;
+  }
+
+  .vlxFinalProfileAvatar {
+    width: 106px !important;
+    height: 106px !important;
+  }
+
+  .vlxFinalProfileInfo h1 {
+    font-size: 34px !important;
+  }
+
+  .vlxFinalProfileStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .vlxFinalProfileActions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vlxFinalProfileGrid {
+    grid-template-columns: 1fr !important;
+  }
+}

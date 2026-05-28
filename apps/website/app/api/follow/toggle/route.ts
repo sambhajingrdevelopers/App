@@ -9,21 +9,19 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/follow/toggle`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/follow/toggle`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
       cache: "no-store"
     })
 
-    const data = await res.json()
-    return NextResponse.json(data, { status: res.status })
+    const data = await response.json()
+    return NextResponse.json(data, { status: response.status })
   } catch (error: any) {
     return NextResponse.json({
       success: false,
-      message: error?.message || "Follow action failed."
+      message: error?.message || "Follow toggle failed."
     }, { status: 500 })
   }
 }

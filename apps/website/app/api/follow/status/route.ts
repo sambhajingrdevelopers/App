@@ -10,19 +10,18 @@ export async function GET(request: NextRequest) {
   const following = request.nextUrl.searchParams.get("following") || "@creator"
 
   try {
-    const res = await fetch(
+    const response = await fetch(
       `${BACKEND_URL}/api/v1/follow/status?follower=${encodeURIComponent(follower)}&following=${encodeURIComponent(following)}`,
       { cache: "no-store" }
     )
 
-    const data = await res.json()
-    return NextResponse.json(data)
-  } catch {
+    const data = await response.json()
+    return NextResponse.json(data, { status: response.status })
+  } catch (error: any) {
     return NextResponse.json({
-      success: true,
-      isFollowing: false,
-      followers: 0,
-      following: 0
-    })
+      success: false,
+      message: error?.message || "Follow status failed.",
+      isFollowing: false
+    }, { status: 500 })
   }
 }
