@@ -21733,3 +21733,770 @@ body {
     max-width: 88% !important;
   }
 }
+
+/* PART 14: WHATSAPP STYLE REAL SECURE MESSAGES */
+.vlxWhatsappPage {
+  width: 100% !important;
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+  padding-bottom: 118px !important;
+  overflow: hidden !important;
+}
+
+.vlxWhatsappShell {
+  width: 100% !important;
+  height: min(760px, calc(100dvh - 140px)) !important;
+  min-height: 620px !important;
+  display: grid !important;
+  grid-template-columns: 360px minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(10, 10, 22, .94) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,.36) !important;
+}
+
+.vlxWhatsappSidebar {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto 1fr !important;
+  border-right: 1px solid rgba(255,255,255,.08) !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,0,184,.16), transparent 35%),
+    rgba(255,255,255,.025) !important;
+}
+
+.vlxWhatsappSidebarTop {
+  padding: 18px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.vlxWhatsappSidebarTop h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 38px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxWhatsappSidebarTop p {
+  margin: 6px 0 0 !important;
+  color: rgba(255,255,255,.56) !important;
+  font-size: 14px !important;
+}
+
+.vlxWhatsappSidebarTop a {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxWhatsappSecureInfo {
+  margin: 0 18px 12px !important;
+  border-radius: 18px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 9px !important;
+  align-items: center !important;
+  background: rgba(0,200,255,.08) !important;
+  border: 1px solid rgba(0,200,255,.14) !important;
+}
+
+.vlxWhatsappSecureInfo small {
+  color: rgba(255,255,255,.70) !important;
+  font-weight: 750 !important;
+}
+
+.vlxWhatsappSearch {
+  margin: 0 18px 12px !important;
+  height: 50px !important;
+  border-radius: 999px !important;
+  padding: 0 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 9px !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+}
+
+.vlxWhatsappSearch span {
+  color: rgba(255,255,255,.62) !important;
+  font-size: 22px !important;
+}
+
+.vlxWhatsappSearch input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 15px !important;
+}
+
+.vlxWhatsappList {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 0 10px 14px !important;
+  scrollbar-width: none !important;
+}
+
+.vlxWhatsappList::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vlxWhatsappUser {
+  width: 100% !important;
+  min-width: 0 !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  padding: 10px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 11px !important;
+  text-align: left !important;
+  color: white !important;
+  background: transparent !important;
+}
+
+.vlxWhatsappUser:hover,
+.vlxWhatsappUser.active {
+  background: rgba(255,255,255,.08) !important;
+}
+
+.vlxWhatsappUserAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxWhatsappUserAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxWhatsappUserAvatar b {
+  color: white !important;
+  font-size: 23px !important;
+}
+
+.vlxWhatsappUserAvatar i {
+  position: absolute !important;
+  right: 4px !important;
+  bottom: 4px !important;
+  width: 13px !important;
+  height: 13px !important;
+  border-radius: 50% !important;
+  background: #00e699 !important;
+  border: 3px solid #0b0b16 !important;
+}
+
+.vlxWhatsappUserText {
+  min-width: 0 !important;
+}
+
+.vlxWhatsappUserText b {
+  display: block !important;
+  color: white !important;
+  font-size: 15px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxWhatsappUserText em {
+  margin-left: 5px !important;
+  color: #00dfff !important;
+  font-style: normal !important;
+}
+
+.vlxWhatsappUserText small {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255,255,255,.52) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxWhatsappMeta {
+  min-width: 32px !important;
+  display: grid !important;
+  gap: 5px !important;
+  justify-items: end !important;
+}
+
+.vlxWhatsappMeta small {
+  color: rgba(255,255,255,.42) !important;
+  font-size: 11px !important;
+}
+
+.vlxWhatsappMeta i {
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  background: #ff00b8 !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.vlxWhatsappChat {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(0,200,255,.10), transparent 34%),
+    rgba(6,7,16,.86) !important;
+  overflow: hidden !important;
+}
+
+.vlxWhatsappNoChat {
+  min-height: 100% !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 10px !important;
+  padding: 24px !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.vlxWhatsappNoChat span {
+  font-size: 54px !important;
+}
+
+.vlxWhatsappNoChat h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 32px !important;
+  letter-spacing: -.06em !important;
+}
+
+.vlxWhatsappNoChat p {
+  max-width: 360px !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.vlxWhatsappChatTop {
+  min-width: 0 !important;
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.035) !important;
+}
+
+.vlxWhatsappBack {
+  display: none !important;
+}
+
+.vlxWhatsappChatAvatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-weight: 950 !important;
+  font-size: 22px !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxWhatsappChatTop div {
+  min-width: 0 !important;
+}
+
+.vlxWhatsappChatTop h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 19px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxWhatsappChatTop p {
+  margin: 4px 0 0 !important;
+  color: rgba(255,255,255,.54) !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxWhatsappChatTop button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 9px 12px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.vlxWhatsappMessages {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  scrollbar-width: none !important;
+}
+
+.vlxWhatsappMessages::-webkit-scrollbar {
+  display: none !important;
+}
+
+.vlxWhatsappState {
+  margin: auto !important;
+  text-align: center !important;
+  display: grid !important;
+  gap: 8px !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+.vlxWhatsappState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.vlxWhatsappBubble {
+  max-width: 76% !important;
+  border-radius: 20px !important;
+  padding: 10px 12px !important;
+  color: white !important;
+}
+
+.vlxWhatsappBubble.mine {
+  align-self: flex-end !important;
+  border-bottom-right-radius: 5px !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxWhatsappBubble.their {
+  align-self: flex-start !important;
+  border-bottom-left-radius: 5px !important;
+  background: rgba(255,255,255,.09) !important;
+}
+
+.vlxWhatsappBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+}
+
+.vlxWhatsappBubble small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.62) !important;
+  font-size: 11px !important;
+}
+
+.vlxWhatsappNotice {
+  margin: 0 14px !important;
+  border-radius: 16px !important;
+  padding: 10px 12px !important;
+  color: white !important;
+  background: rgba(255,0,184,.10) !important;
+  border: 1px solid rgba(255,0,184,.18) !important;
+}
+
+.vlxWhatsappComposer {
+  padding: 12px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.035) !important;
+}
+
+.vlxWhatsappComposer input {
+  min-width: 0 !important;
+  height: 48px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: white !important;
+  background: rgba(255,255,255,.07) !important;
+}
+
+.vlxWhatsappComposer button {
+  height: 48px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 18px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxWhatsappComposer button:disabled {
+  opacity: .62 !important;
+}
+
+.vlxWhatsappEmpty {
+  margin: 14px 8px !important;
+  border-radius: 22px !important;
+  padding: 16px !important;
+  display: grid !important;
+  gap: 5px !important;
+  color: rgba(255,255,255,.62) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.vlxWhatsappEmpty b {
+  color: white !important;
+}
+
+@media (max-width: 760px) {
+  .vlxWhatsappPage {
+    padding-bottom: 112px !important;
+  }
+
+  .vlxWhatsappShell {
+    height: calc(100dvh - 132px) !important;
+    min-height: 560px !important;
+    grid-template-columns: 1fr !important;
+    border-radius: 26px !important;
+  }
+
+  .vlxWhatsappSidebar {
+    border-right: 0 !important;
+  }
+
+  .vlxWhatsappChat {
+    display: none !important;
+  }
+
+  .vlxWhatsappPage.chatOpen .vlxWhatsappSidebar {
+    display: none !important;
+  }
+
+  .vlxWhatsappPage.chatOpen .vlxWhatsappChat {
+    display: grid !important;
+  }
+
+  .vlxWhatsappBack {
+    display: grid !important;
+    width: 40px !important;
+    height: 40px !important;
+    place-items: center !important;
+    padding: 0 !important;
+    font-size: 28px !important;
+  }
+
+  .vlxWhatsappChatTop {
+    grid-template-columns: auto auto 1fr auto auto !important;
+  }
+
+  .vlxWhatsappBubble {
+    max-width: 86% !important;
+  }
+}
+
+@media (min-width: 761px) {
+  .vlxShellMain {
+    width: min(100% - 28px, 1100px) !important;
+  }
+}
+
+/* PART 15: REAL BACKEND CONNECTED RESPONSIVE REELS */
+.vlxRealReelsPage {
+  width: 100% !important;
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 14px !important;
+  padding-bottom: 132px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxRealReelsHeader {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.vlxRealReelsHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 46px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxRealReelsHeader p {
+  margin: 7px 0 0 !important;
+  color: rgba(255,255,255,.64) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxRealReelsHeader button,
+.vlxRealReelsState a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 15px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxRealReelsSearch {
+  height: 58px !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(255,255,255,.065) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxRealReelsSearch span {
+  color: rgba(255,255,255,.65) !important;
+  font-size: 24px !important;
+}
+
+.vlxRealReelsSearch input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 16px !important;
+}
+
+.vlxRealReelsNotice {
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+  font-weight: 850 !important;
+}
+
+.vlxRealReelsState {
+  min-height: 220px !important;
+  border-radius: 28px !important;
+  padding: 22px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 9px !important;
+  color: rgba(255,255,255,.66) !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxRealReelsState b {
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.vlxRealReelsState a {
+  width: fit-content !important;
+  margin: 0 auto !important;
+}
+
+.vlxRealReelsFeed {
+  display: grid !important;
+  gap: 18px !important;
+}
+
+.vlxRealReelCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(12,13,28,.94) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxRealReelVideoBox {
+  width: 100% !important;
+  min-height: 520px !important;
+  max-height: 760px !important;
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  background: #05050a !important;
+}
+
+.vlxRealReelVideoBox video {
+  width: 100% !important;
+  max-height: 760px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.vlxRealReelFallback {
+  width: 100% !important;
+  min-height: 520px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 10px !important;
+  color: rgba(255,255,255,.64) !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,0,184,.20), transparent 40%),
+    rgba(255,255,255,.03) !important;
+}
+
+.vlxRealReelFallback b {
+  color: white !important;
+  font-size: 48px !important;
+}
+
+.vlxRealReelSideActions {
+  position: absolute !important;
+  right: 12px !important;
+  bottom: 18px !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.vlxRealReelSideActions button {
+  width: 58px !important;
+  height: 58px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  background: rgba(10,10,22,.66) !important;
+  backdrop-filter: blur(14px) !important;
+  font-size: 19px !important;
+}
+
+.vlxRealReelSideActions small {
+  display: block !important;
+  font-size: 10px !important;
+  color: rgba(255,255,255,.76) !important;
+  font-weight: 850 !important;
+}
+
+.vlxRealReelFooter {
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 12px !important;
+}
+
+.vlxRealReelAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  text-decoration: none !important;
+  color: white !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxRealReelAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxRealReelAvatar b {
+  font-size: 23px !important;
+}
+
+.vlxRealReelFooter > div {
+  min-width: 0 !important;
+}
+
+.vlxRealReelFooter a {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+}
+
+.vlxRealReelFooter em {
+  color: #00dfff !important;
+  font-style: normal !important;
+}
+
+.vlxRealReelFooter p {
+  margin: 5px 0 !important;
+  color: rgba(255,255,255,.72) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxRealReelFooter small {
+  color: rgba(255,255,255,.48) !important;
+}
+
+.vlxRealReelButtons {
+  margin-top: 12px !important;
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.vlxRealReelButtons a,
+.vlxRealReelButtons button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 9px 13px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.vlxRealReelButtons button {
+  background: rgba(255,0,184,.16) !important;
+}
+
+@media (max-width: 430px) {
+  .vlxRealReelsHeader h1 {
+    font-size: 40px !important;
+  }
+
+  .vlxRealReelsHeader button {
+    padding: 10px 12px !important;
+  }
+
+  .vlxRealReelVideoBox,
+  .vlxRealReelFallback {
+    min-height: 500px !important;
+  }
+
+  .vlxRealReelSideActions button {
+    width: 52px !important;
+    height: 52px !important;
+  }
+}
