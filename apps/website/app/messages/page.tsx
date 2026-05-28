@@ -1,19 +1,25 @@
 'use client'
 
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
 
-type SecureMessage = {
+type Msg = {
   id: string
   sender: string
   receiver: string
   text: string
   createdAt: string
-  readAt?: string | null
-  mine?: boolean
-  encrypted?: boolean
+}
+
+type UserItem = {
+  id?: string
+  name: string
+  username: string
+  bio?: string
+  avatarUrl?: string
+  verified?: boolean
 }
 
 type Conversation = {
@@ -22,277 +28,375 @@ type Conversation = {
   name: string
   lastMessage: string
   lastAt: string
-  encrypted?: boolean
   unread?: number
 }
 
 function cleanUsername(value?: string | null) {
-  const clean = String(value || '').trim()
-  if (!clean) return '@creator'
-  return clean.startsWith('@') ? clean : `@${clean}`
+  const v = String(value || '').trim()
+  if (!v) return '@creator'
+  return v.startsWith('@') ? v : `@${v}`
 }
 
-function firstLetter(value?: string) {
-  return String(value || 'V').replace('@', '').trim().slice(0, 1).toUpperCase()
+function letter(value?: string) {
+  return String(value || 'U').replace('@', '').slice(0, 1).toUpperCase()
+}
+
+function isImg(url?: string) {
+  const v = String(url || '')
+  return v.startsWith('http') || v.startsWith('/media/') || v.startsWith('data:')
 }
 
 function timeLabel(value?: string) {
-  if (!value) return 'now'
-  const time = new Date(value).getTime()
-  if (Number.isNaN(time)) return 'now'
-
-  const diff = Date.now() - time
-  const min = Math.max(1, Math.floor(diff / 60000))
-  if (min < 60) return `${min}m ago`
-  const hr = Math.floor(min / 60)
-  if (hr < 24) return `${hr}h ago`
-  return `${Math.floor(hr / 24)}d ago`
+  if (!value) return ''
+  const t = new Date(value).getTime()
+  if (Number.isNaN(t)) return ''
+  const diff = Date.now() - t
+  const m = Math.max(1, Math.floor(diff / 60000))
+  if (m < 60) return `${m}m`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h`
+  return `${Math.floor(h / 24)}d`
 }
 
 export default function MessagesPage() {
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   const [me, setMe] = useState('@you')
-  const [recipient, setRecipient] = useState('@creator')
-  const [recipientInput, setRecipientInput] = useState('@creator')
+  const [users, setUsers] = useState<UserItem[]>([])
   const [conversations, setConversations] = useState<Conversation[]>([])
-  const [messages, setMessages] = useState<SecureMessage[]>([])
+  const [messages, setMessages] = useState<Msg[]>([])
+  const [selected, setSelected] = useState<UserItem | null>(null)
   const [text, setText] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [mobileChat, setMobileChat] = useState(false)
+  const [loadingUsers, setLoadingUsers] = useState(true)
+  const [loadingChat, setLoadingChat] = useState(false)
   const [sending, setSending] = useState(false)
   const [notice, setNotice] = useState('')
 
-  function scrollBottom() {
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 80)
+  function scrollDown() {
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 60)
   }
 
-  async function loadConversations(user: string) {
+  async function fetchUsers() {
+    const data = await fetch('/api/users/list', { cache: 'no-store' })
+      .then((r) => r.json())
+      .catch(() => ({ users: [] }))
+
+    return Array.isArray(data.users) ? data.users : []
+  }
+
+  async function fetchConversations(user: string) {
     const data = await fetch(`/api/secure-messages/conversations?user=${encodeURIComponent(user)}`, {
       cache: 'no-store'
-    }).then((res) => res.json()).catch(() => ({
-      conversations: []
-    }))
+    })
+      .then((r) => r.json())
+      .catch(() => ({ conversations: [] }))
 
-    setConversations(Array.isArray(data.conversations) ? data.conversations : [])
+    return Array.isArray(data.conversations) ? data.conversations : []
   }
 
   async function loadThread(user: string, other: string) {
-    setLoading(true)
+    setLoadingChat(true)
     setNotice('')
 
-    try {
-      const data = await fetch(
-        `/api/secure-messages/thread?user=${encodeURIComponent(user)}&with=${encodeURIComponent(other)}`,
-        { cache: 'no-store' }
-      ).then((res) => res.json())
+    const data = await fetch(
+      `/api/secure-messages/thread?user=${encodeURIComponent(user)}&with=${encodeURIComponent(other)}`,
+      { cache: 'no-store' }
+    )
+      .then((r) => r.json())
+      .catch(() => ({ success: false, messages: [], message: 'Message backend failed.' }))
 
-      setMessages(Array.isArray(data.messages) ? data.messages : [])
+    setMessages(Array.isArray(data.messages) ? data.messages : [])
 
-      if (!data.success) {
-        setNotice(data.message || 'Secure message thread failed.')
-      }
-    } catch {
-      setMessages([])
-      setNotice('Secure backend connection failed.')
-    } finally {
-      setLoading(false)
-      scrollBottom()
+    if (!data.success) {
+      setNotice(data.message || 'Message backend failed.')
     }
+
+    setLoadingChat(false)
+    scrollDown()
+  }
+
+  async function openChat(user: UserItem) {
+    const username = cleanUsername(user.username)
+    const finalUser = { ...user, username }
+
+    setSelected(finalUser)
+    setMobileChat(true)
+    window.history.replaceState(null, '', `/messages?to=${encodeURIComponent(username)}`)
+
+    await loadThread(me, username)
   }
 
   async function boot() {
+    setLoadingUsers(true)
+
     const session = await getSessionUser()
     const username = cleanUsername(session.username)
+    setMe(username)
+
+    const [allUsers, allConversations] = await Promise.all([
+      fetchUsers(),
+      fetchConversations(username)
+    ])
+
+    const safeUsers = allUsers
+      .map((u: UserItem) => ({
+        ...u,
+        username: cleanUsername(u.username),
+        name: u.name || cleanUsername(u.username).replace('@', '')
+      }))
+      .filter((u: UserItem) => u.username.toLowerCase() !== username.toLowerCase())
+
+    setUsers(safeUsers)
+    setConversations(allConversations)
 
     const params = new URLSearchParams(window.location.search)
-    const to = cleanUsername(params.get('to') || '@creator')
+    const to = params.get('to')
+    const targetUsername = to ? cleanUsername(to) : cleanUsername(allConversations[0]?.username || safeUsers[0]?.username || '@creator')
 
-    setMe(username)
-    setRecipient(to)
-    setRecipientInput(to)
+    const target =
+      safeUsers.find((u: UserItem) => cleanUsername(u.username).toLowerCase() === targetUsername.toLowerCase()) ||
+      {
+        name: targetUsername.replace('@', '') || 'Creator',
+        username: targetUsername,
+        bio: 'Secure chat'
+      }
 
-    await loadConversations(username)
-    await loadThread(username, to)
+    setSelected(target)
+
+    if (to || window.innerWidth >= 780) {
+      await loadThread(username, targetUsername)
+      setMobileChat(Boolean(to))
+    }
+
+    setLoadingUsers(false)
   }
 
   useEffect(() => {
     boot()
   }, [])
 
-  async function openConversation(username: string) {
-    const target = cleanUsername(username)
+  const chatUsers = useMemo(() => {
+    const map = new Map<string, UserItem & { lastMessage?: string; lastAt?: string; unread?: number }>()
 
-    setRecipient(target)
-    setRecipientInput(target)
+    conversations.forEach((c) => {
+      const u = cleanUsername(c.username)
+      map.set(u.toLowerCase(), {
+        username: u,
+        name: c.name || u.replace('@', ''),
+        bio: c.lastMessage || 'Encrypted message',
+        lastMessage: c.lastMessage,
+        lastAt: c.lastAt,
+        unread: c.unread || 0,
+        verified: true
+      })
+    })
 
-    window.history.replaceState(null, '', `/messages?to=${encodeURIComponent(target)}`)
+    users.forEach((u) => {
+      const username = cleanUsername(u.username)
+      if (!map.has(username.toLowerCase())) {
+        map.set(username.toLowerCase(), {
+          ...u,
+          username,
+          name: u.name || username.replace('@', ''),
+          bio: u.bio || 'Tap to start chat',
+          lastMessage: '',
+          lastAt: '',
+          unread: 0
+        })
+      }
+    })
 
-    await loadThread(me, target)
-  }
+    const q = search.trim().toLowerCase()
+    return Array.from(map.values()).filter((u) => {
+      if (!q) return true
+      return (
+        u.name.toLowerCase().includes(q) ||
+        u.username.toLowerCase().includes(q) ||
+        String(u.bio || '').toLowerCase().includes(q)
+      )
+    })
+  }, [users, conversations, search])
 
-  async function handleRecipientSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    await openConversation(recipientInput)
-  }
-
-  async function handleSend(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    const cleanText = text.trim()
-    if (!cleanText) return
+  async function send(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (!selected || !text.trim()) return
 
     setSending(true)
     setNotice('')
 
-    try {
-      const response = await fetch('/api/secure-messages/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sender: me,
-          receiver: recipient,
-          text: cleanText
-        })
-      })
-
-      const data = await response.json()
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Secure send failed.')
-      }
-
-      setText('')
-      await loadThread(me, recipient)
-      await loadConversations(me)
-    } catch (error: any) {
-      setNotice(error?.message || 'Secure send failed.')
-    } finally {
-      setSending(false)
-      scrollBottom()
+    const body = {
+      sender: me,
+      receiver: selected.username,
+      text: text.trim()
     }
-  }
 
-  async function archiveConversation() {
-    const data = await fetch('/api/secure-messages/archive', {
+    const data = await fetch('/api/secure-messages/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: me, withUser: recipient })
-    }).then((res) => res.json()).catch(() => ({
-      success: false,
-      message: 'Archive failed.'
-    }))
+      body: JSON.stringify(body)
+    })
+      .then((r) => r.json())
+      .catch(() => ({ success: false, message: 'Send failed.' }))
 
-    setNotice(data.message || 'Updated.')
-    if (data.success) {
-      setMessages([])
-      await loadConversations(me)
+    if (!data.success) {
+      setNotice(data.message || 'Send failed.')
+    } else {
+      setText('')
+      await loadThread(me, selected.username)
+      setConversations(await fetchConversations(me))
     }
+
+    setSending(false)
+    scrollDown()
   }
 
   return (
     <AuthGuard>
-      <SocialAppShell active="creators" title="" subtitle="" hideSearch>
-        <main className="vlxSecureMessagesPage">
-          <header className="vlxSecureMessagesHeader">
-            <a href="/home">‹</a>
+      <SocialAppShell active="creators" hideSearch>
+        <main className={`waPage ${mobileChat ? 'chatOpen' : ''}`}>
+          <section className="waApp">
+            <aside className="waList">
+              <header className="waListHeader">
+                <div className="waMyAvatar">{letter(me)}</div>
+                <h1>Chats</h1>
+                <div className="waListActions">
+                  <a href="/search">⌕</a>
+                  <a href="/create">+</a>
+                </div>
+              </header>
 
-            <div>
-              <h1>Messages</h1>
-              <p>Secure encrypted user-to-user chat.</p>
-            </div>
+              <label className="waSearch">
+                <span>⌕</span>
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search or start new chat"
+                />
+              </label>
 
-            <button type="button" onClick={() => loadThread(me, recipient)}>
-              Refresh
-            </button>
-          </header>
-
-          <section className="vlxSecureHero">
-            <span>🔐</span>
-            <div>
-              <b>AES-GCM secure storage</b>
-              <small>Messages are encrypted before saving in backend database.</small>
-            </div>
-          </section>
-
-          <form className="vlxSecureRecipientBar" onSubmit={handleRecipientSubmit}>
-            <span>To</span>
-            <input
-              value={recipientInput}
-              onChange={(event) => setRecipientInput(event.target.value)}
-              placeholder="@username"
-            />
-            <button type="submit">Open</button>
-          </form>
-
-          {conversations.length > 0 && (
-            <section className="vlxSecureConversationStrip">
-              {conversations.map((conversation) => (
-                <button
-                  type="button"
-                  key={conversation.id}
-                  onClick={() => openConversation(conversation.username)}
-                  className={cleanUsername(conversation.username).toLowerCase() === recipient.toLowerCase() ? 'active' : ''}
-                >
-                  <i>{firstLetter(conversation.name || conversation.username)}</i>
-                  <span>
-                    <b>{conversation.name || conversation.username}</b>
-                    <small>🔐 {conversation.lastMessage}</small>
-                  </span>
-                </button>
-              ))}
-            </section>
-          )}
-
-          <section className="vlxSecureChatPanel">
-            <header className="vlxSecureChatTop">
-              <div className="vlxSecureChatAvatar">{firstLetter(recipient)}</div>
-
-              <div>
-                <h2>{recipient.replace('@', '') || 'Creator'}</h2>
-                <p>{recipient} · encrypted chat</p>
+              <div className="waChips">
+                <button>All</button>
+                <button>Unread</button>
+                <button>Creators</button>
               </div>
 
-              <button type="button" onClick={archiveConversation}>
-                Hide
-              </button>
-            </header>
+              <div className="waUsers">
+                {loadingUsers ? (
+                  <div className="waEmpty">Loading chats...</div>
+                ) : chatUsers.length === 0 ? (
+                  <div className="waEmpty">No users found.</div>
+                ) : (
+                  chatUsers.map((u) => {
+                    const active = selected?.username?.toLowerCase() === cleanUsername(u.username).toLowerCase()
 
-            <div className="vlxSecureMessageList">
-              {loading ? (
-                <div className="vlxSecureMessageState">Loading encrypted messages...</div>
-              ) : messages.length === 0 ? (
-                <div className="vlxSecureMessageState">
-                  <b>No messages yet</b>
-                  <span>Start secure conversation with {recipient}.</span>
+                    return (
+                      <button
+                        type="button"
+                        key={u.username}
+                        onClick={() => openChat(u)}
+                        className={`waUser ${active ? 'active' : ''}`}
+                      >
+                        <span className="waAvatar">
+                          {isImg(u.avatarUrl) ? <img src={u.avatarUrl} alt={u.name} /> : <b>{letter(u.name)}</b>}
+                          <i />
+                        </span>
+
+                        <span className="waUserText">
+                          <b>
+                            {u.name}
+                            {u.verified && <em>✓</em>}
+                          </b>
+                          <small>{u.lastMessage ? `🔐 ${u.lastMessage}` : u.bio || 'Tap to chat'}</small>
+                        </span>
+
+                        <span className="waUserMeta">
+                          <small>{timeLabel(u.lastAt)}</small>
+                          {Boolean(u.unread) && <i>{u.unread}</i>}
+                        </span>
+                      </button>
+                    )
+                  })
+                )}
+              </div>
+            </aside>
+
+            <section className="waChat">
+              {!selected ? (
+                <div className="waNoChat">
+                  <span>💬</span>
+                  <h2>VibeLoop Web</h2>
+                  <p>Select a chat to start secure encrypted messaging.</p>
                 </div>
               ) : (
-                messages.map((message) => {
-                  const mine = cleanUsername(message.sender).toLowerCase() === me.toLowerCase()
+                <>
+                  <header className="waChatHeader">
+                    <button type="button" className="waBack" onClick={() => setMobileChat(false)}>
+                      ‹
+                    </button>
 
-                  return (
-                    <div className={`vlxSecureBubble ${mine ? 'mine' : 'their'}`} key={message.id}>
-                      <p>{message.text}</p>
-                      <small>🔐 {timeLabel(message.createdAt)}</small>
+                    <span className="waAvatar small">
+                      {isImg(selected.avatarUrl) ? (
+                        <img src={selected.avatarUrl} alt={selected.name} />
+                      ) : (
+                        <b>{letter(selected.name)}</b>
+                      )}
+                      <i />
+                    </span>
+
+                    <div className="waChatTitle">
+                      <h2>{selected.name}</h2>
+                      <p>{selected.username} · online</p>
                     </div>
-                  )
-                })
+
+                    <a href={`/profile?username=${encodeURIComponent(selected.username)}`}>Profile</a>
+                    <button type="button" onClick={() => loadThread(me, selected.username)}>↻</button>
+                  </header>
+
+                  <div className="waMsgArea">
+                    <div className="waEncryptNote">🔐 Messages are encrypted in backend storage</div>
+
+                    {loadingChat ? (
+                      <div className="waChatState">Loading messages...</div>
+                    ) : messages.length === 0 ? (
+                      <div className="waChatState">
+                        <b>No messages yet</b>
+                        <span>Send first message to {selected.name}</span>
+                      </div>
+                    ) : (
+                      messages.map((m) => {
+                        const mine = cleanUsername(m.sender).toLowerCase() === me.toLowerCase()
+
+                        return (
+                          <div className={`waBubble ${mine ? 'mine' : 'their'}`} key={m.id}>
+                            <p>{m.text}</p>
+                            <small>{timeLabel(m.createdAt)} 🔐</small>
+                          </div>
+                        )
+                      })
+                    )}
+
+                    <div ref={bottomRef} />
+                  </div>
+
+                  {notice && <div className="waNotice">{notice}</div>}
+
+                  <form className="waComposer" onSubmit={send}>
+                    <button type="button">😊</button>
+                    <button type="button">📎</button>
+                    <input
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      placeholder="Type a message"
+                    />
+                    <button type="submit" disabled={sending}>
+                      {sending ? '...' : '➤'}
+                    </button>
+                  </form>
+                </>
               )}
-
-              <div ref={bottomRef} />
-            </div>
-
-            {notice && <div className="vlxSecureNotice">{notice}</div>}
-
-            <form className="vlxSecureComposer" onSubmit={handleSend}>
-              <input
-                value={text}
-                onChange={(event) => setText(event.target.value)}
-                placeholder="Write encrypted message..."
-              />
-              <button type="submit" disabled={sending}>
-                {sending ? 'Sending...' : 'Send'}
-              </button>
-            </form>
+            </section>
           </section>
         </main>
       </SocialAppShell>

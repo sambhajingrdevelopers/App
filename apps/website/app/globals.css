@@ -23421,3 +23421,476 @@ body,
     font-size: 17px !important;
   }
 }
+
+/* FINAL WHATSAPP-LIKE MESSAGE PAGE */
+.waPage {
+  width: 100% !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding-bottom: 110px !important;
+  overflow: hidden !important;
+}
+
+.waApp {
+  height: calc(100dvh - 132px) !important;
+  min-height: 640px !important;
+  display: grid !important;
+  grid-template-columns: 380px minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  border-radius: 26px !important;
+  background: #0b141a !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.waList {
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto 1fr !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+  border-right: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.waListHeader {
+  height: 70px !important;
+  padding: 12px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #202c33 !important;
+}
+
+.waMyAvatar,
+.waAvatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+  font-weight: 900 !important;
+}
+
+.waAvatar.small {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+.waAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.waAvatar i {
+  position: absolute !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background: #25d366 !important;
+  border: 2px solid #111b21 !important;
+}
+
+.waListHeader h1 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 25px !important;
+  font-weight: 800 !important;
+}
+
+.waListActions {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.waListActions a,
+.waChatHeader button,
+.waChatHeader a {
+  width: 38px !important;
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+}
+
+.waSearch {
+  margin: 10px 12px !important;
+  height: 44px !important;
+  border-radius: 999px !important;
+  padding: 0 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #202c33 !important;
+}
+
+.waSearch span {
+  color: #8696a0 !important;
+}
+
+.waSearch input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  font-size: 15px !important;
+}
+
+.waChips {
+  padding: 0 12px 10px !important;
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.waChips::-webkit-scrollbar {
+  display: none !important;
+}
+
+.waChips button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 8px 14px !important;
+  color: #aebac1 !important;
+  background: #202c33 !important;
+  font-weight: 700 !important;
+}
+
+.waChips button:first-child {
+  color: #111b21 !important;
+  background: #25d366 !important;
+}
+
+.waUsers {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #374045 transparent !important;
+}
+
+.waUser {
+  width: 100% !important;
+  border: 0 !important;
+  padding: 12px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-align: left !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.05) !important;
+}
+
+.waUser:hover,
+.waUser.active {
+  background: #202c33 !important;
+}
+
+.waUserText {
+  min-width: 0 !important;
+}
+
+.waUserText b {
+  display: block !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waUserText em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+  margin-left: 5px !important;
+}
+
+.waUserText small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: #8696a0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waUserMeta {
+  min-width: 34px !important;
+  display: grid !important;
+  justify-items: end !important;
+  gap: 5px !important;
+}
+
+.waUserMeta small {
+  color: #8696a0 !important;
+  font-size: 12px !important;
+}
+
+.waUserMeta i {
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #25d366 !important;
+  color: #111b21 !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.waChat {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  background: #0b141a !important;
+  overflow: hidden !important;
+}
+
+.waNoChat {
+  height: 100% !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 10px !important;
+  color: #8696a0 !important;
+}
+
+.waNoChat span {
+  font-size: 72px !important;
+}
+
+.waNoChat h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 34px !important;
+}
+
+.waNoChat p {
+  max-width: 360px !important;
+  margin: 0 !important;
+}
+
+.waChatHeader {
+  height: 70px !important;
+  padding: 10px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #202c33 !important;
+}
+
+.waBack {
+  display: none !important;
+}
+
+.waChatTitle {
+  min-width: 0 !important;
+}
+
+.waChatTitle h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 17px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waChatTitle p {
+  margin: 4px 0 0 !important;
+  color: #8696a0 !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waMsgArea {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  background:
+    radial-gradient(circle at 30% 10%, rgba(37,211,102,.06), transparent 30%),
+    #0b141a !important;
+}
+
+.waEncryptNote {
+  align-self: center !important;
+  max-width: 80% !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  color: #d1d7db !important;
+  background: #182229 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+}
+
+.waChatState {
+  margin: auto !important;
+  display: grid !important;
+  gap: 6px !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+}
+
+.waChatState b {
+  color: #e9edef !important;
+  font-size: 22px !important;
+}
+
+.waBubble {
+  max-width: 72% !important;
+  border-radius: 8px !important;
+  padding: 8px 10px 6px !important;
+  color: #e9edef !important;
+  box-shadow: 0 1px 1px rgba(0,0,0,.20) !important;
+}
+
+.waBubble.mine {
+  align-self: flex-end !important;
+  background: #005c4b !important;
+  border-top-right-radius: 2px !important;
+}
+
+.waBubble.their {
+  align-self: flex-start !important;
+  background: #202c33 !important;
+  border-top-left-radius: 2px !important;
+}
+
+.waBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere !important;
+  white-space: pre-wrap !important;
+}
+
+.waBubble small {
+  display: block !important;
+  margin-top: 4px !important;
+  color: #aebac1 !important;
+  text-align: right !important;
+  font-size: 11px !important;
+}
+
+.waNotice {
+  margin: 0 12px !important;
+  border-radius: 10px !important;
+  padding: 9px 12px !important;
+  color: #e9edef !important;
+  background: rgba(255,0,80,.16) !important;
+}
+
+.waComposer {
+  height: 68px !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #202c33 !important;
+}
+
+.waComposer button {
+  width: 44px !important;
+  height: 44px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 20px !important;
+}
+
+.waComposer button[type="submit"] {
+  color: #111b21 !important;
+  background: #25d366 !important;
+  font-weight: 900 !important;
+}
+
+.waComposer input {
+  min-width: 0 !important;
+  height: 46px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: #e9edef !important;
+  background: #2a3942 !important;
+  font-size: 15px !important;
+}
+
+.waEmpty {
+  margin: 20px !important;
+  color: #8696a0 !important;
+  text-align: center !important;
+}
+
+@media (max-width: 780px) {
+  .waPage {
+    padding-bottom: 100px !important;
+  }
+
+  .waApp {
+    height: calc(100dvh - 128px) !important;
+    min-height: 560px !important;
+    grid-template-columns: 1fr !important;
+    border-radius: 22px !important;
+  }
+
+  .waChat {
+    display: none !important;
+  }
+
+  .waPage.chatOpen .waList {
+    display: none !important;
+  }
+
+  .waPage.chatOpen .waChat {
+    display: grid !important;
+  }
+
+  .waBack {
+    display: grid !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 28px !important;
+  }
+
+  .waChatHeader {
+    grid-template-columns: auto auto 1fr auto auto !important;
+    gap: 8px !important;
+  }
+
+  .waBubble {
+    max-width: 86% !important;
+  }
+}
+
+@media (min-width: 781px) {
+  .vlxShellMain {
+    width: min(100% - 28px, 1180px) !important;
+    max-width: 1180px !important;
+  }
+}
