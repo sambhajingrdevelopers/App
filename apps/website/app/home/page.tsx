@@ -3,14 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
-
-type Creator = {
-  id?: string
-  name?: string
-  username?: string
-  avatarUrl?: string
-  verified?: boolean
-}
+import { getSessionUser } from '../../lib/sessionUser'
 
 type FeedItem = {
   id: string
@@ -31,14 +24,20 @@ type FeedItem = {
   createdAt?: string
 }
 
-function firstLetter(value?: string) {
-  return String(value || 'V').trim().slice(0, 1).toUpperCase()
+type StoryUser = {
+  username: string
+  name: string
+  avatarUrl?: string
 }
 
 function cleanUsername(value?: string) {
   const clean = String(value || '').trim()
   if (!clean) return '@creator'
   return clean.startsWith('@') ? clean : `@${clean}`
+}
+
+function firstLetter(value?: string) {
+  return String(value || 'V').trim().slice(0, 1).toUpperCase()
 }
 
 function validMedia(url?: string) {
@@ -59,250 +58,230 @@ function timeLabel(value?: string) {
   return `${Math.floor(hr / 24)}d ago`
 }
 
-function HomeMedia({ item }: { item: FeedItem }) {
+function Media({ item }: { item: FeedItem }) {
   const src = item.videoUrl || item.mediaUrl || ''
-  const [failed, setFailed] = useState(!validMedia(src))
   const isVideo =
     item.mediaType === 'video' ||
     item.kind === 'reel' ||
     item.type === 'reel' ||
     Boolean(item.videoUrl)
 
-  if (failed) {
+  if (!validMedia(src)) {
     return (
-      <div className="vlxMediaFallback">
-        <b>Media unavailable</b>
-        <span>Backend media URL missing or failed.</span>
+      <div className="vlxHomeMediaFallback">
+        <b>{isVideo ? '▶' : '✦'}</b>
+        <span>Media loading failed</span>
       </div>
     )
   }
 
   if (isVideo) {
-    return (
-      <video
-        src={src}
-        controls
-        playsInline
-        preload="metadata"
-        onError={() => setFailed(true)}
-      />
-    )
+    return <video src={src} controls playsInline preload="metadata" />
   }
 
-  return (
-    <img
-      src={src}
-      alt={item.title || 'post'}
-      onError={() => setFailed(true)}
-    />
-  )
+  return <img src={src} alt={item.title || 'post'} />
 }
 
 export default function HomePage() {
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [query, setQuery] = useState('')
-  const [creators, setCreators] = useState<Creator[]>([])
+  const [me, setMe] = useState('@you')
   const [posts, setPosts] = useState<FeedItem[]>([])
   const [reels, setReels] = useState<FeedItem[]>([])
   const [stories, setStories] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
   async function loadHome() {
     setLoading(true)
-    setError('')
+    setNotice('')
 
     try {
-      const [feedData, creatorsData] = await Promise.all([
-        fetch('/api/feed', { cache: 'no-store' }).then((r) => r.json()),
-        fetch('/api/home/online-following', { cache: 'no-store' }).then((r) => r.json())
-      ])
+      const data = await fetch('/api/content/home', {
+        cache: 'no-store'
+      }).then((res) => res.json())
 
-      setPosts(Array.isArray(feedData.posts) ? feedData.posts : [])
-      setReels(Array.isArray(feedData.reels) ? feedData.reels : [])
-      setStories(Array.isArray(feedData.stories) ? feedData.stories : [])
-      setCreators(Array.isArray(creatorsData.users) ? creatorsData.users : [])
+      setPosts(Array.isArray(data.posts) ? data.posts : [])
+      setReels(Array.isArray(data.reels) ? data.reels : [])
+      setStories(Array.isArray(data.stories) ? data.stories : [])
 
-      if (!feedData.success) {
-        setError(feedData.message || 'Backend feed failed.')
+      if (!data.success) {
+        setNotice(data.message || 'Home backend failed.')
       }
     } catch {
-      setError('Backend connection failed.')
       setPosts([])
       setReels([])
       setStories([])
-      setCreators([])
+      setNotice('Backend home connection failed.')
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    loadHome()
+    async function boot() {
+      const session = await getSessionUser()
+      setMe(cleanUsername(session.username))
+      await loadHome()
+    }
+
+    boot()
   }, [])
 
   const feed = useMemo(() => {
-    const mixed = [...posts, ...reels]
-    const q = query.trim().toLowerCase()
-
-    const sorted = mixed.sort((a, b) =>
+    return [...posts, ...reels].sort((a, b) =>
       String(b.createdAt || '').localeCompare(String(a.createdAt || ''))
     )
+  }, [posts, reels])
 
-    if (!q) return sorted
+  const storyUsers = useMemo<StoryUser[]>(() => {
+    const map = new Map<string, StoryUser>()
 
-    return sorted.filter((item) =>
-      [
-        item.title,
-        item.caption,
-        item.username,
-        item.user,
-        item.name
-      ].some((value) => String(value || '').toLowerCase().includes(q))
-    )
-  }, [posts, reels, query])
+    const all = [...stories, ...posts, ...reels]
+
+    all.forEach((item) => {
+      const username = cleanUsername(item.username || item.user || item.name)
+      if (!username || map.has(username.toLowerCase())) return
+
+      map.set(username.toLowerCase(), {
+        username,
+        name: item.name || username.replace('@', '') || 'Creator',
+        avatarUrl: item.avatarUrl || ''
+      })
+    })
+
+    return Array.from(map.values())
+  }, [stories, posts, reels])
+
+  async function saveItem(item: FeedItem) {
+    const data = await fetch('/api/saved/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user: me,
+        contentId: item.id,
+        kind: item.kind || item.type || 'post'
+      })
+    }).then((res) => res.json()).catch(() => ({
+      success: false,
+      message: 'Save failed.'
+    }))
+
+    setNotice(data.message || 'Updated.')
+  }
+
+  async function moveToTrash(item: FeedItem) {
+    const data = await fetch('/api/trash/move', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user: me,
+        contentId: item.id
+      })
+    }).then((res) => res.json()).catch(() => ({
+      success: false,
+      message: 'Move to trash failed.'
+    }))
+
+    setNotice(data.message || 'Updated.')
+
+    if (data.success) {
+      setPosts((old) => old.filter((post) => post.id !== item.id))
+      setReels((old) => old.filter((reel) => reel.id !== item.id))
+    }
+  }
 
   return (
     <AuthGuard>
       <SocialAppShell active="home" title="" subtitle="" hideSearch>
-        <main className="vlxHome">
-          <header className="vlxHomeHeader">
-            <a href="/home" className="vlxLogo">
-              Vibe<span>Loop</span>
-            </a>
-
-            <div className="vlxTopActions">
-              <button
-                type="button"
-                onClick={() => setSearchOpen((old) => !old)}
-                className={searchOpen ? 'active' : ''}
-                aria-label="Search"
-              >
-                ⚡⌕
-              </button>
-
-              <a href="/notifications" aria-label="Notifications">
-                🔔
-              </a>
-
-              <a href="/messages" aria-label="Messages">
-                ✉
-              </a>
-            </div>
-          </header>
-
-          {searchOpen && (
-            <form className="vlxSearchBar" onSubmit={(e) => e.preventDefault()}>
-              <span>⌕</span>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search posts, reels, creators..."
-                autoFocus
-              />
-              <button type="button" onClick={() => setSearchOpen(false)}>
-                ×
-              </button>
-            </form>
-          )}
-
-          <section className="vlxStories" aria-label="Stories">
-            <a className="vlxCreateStory" href="/create?type=story">
+        <main className="vlxHomeCleanPage">
+          <section className="vlxHomeStories">
+            <a href="/create" className="vlxStoryCreate">
               <span>+</span>
-              <b>Create</b>
+              <small>Create</small>
             </a>
 
-            {creators.map((creator) => {
-              const handle = cleanUsername(creator.username || creator.name)
-
-              return (
-                <a
-                  className="vlxStory"
-                  href={`/profile?username=${encodeURIComponent(handle)}`}
-                  key={creator.id || handle}
-                >
-                  <div>
-                    {validMedia(creator.avatarUrl) ? (
-                      <img src={creator.avatarUrl} alt={creator.name || handle} />
-                    ) : (
-                      <span>{firstLetter(creator.name || handle)}</span>
-                    )}
-                    <i />
-                  </div>
-                  <b>{creator.name || handle}</b>
-                </a>
-              )
-            })}
+            {storyUsers.map((user) => (
+              <a
+                href={`/profile?username=${encodeURIComponent(user.username)}`}
+                className="vlxStoryUser"
+                key={user.username}
+              >
+                <span>
+                  {validMedia(user.avatarUrl) ? (
+                    <img src={user.avatarUrl} alt={user.name} />
+                  ) : (
+                    <b>{firstLetter(user.name)}</b>
+                  )}
+                  <i />
+                </span>
+                <small>{user.name}</small>
+              </a>
+            ))}
           </section>
 
-          {loading && (
-            <section className="vlxState">
-              Loading backend feed...
+          {notice && <section className="vlxHomeNotice">{notice}</section>}
+
+          {loading ? (
+            <section className="vlxHomeState">Loading feed...</section>
+          ) : feed.length === 0 ? (
+            <section className="vlxHomeState">
+              <b>No feed yet</b>
+              <span>Add backend posts, reels and stories.</span>
+              <a href="/create">Create Content</a>
             </section>
-          )}
+          ) : (
+            <section className="vlxHomeFeed">
+              {feed.map((item) => {
+                const username = cleanUsername(item.username || item.user || item.name)
+                const name = item.name || username.replace('@', '') || 'Creator'
+                const isOwner = username.toLowerCase() === me.toLowerCase()
+                const kind = item.kind || item.type || (item.videoUrl ? 'reel' : 'post')
 
-          {!loading && feed.length === 0 && (
-            <section className="vlxState">
-              <b>No content found</b>
-              <span>{error || 'Upload posts/reels or seed backend content.'}</span>
-              <div>
-                <a href="/create?type=post">Create Post</a>
-                <button type="button" onClick={loadHome}>Refresh</button>
-              </div>
-            </section>
-          )}
+                return (
+                  <article className="vlxHomePostCard" key={item.id}>
+                    <header>
+                      <a href={`/profile?username=${encodeURIComponent(username)}`} className="vlxHomeAvatar">
+                        {validMedia(item.avatarUrl) ? (
+                          <img src={item.avatarUrl} alt={name} />
+                        ) : (
+                          <span>{firstLetter(name)}</span>
+                        )}
+                      </a>
 
-          <section className="vlxFeed">
-            {feed.map((item) => {
-              const handle = cleanUsername(item.username || item.user || item.name)
-              const displayName = item.name || handle.replace('@', '') || 'Creator'
-              const kind = item.kind || item.type || (item.videoUrl ? 'reel' : 'post')
-              const isReel = kind === 'reel'
+                      <div>
+                        <a href={`/profile?username=${encodeURIComponent(username)}`}>
+                          {username} <em>✓</em>
+                        </a>
+                        <small>{kind} · {timeLabel(item.createdAt)}</small>
+                      </div>
 
-              return (
-                <article className="vlxPost" key={item.id}>
-                  <header className="vlxPostHeader">
-                    <a
-                      href={`/profile?username=${encodeURIComponent(handle)}`}
-                      className="vlxAvatar"
-                    >
-                      {validMedia(item.avatarUrl) ? (
-                        <img src={item.avatarUrl} alt={displayName} />
-                      ) : (
-                        <span>{firstLetter(displayName)}</span>
-                      )}
+                      <button type="button">⋮</button>
+                    </header>
+
+                    <a href={`/post/${encodeURIComponent(item.id)}`} className="vlxHomeMedia">
+                      <Media item={item} />
                     </a>
 
-                    <div>
-                      <a href={`/profile?username=${encodeURIComponent(handle)}`}>
-                        {handle} <em>✓</em>
-                      </a>
-                      <small>{isReel ? 'Reel' : 'Post'} · {timeLabel(item.createdAt)}</small>
-                    </div>
+                    <section className="vlxHomePostBody">
+                      <h2>{item.title || kind}</h2>
+                      {item.caption && <p>{item.caption}</p>}
 
-                    <button type="button">⋮</button>
-                  </header>
-
-                  <a href={`/post/${encodeURIComponent(item.id)}`} className="vlxPostMedia">
-                    <HomeMedia item={item} />
-                    {isReel && <i>▶</i>}
-                  </a>
-
-                  <div className="vlxPostBody">
-                    <h2>{item.title || (isReel ? 'Reel' : 'Post')}</h2>
-                    {item.caption && <p>{item.caption}</p>}
-
-                    <div className="vlxPostActions">
-                      <button type="button">♡ {item.likes || 0}</button>
-                      <button type="button">💬 {item.comments || 0}</button>
-                      <button type="button">▶ {item.views || 0}</button>
-                      <button type="button">↗</button>
-                    </div>
-                  </div>
-                </article>
-              )
-            })}
-          </section>
+                      <div className="vlxHomePostActions">
+                        <button type="button">♡ {item.likes || 0}</button>
+                        <button type="button">💬 {item.comments || 0}</button>
+                        <button type="button">▶ {item.views || 0}</button>
+                        <button type="button" onClick={() => saveItem(item)}>Save</button>
+                        {isOwner && (
+                          <button type="button" onClick={() => moveToTrash(item)}>
+                            Trash
+                          </button>
+                        )}
+                      </div>
+                    </section>
+                  </article>
+                )
+              })}
+            </section>
+          )}
         </main>
       </SocialAppShell>
     </AuthGuard>
