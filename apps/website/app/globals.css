@@ -20295,3 +20295,536 @@ body {
     max-width: 88% !important;
   }
 }
+
+/* PART 8 FINAL: REAL CONNECTED RESPONSIVE NOTIFICATIONS PAGE */
+.vlxNotificationsPage {
+  width: 100% !important;
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 16px !important;
+  padding-bottom: 150px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxNotificationsHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.vlxNotificationsHeader > a {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 32px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+
+.vlxNotificationsHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 40px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxNotificationsHeader p {
+  margin: 6px 0 0 !important;
+  color: rgba(255,255,255,.64) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxNotificationsHeader button,
+.vlxNotificationActions button,
+.vlxNotificationActions a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 14px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxNotificationHero {
+  border-radius: 30px !important;
+  padding: 22px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255,0,184,.20), transparent 35%),
+    rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxNotificationHero span {
+  width: fit-content !important;
+  display: block !important;
+  border-radius: 999px !important;
+  padding: 8px 12px !important;
+  color: #00dfff !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.16) !important;
+  font-weight: 900 !important;
+}
+
+.vlxNotificationHero h2 {
+  margin: 14px 0 8px !important;
+  color: white !important;
+  font-size: 32px !important;
+  line-height: 1 !important;
+  letter-spacing: -.06em !important;
+}
+
+.vlxNotificationHero p {
+  margin: 0 !important;
+  color: rgba(255,255,255,.64) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxNotificationHero > div:last-child {
+  width: 90px !important;
+  height: 90px !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+  box-shadow: 0 18px 45px rgba(255,0,184,.22) !important;
+}
+
+.vlxNotificationHero b {
+  color: white !important;
+  font-size: 32px !important;
+}
+
+.vlxNotificationHero small {
+  color: rgba(255,255,255,.78) !important;
+  font-weight: 900 !important;
+}
+
+.vlxNotificationActions {
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.vlxNotificationNotice {
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+  font-weight: 800 !important;
+}
+
+.vlxNotificationState {
+  min-height: 145px !important;
+  border-radius: 26px !important;
+  padding: 20px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.66) !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxNotificationState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.vlxNotificationList {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.vlxNotificationCard {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  border-radius: 24px !important;
+  padding: 12px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxNotificationCard.unread {
+  border-color: rgba(255,0,184,.25) !important;
+  box-shadow: 0 0 30px rgba(255,0,184,.08) !important;
+}
+
+.vlxNotificationCard.read {
+  opacity: .72 !important;
+}
+
+.vlxNotificationIcon {
+  width: 54px !important;
+  height: 54px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-size: 22px !important;
+  font-weight: 950 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxNotificationText {
+  min-width: 0 !important;
+  cursor: pointer !important;
+}
+
+.vlxNotificationText h3 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 17px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vlxNotificationText p {
+  margin: 5px 0 0 !important;
+  color: rgba(255,255,255,.66) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxNotificationText small {
+  display: block !important;
+  margin-top: 6px !important;
+  color: rgba(255,255,255,.45) !important;
+}
+
+.vlxNotificationCardActions {
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.vlxNotificationCardActions button {
+  min-width: 58px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 8px 10px !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.09) !important;
+}
+
+.vlxNotificationCardActions button:first-child {
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+@media (max-width: 430px) {
+  .vlxNotificationsHeader h1 {
+    font-size: 34px !important;
+  }
+
+  .vlxNotificationsHeader button {
+    padding: 10px 12px !important;
+  }
+
+  .vlxNotificationHero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vlxNotificationHero > div:last-child {
+    width: 100% !important;
+    height: 78px !important;
+  }
+
+  .vlxNotificationCard {
+    grid-template-columns: auto 1fr !important;
+  }
+
+  .vlxNotificationCardActions {
+    grid-column: 1 / -1 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* PART 9 FINAL: REAL CONNECTED RESPONSIVE SETTINGS PAGE */
+.vlxSettingsPage {
+  width: 100% !important;
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 16px !important;
+  padding-bottom: 150px !important;
+  overflow-x: hidden !important;
+}
+
+.vlxSettingsHeader {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.vlxSettingsHeader > a:first-child {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 32px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+
+.vlxSettingsHeader > a:last-child,
+.vlxSettingsSave {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 14px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vlxSettingsHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 44px !important;
+  line-height: 1 !important;
+  letter-spacing: -.08em !important;
+}
+
+.vlxSettingsHeader p {
+  margin: 6px 0 0 !important;
+  color: rgba(255,255,255,.64) !important;
+  line-height: 1.35 !important;
+}
+
+.vlxSettingsState {
+  min-height: 160px !important;
+  border-radius: 28px !important;
+  padding: 22px !important;
+  display: grid !important;
+  place-content: center !important;
+  color: rgba(255,255,255,.66) !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxSettingsForm {
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.vlxSettingsPreview {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  padding-bottom: 16px !important;
+  background: rgba(12,13,28,.92) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.vlxSettingsBanner {
+  height: 165px !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,0,184,.35), transparent 35%),
+    linear-gradient(135deg, #00c8ff, #673cff 65%, #ff00b8) !important;
+}
+
+.vlxSettingsBanner img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxSettingsBanner span {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.vlxSettingsIdentity {
+  padding: 0 18px !important;
+  margin-top: -48px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: end !important;
+  gap: 14px !important;
+}
+
+.vlxSettingsAvatar {
+  width: 98px !important;
+  height: 98px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 6px solid #090914 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vlxSettingsAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vlxSettingsAvatar b {
+  color: white !important;
+  font-size: 44px !important;
+}
+
+.vlxSettingsIdentity h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  letter-spacing: -.06em !important;
+}
+
+.vlxSettingsIdentity p {
+  margin: 5px 0 !important;
+  color: #00dfff !important;
+  font-weight: 900 !important;
+}
+
+.vlxSettingsIdentity small {
+  color: rgba(255,255,255,.62) !important;
+}
+
+.vlxUploadSettings,
+.vlxSettingsFields,
+.vlxPrivacyPanel {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.vlxUploadSettings label,
+.vlxSettingsFields label,
+.vlxPrivacyPanel label {
+  display: grid !important;
+  gap: 8px !important;
+  color: rgba(255,255,255,.76) !important;
+  font-weight: 900 !important;
+}
+
+.vlxUploadSettings label {
+  border-radius: 24px !important;
+  padding: 14px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px dashed rgba(255,255,255,.18) !important;
+}
+
+.vlxSettingsFields input,
+.vlxSettingsFields textarea,
+.vlxUploadSettings input {
+  width: 100% !important;
+  min-width: 0 !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 20px !important;
+  padding: 14px 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,.065) !important;
+  font-size: 16px !important;
+}
+
+.vlxSettingsFields input:disabled {
+  opacity: .65 !important;
+}
+
+.vlxSettingsFields textarea {
+  min-height: 115px !important;
+  resize: vertical !important;
+}
+
+.vlxUploadSettings small {
+  color: #00dfff !important;
+}
+
+.vlxPrivacyPanel {
+  border-radius: 26px !important;
+  padding: 14px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.vlxPrivacyPanel label {
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.vlxPrivacyPanel b {
+  color: white !important;
+}
+
+.vlxPrivacyPanel small {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255,255,255,.56) !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+}
+
+.vlxPrivacyPanel input {
+  width: 24px !important;
+  height: 24px !important;
+  accent-color: #ff00b8 !important;
+}
+
+.vlxSettingsNotice {
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+  font-weight: 800 !important;
+}
+
+.vlxSettingsSave {
+  height: 56px !important;
+  font-size: 16px !important;
+}
+
+.vlxSettingsSave:disabled {
+  opacity: .6 !important;
+}
+
+@media (max-width: 430px) {
+  .vlxSettingsHeader h1 {
+    font-size: 38px !important;
+  }
+
+  .vlxSettingsHeader > a:last-child {
+    padding: 10px 13px !important;
+  }
+
+  .vlxSettingsIdentity {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .vlxSettingsAvatar {
+    width: 88px !important;
+    height: 88px !important;
+  }
+
+  .vlxPrivacyPanel label {
+    grid-template-columns: 1fr !important;
+  }
+}

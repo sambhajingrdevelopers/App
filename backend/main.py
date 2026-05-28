@@ -711,3 +711,49 @@ except Exception:
     pass
 
 app.include_router(messages_real_fixed_router)
+
+
+# Real notifications routes
+try:
+    from routes.notifications_real_fixed import router as notifications_real_fixed_router
+except ImportError:
+    from .routes.notifications_real_fixed import router as notifications_real_fixed_router
+
+try:
+    notification_paths = {
+        "/api/v1/notifications/list",
+        "/api/v1/notifications/create",
+        "/api/v1/notifications/mark-read",
+        "/api/v1/notifications/archive",
+        "/api/v1/notifications/seed",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in notification_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(notifications_real_fixed_router)
+
+
+# Real settings/profile routes
+try:
+    from routes.settings_real_fixed import router as settings_real_fixed_router
+except ImportError:
+    from .routes.settings_real_fixed import router as settings_real_fixed_router
+
+try:
+    settings_paths = {
+        "/api/v1/settings/profile",
+        "/api/v1/settings/profile/update",
+        "/api/v1/public/profile",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in settings_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(settings_real_fixed_router)

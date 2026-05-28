@@ -1,306 +1,258 @@
-'use client';
+'use client'
 
-import { useEffect, useRef, useState } from 'react';
-import AuthGuard from '../../components/AuthGuard';
-import SocialAppShell from '../../components/SocialAppShell';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import AuthGuard from '../../components/AuthGuard'
+import SocialAppShell from '../../components/SocialAppShell'
+import { getSessionUser } from '../../lib/sessionUser'
+
+function cleanUsername(value?: string) {
+  const clean = String(value || '').trim()
+  if (!clean) return '@you'
+  return clean.startsWith('@') ? clean : `@${clean}`
+}
+
+function validMedia(url?: string) {
+  const clean = String(url || '').trim()
+  return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
+}
 
 export default function SettingsPage() {
-  const [displayName, setDisplayName] = useState('VibeLoop Creator');
-  const [username, setUsername] = useState('@you');
-  const [bio, setBio] = useState('Digital creator • Reels • Stories • Brand collaborations');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [bannerUrl, setBannerUrl] = useState('');
-  const [message, setMessage] = useState('');
-  const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const bannerInputRef = useRef<HTMLInputElement | null>(null);
+  const [username, setUsername] = useState('@you')
+  const [name, setName] = useState('Creator')
+  const [email, setEmail] = useState('')
+  const [bio, setBio] = useState('Digital Creator')
+  const [avatarUrl, setAvatarUrl] = useState('')
+  const [bannerUrl, setBannerUrl] = useState('')
+  const [isPrivate, setIsPrivate] = useState(false)
+  const [allowMessages, setAllowMessages] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState('')
+  const [notice, setNotice] = useState('')
 
-  useEffect(() => {
-    async function loadProfile() {
-      try {
-        const response = await fetch('/api/profile', { cache: 'no-store' });
-        const result = await response.json();
-        const profile = result.profile || {};
-
-        setDisplayName(profile.displayName || 'VibeLoop Creator');
-        setUsername(profile.username || '@you');
-        setBio(profile.bio || 'Digital creator • Reels • Stories • Brand collaborations');
-        setAvatarUrl(profile.avatarUrl || '');
-        setBannerUrl(profile.bannerUrl || '');
-
-        localStorage.setItem('vibeloop_profile', JSON.stringify(profile));
-      } catch {
-        try {
-          const saved = localStorage.getItem('vibeloop_profile');
-
-          if (saved) {
-            const profile = JSON.parse(saved);
-            setDisplayName(profile.displayName || 'VibeLoop Creator');
-            setUsername(profile.username || '@you');
-            setBio(profile.bio || 'Digital creator • Reels • Stories • Brand collaborations');
-            setAvatarUrl(profile.avatarUrl || '');
-            setBannerUrl(profile.bannerUrl || '');
-          }
-        } catch {
-          // keep default profile
-        }
-      }
-    }
-
-    loadProfile();
-  }, []);
-
-  async function uploadImage(file: File, type: 'avatar' | 'banner') {
-    if (!file.type.startsWith('image/')) {
-      setMessage('Please upload only image files.');
-      return;
-    }
-
-    setMessage('Uploading image...');
+  async function loadSettings() {
+    setLoading(true)
+    setNotice('')
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      const session = await getSessionUser()
+      const userName = cleanUsername(session.username)
+      setUsername(userName)
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
+      const data = await fetch(`/api/settings/profile?username=${encodeURIComponent(userName)}`, {
+        cache: 'no-store'
+      }).then((res) => res.json())
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result?.message || 'Upload failed');
+      if (!data.success) {
+        throw new Error(data.message || 'Settings load failed.')
       }
 
-      if (type === 'avatar') setAvatarUrl(result.mediaUrl);
-      if (type === 'banner') setBannerUrl(result.mediaUrl);
+      const user = data.user || {}
 
-      setMessage('Image uploaded successfully.');
-    } catch {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (type === 'avatar') setAvatarUrl(String(reader.result));
-        if (type === 'banner') setBannerUrl(String(reader.result));
-        setMessage('Server upload failed. Local preview saved.');
-      };
-
-      reader.readAsDataURL(file);
+      setName(user.name || session.name || 'Creator')
+      setEmail(user.email || '')
+      setBio(user.bio || 'Digital Creator')
+      setAvatarUrl(user.avatarUrl || '')
+      setBannerUrl(user.bannerUrl || '')
+      setIsPrivate(Boolean(user.isPrivate))
+      setAllowMessages(user.allowMessages !== false)
+    } catch (error: any) {
+      setNotice(error?.message || 'Settings load failed.')
+    } finally {
+      setLoading(false)
     }
   }
 
-  async function saveSettings() {
-    const profile = {
-      displayName,
-      username,
-      bio,
-      avatarUrl,
-      bannerUrl
-    };
+  useEffect(() => {
+    loadSettings()
+  }, [])
 
-    localStorage.setItem('vibeloop_profile', JSON.stringify(profile));
-    setMessage('Saving profile to platform...');
+  async function uploadMedia(event: ChangeEvent<HTMLInputElement>, field: 'avatar' | 'banner') {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setUploading(field)
+    setNotice('')
 
     try {
-      const response = await fetch('/api/profile', {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/content/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Upload failed.')
+      }
+
+      const url = data.mediaUrl || data.videoUrl || ''
+
+      if (field === 'avatar') {
+        setAvatarUrl(url)
+      } else {
+        setBannerUrl(url)
+      }
+
+      setNotice(`${field === 'avatar' ? 'Profile photo' : 'Cover banner'} uploaded.`)
+    } catch (error: any) {
+      setNotice(error?.message || 'Upload failed.')
+    } finally {
+      setUploading('')
+    }
+  }
+
+  async function saveSettings(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    setSaving(true)
+    setNotice('')
+
+    try {
+      const response = await fetch('/api/settings/profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(profile)
-      });
+        body: JSON.stringify({
+          username,
+          name,
+          email,
+          bio,
+          avatarUrl,
+          bannerUrl,
+          isPrivate,
+          allowMessages
+        })
+      })
 
-      const result = await response.json();
+      const data = await response.json()
 
-      if (!response.ok || !result.success) {
-        throw new Error(result?.message || 'Live save failed');
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Settings save failed.')
       }
 
-      localStorage.setItem('vibeloop_profile', JSON.stringify(result.profile || profile));
-      setMessage('Profile saved to secure cloud platform successfully.');
-    } catch {
-      setMessage('Live save failed. Profile saved locally.');
+      setNotice('Profile settings saved successfully.')
+    } catch (error: any) {
+      setNotice(error?.message || 'Settings save failed.')
+    } finally {
+      setSaving(false)
     }
-  }
-
-  function clearLocalPosts() {
-    localStorage.removeItem('vibeloop_posts');
-    setMessage('Local saved posts cleared.');
   }
 
   return (
     <AuthGuard>
-      <SocialAppShell
-        active="settings"
-        title="Settings"
-        subtitle="Manage your profile, privacy, security and account preferences."
-      >
-        <div className="vlSettingsGrid">
-          <section className="vlSettingsCard">
-            <h2>Profile Settings</h2>
-            <p>Update your creator identity, profile photo and cover banner.</p>
+      <SocialAppShell active="profile" title="" subtitle="" hideSearch>
+        <main className="vlxSettingsPage">
+          <header className="vlxSettingsHeader">
+            <a href="/profile">‹</a>
 
-            <div className="vlProfileImageSettings">
-              <div
-                className="vlSettingsBanner"
-                style={{
-                  backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined
-                }}
-              />
+            <div>
+              <h1>Settings</h1>
+              <p>Manage profile, privacy and message permissions.</p>
+            </div>
 
-              <div className="vlSettingsAvatarWrap">
-                <div
-                  className="vlSettingsAvatar"
-                  style={{
-                    backgroundImage: avatarUrl ? `url(${avatarUrl})` : undefined
-                  }}
-                >
-                  {!avatarUrl && (displayName?.[0]?.toUpperCase() || 'V')}
+            <a href="/profile">View</a>
+          </header>
+
+          {loading ? (
+            <section className="vlxSettingsState">Loading settings...</section>
+          ) : (
+            <form className="vlxSettingsForm" onSubmit={saveSettings}>
+              <section className="vlxSettingsPreview">
+                <div className="vlxSettingsBanner">
+                  {validMedia(bannerUrl) ? <img src={bannerUrl} alt="Cover banner" /> : <span />}
                 </div>
 
-                <div className="vlImageButtons">
-                  <button type="button" onClick={() => avatarInputRef.current?.click()}>
-                    Upload Profile Photo
-                  </button>
-                  <button type="button" onClick={() => bannerInputRef.current?.click()}>
-                    Upload Cover Banner
-                  </button>
+                <div className="vlxSettingsIdentity">
+                  <div className="vlxSettingsAvatar">
+                    {validMedia(avatarUrl) ? <img src={avatarUrl} alt={name} /> : <b>{name.slice(0, 1).toUpperCase()}</b>}
+                  </div>
+
+                  <div>
+                    <h2>{name}</h2>
+                    <p>{username}</p>
+                    <small>{bio}</small>
+                  </div>
                 </div>
-              </div>
+              </section>
 
-              <input
-                ref={avatarInputRef}
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) uploadImage(file, 'avatar');
-                }}
-              />
+              <section className="vlxUploadSettings">
+                <label>
+                  Upload Profile Photo
+                  <input type="file" accept="image/*" onChange={(event) => uploadMedia(event, 'avatar')} />
+                  {uploading === 'avatar' && <small>Uploading profile photo...</small>}
+                </label>
 
-              <input
-                ref={bannerInputRef}
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) uploadImage(file, 'banner');
-                }}
-              />
-            </div>
+                <label>
+                  Upload Cover Banner
+                  <input type="file" accept="image/*" onChange={(event) => uploadMedia(event, 'banner')} />
+                  {uploading === 'banner' && <small>Uploading cover banner...</small>}
+                </label>
+              </section>
 
-            <label>
-              Display Name
-              <input
-                value={displayName}
-                onChange={(event) => setDisplayName(event.target.value)}
-              />
-            </label>
+              <section className="vlxSettingsFields">
+                <label>
+                  Display Name
+                  <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Display name" />
+                </label>
 
-            <label>
-              Username
-              <input
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-              />
-            </label>
+                <label>
+                  Username
+                  <input value={username} disabled placeholder="@username" />
+                </label>
 
-            <label>
-              Bio
-              <textarea
-                value={bio}
-                onChange={(event) => setBio(event.target.value)}
-              />
-            </label>
+                <label>
+                  Email
+                  <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
+                </label>
 
-            <button type="button" onClick={saveSettings}>
-              Save Profile
-            </button>
-          </section>
+                <label>
+                  Bio
+                  <textarea value={bio} onChange={(event) => setBio(event.target.value)} rows={4} placeholder="Bio" />
+                </label>
 
-          <section className="vlSettingsCard">
-            <h2>Privacy</h2>
-            <p>Control who can view and interact with your content.</p>
+                <label>
+                  Avatar URL
+                  <input value={avatarUrl} onChange={(event) => setAvatarUrl(event.target.value)} placeholder="Profile photo URL" />
+                </label>
 
-            <div className="vlToggleRow">
-              <div>
-                <b>Private Account</b>
-                <span>Only approved followers can view your posts.</span>
-              </div>
-              <input type="checkbox" />
-            </div>
+                <label>
+                  Banner URL
+                  <input value={bannerUrl} onChange={(event) => setBannerUrl(event.target.value)} placeholder="Cover banner URL" />
+                </label>
+              </section>
 
-            <div className="vlToggleRow">
-              <div>
-                <b>Show Online Status</b>
-                <span>Allow others to see when you are online.</span>
-              </div>
-              <input type="checkbox" defaultChecked />
-            </div>
+              <section className="vlxPrivacyPanel">
+                <label>
+                  <span>
+                    <b>Private Profile</b>
+                    <small>Only owner can see posts/reels if private is enabled.</small>
+                  </span>
+                  <input type="checkbox" checked={isPrivate} onChange={(event) => setIsPrivate(event.target.checked)} />
+                </label>
 
-            <div className="vlToggleRow">
-              <div>
-                <b>Allow Message Requests</b>
-                <span>Receive messages from new creators.</span>
-              </div>
-              <input type="checkbox" defaultChecked />
-            </div>
-          </section>
+                <label>
+                  <span>
+                    <b>Allow Messages</b>
+                    <small>Public users can message you when enabled.</small>
+                  </span>
+                  <input type="checkbox" checked={allowMessages} onChange={(event) => setAllowMessages(event.target.checked)} />
+                </label>
+              </section>
 
-          <section className="vlSettingsCard">
-            <h2>Security</h2>
-            <p>Protect your account and login sessions.</p>
+              {notice && <section className="vlxSettingsNotice">{notice}</section>}
 
-            <div className="vlSecurityItem">
-              <b>Password</b>
-              <span>Last changed recently</span>
-              <button type="button">Change</button>
-            </div>
-
-            <div className="vlSecurityItem">
-              <b>Two-Step Verification</b>
-              <span>Add extra protection to your account.</span>
-              <button type="button">Enable</button>
-            </div>
-
-            <div className="vlSecurityItem">
-              <b>Active Sessions</b>
-              <span>Manage devices where you are logged in.</span>
-              <button type="button">View</button>
-            </div>
-          </section>
-
-          <section className="vlSettingsCard">
-            <h2>App Preferences</h2>
-            <p>Control theme, storage and local app behavior.</p>
-
-            <div className="vlThemePreview">
-              <div />
-              <div />
-              <div />
-            </div>
-
-            <button type="button" onClick={clearLocalPosts}>
-              Clear Local Saved Posts
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                localStorage.removeItem('vibeloop_user');
-        fetch('/api/auth/session', { method: 'DELETE' }).catch(() => {});
-                window.location.href = '/login';
-              }}
-            >
-              Logout Account
-            </button>
-          </section>
-        </div>
-
-        {message && <div className="vlSettingsMessage">{message}</div>}
+              <button className="vlxSettingsSave" type="submit" disabled={saving || Boolean(uploading)}>
+                {saving ? 'Saving...' : 'Save Settings'}
+              </button>
+            </form>
+          )}
+        </main>
       </SocialAppShell>
     </AuthGuard>
-  );
+  )
 }
