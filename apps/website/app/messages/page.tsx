@@ -1,17 +1,19 @@
 'use client'
 
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
 
-type MessageItem = {
+type SecureMessage = {
   id: string
   sender: string
   receiver: string
   text: string
   createdAt: string
   readAt?: string | null
+  mine?: boolean
+  encrypted?: boolean
 }
 
 type Conversation = {
@@ -20,6 +22,7 @@ type Conversation = {
   name: string
   lastMessage: string
   lastAt: string
+  encrypted?: boolean
   unread?: number
 }
 
@@ -30,7 +33,7 @@ function cleanUsername(value?: string | null) {
 }
 
 function firstLetter(value?: string) {
-  return String(value || 'V').trim().slice(0, 1).toUpperCase()
+  return String(value || 'V').replace('@', '').trim().slice(0, 1).toUpperCase()
 }
 
 function timeLabel(value?: string) {
@@ -41,26 +44,30 @@ function timeLabel(value?: string) {
   const diff = Date.now() - time
   const min = Math.max(1, Math.floor(diff / 60000))
   if (min < 60) return `${min}m ago`
-
   const hr = Math.floor(min / 60)
   if (hr < 24) return `${hr}h ago`
-
   return `${Math.floor(hr / 24)}d ago`
 }
 
 export default function MessagesPage() {
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+
   const [me, setMe] = useState('@you')
   const [recipient, setRecipient] = useState('@creator')
   const [recipientInput, setRecipientInput] = useState('@creator')
   const [conversations, setConversations] = useState<Conversation[]>([])
-  const [messages, setMessages] = useState<MessageItem[]>([])
+  const [messages, setMessages] = useState<SecureMessage[]>([])
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [notice, setNotice] = useState('')
 
+  function scrollBottom() {
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 80)
+  }
+
   async function loadConversations(user: string) {
-    const data = await fetch(`/api/messages/conversations?user=${encodeURIComponent(user)}`, {
+    const data = await fetch(`/api/secure-messages/conversations?user=${encodeURIComponent(user)}`, {
       cache: 'no-store'
     }).then((res) => res.json()).catch(() => ({
       conversations: []
@@ -75,20 +82,21 @@ export default function MessagesPage() {
 
     try {
       const data = await fetch(
-        `/api/messages/thread?user=${encodeURIComponent(user)}&with=${encodeURIComponent(other)}`,
+        `/api/secure-messages/thread?user=${encodeURIComponent(user)}&with=${encodeURIComponent(other)}`,
         { cache: 'no-store' }
       ).then((res) => res.json())
 
       setMessages(Array.isArray(data.messages) ? data.messages : [])
 
       if (!data.success) {
-        setNotice(data.message || 'Message thread failed.')
+        setNotice(data.message || 'Secure message thread failed.')
       }
     } catch {
       setMessages([])
-      setNotice('Backend message connection failed.')
+      setNotice('Secure backend connection failed.')
     } finally {
       setLoading(false)
+      scrollBottom()
     }
   }
 
@@ -117,8 +125,7 @@ export default function MessagesPage() {
     setRecipient(target)
     setRecipientInput(target)
 
-    const nextUrl = `/messages?to=${encodeURIComponent(target)}`
-    window.history.replaceState(null, '', nextUrl)
+    window.history.replaceState(null, '', `/messages?to=${encodeURIComponent(target)}`)
 
     await loadThread(me, target)
   }
@@ -138,11 +145,9 @@ export default function MessagesPage() {
     setNotice('')
 
     try {
-      const response = await fetch('/api/messages/send', {
+      const response = await fetch('/api/secure-messages/send', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sender: me,
           receiver: recipient,
@@ -153,29 +158,47 @@ export default function MessagesPage() {
       const data = await response.json()
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Send failed.')
+        throw new Error(data.message || 'Secure send failed.')
       }
 
       setText('')
       await loadThread(me, recipient)
       await loadConversations(me)
     } catch (error: any) {
-      setNotice(error?.message || 'Send failed.')
+      setNotice(error?.message || 'Secure send failed.')
     } finally {
       setSending(false)
+      scrollBottom()
+    }
+  }
+
+  async function archiveConversation() {
+    const data = await fetch('/api/secure-messages/archive', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: me, withUser: recipient })
+    }).then((res) => res.json()).catch(() => ({
+      success: false,
+      message: 'Archive failed.'
+    }))
+
+    setNotice(data.message || 'Updated.')
+    if (data.success) {
+      setMessages([])
+      await loadConversations(me)
     }
   }
 
   return (
     <AuthGuard>
       <SocialAppShell active="creators" title="" subtitle="" hideSearch>
-        <main className="vlxMessagesPage">
-          <header className="vlxMessagesHeader">
+        <main className="vlxSecureMessagesPage">
+          <header className="vlxSecureMessagesHeader">
             <a href="/home">‹</a>
 
             <div>
               <h1>Messages</h1>
-              <p>Chat with {recipient}</p>
+              <p>Secure encrypted user-to-user chat.</p>
             </div>
 
             <button type="button" onClick={() => loadThread(me, recipient)}>
@@ -183,7 +206,15 @@ export default function MessagesPage() {
             </button>
           </header>
 
-          <form className="vlxRecipientBar" onSubmit={handleRecipientSubmit}>
+          <section className="vlxSecureHero">
+            <span>🔐</span>
+            <div>
+              <b>AES-GCM secure storage</b>
+              <small>Messages are encrypted before saving in backend database.</small>
+            </div>
+          </section>
+
+          <form className="vlxSecureRecipientBar" onSubmit={handleRecipientSubmit}>
             <span>To</span>
             <input
               value={recipientInput}
@@ -194,7 +225,7 @@ export default function MessagesPage() {
           </form>
 
           {conversations.length > 0 && (
-            <section className="vlxConversationStrip">
+            <section className="vlxSecureConversationStrip">
               {conversations.map((conversation) => (
                 <button
                   type="button"
@@ -205,57 +236,61 @@ export default function MessagesPage() {
                   <i>{firstLetter(conversation.name || conversation.username)}</i>
                   <span>
                     <b>{conversation.name || conversation.username}</b>
-                    <small>{conversation.lastMessage}</small>
+                    <small>🔐 {conversation.lastMessage}</small>
                   </span>
                 </button>
               ))}
             </section>
           )}
 
-          <section className="vlxChatPanel">
-            <header className="vlxChatTop">
-              <div className="vlxChatAvatar">
-                {firstLetter(recipient)}
-              </div>
+          <section className="vlxSecureChatPanel">
+            <header className="vlxSecureChatTop">
+              <div className="vlxSecureChatAvatar">{firstLetter(recipient)}</div>
 
               <div>
                 <h2>{recipient.replace('@', '') || 'Creator'}</h2>
-                <p>{recipient}</p>
+                <p>{recipient} · encrypted chat</p>
               </div>
+
+              <button type="button" onClick={archiveConversation}>
+                Hide
+              </button>
             </header>
 
-            <div className="vlxMessageList">
+            <div className="vlxSecureMessageList">
               {loading ? (
-                <div className="vlxMessageState">Loading messages...</div>
+                <div className="vlxSecureMessageState">Loading encrypted messages...</div>
               ) : messages.length === 0 ? (
-                <div className="vlxMessageState">
+                <div className="vlxSecureMessageState">
                   <b>No messages yet</b>
-                  <span>Start conversation with {recipient}.</span>
+                  <span>Start secure conversation with {recipient}.</span>
                 </div>
               ) : (
                 messages.map((message) => {
                   const mine = cleanUsername(message.sender).toLowerCase() === me.toLowerCase()
 
                   return (
-                    <div className={`vlxMessageBubble ${mine ? 'mine' : 'their'}`} key={message.id}>
+                    <div className={`vlxSecureBubble ${mine ? 'mine' : 'their'}`} key={message.id}>
                       <p>{message.text}</p>
-                      <small>{timeLabel(message.createdAt)}</small>
+                      <small>🔐 {timeLabel(message.createdAt)}</small>
                     </div>
                   )
                 })
               )}
+
+              <div ref={bottomRef} />
             </div>
 
-            {notice && <div className="vlxMessageNotice">{notice}</div>}
+            {notice && <div className="vlxSecureNotice">{notice}</div>}
 
-            <form className="vlxMessageComposer" onSubmit={handleSend}>
+            <form className="vlxSecureComposer" onSubmit={handleSend}>
               <input
                 value={text}
                 onChange={(event) => setText(event.target.value)}
-                placeholder="Write message..."
+                placeholder="Write encrypted message..."
               />
               <button type="submit" disabled={sending}>
-                {sending ? '...' : 'Send'}
+                {sending ? 'Sending...' : 'Send'}
               </button>
             </form>
           </section>

@@ -757,3 +757,28 @@ except Exception:
     pass
 
 app.include_router(settings_real_fixed_router)
+
+
+# Real secure encrypted messages routes
+try:
+    from routes.messages_secure_real import router as messages_secure_real_router
+except ImportError:
+    from .routes.messages_secure_real import router as messages_secure_real_router
+
+try:
+    secure_message_paths = {
+        "/api/v1/secure/messages/thread",
+        "/api/v1/secure/messages/send",
+        "/api/v1/secure/messages/conversations",
+        "/api/v1/secure/messages/archive",
+        "/api/v1/secure/messages/seed",
+        "/api/v1/secure/messages/health",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in secure_message_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(messages_secure_real_router)
