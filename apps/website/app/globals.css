@@ -23262,3 +23262,162 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* EMERGENCY FINAL MOBILE RESPONSIVE FIX: PROFILE + APP SHELL */
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+html,
+body,
+.vlxShellRoot,
+.vlxShellMain,
+.vlxFinalProfilePage,
+.vlxFinalProfileHero {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.vlxShellMain {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  margin: 0 auto !important;
+}
+
+.vlxFinalProfilePage {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: 0 auto !important;
+}
+
+.vlxFinalProfileHero {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  border-radius: 28px !important;
+}
+
+.vlxFinalProfileCover {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.vlxFinalProfileMain,
+.vlxFinalProfileStats,
+.vlxFinalProfileActions,
+.vlxFinalProfileTabs,
+.vlxFinalProfileGrid {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.vlxFinalProfileInfo {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.vlxFinalProfileInfo h1,
+.vlxFinalProfileInfo p,
+.vlxFinalProfileInfo small {
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+
+.vlxFinalProfileStats {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  padding: 14px !important;
+  gap: 10px !important;
+}
+
+.vlxFinalProfileStats div {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.vlxFinalProfileActions {
+  grid-template-columns: 1fr !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.vlxFinalProfileGrid {
+  grid-template-columns: 1fr !important;
+}
+
+/* hide old duplicate right floating msg/notification icons */
+.vlxFloatingActions,
+.vlxFloatDock,
+.vlxSideQuick,
+.vlxNotifyFloat,
+.vlxMessageFloat,
+.vlxQuickDock,
+.vlxFloatingDock,
+.floating-actions,
+.floatingActions,
+.floatingActionRail,
+.floatingIconsRail,
+.right-floating-actions,
+.rightFloatingActions,
+.quickFloatDock,
+[class*="Floating"],
+[class*="floating"],
+[class*="RightDock"],
+[class*="rightDock"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* keep bottom nav fully inside screen */
+.vlxShellBottom {
+  left: 12px !important;
+  right: 12px !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  transform: none !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+@media (max-width: 430px) {
+  .vlxShellTop {
+    width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .vlxShellTopActions a,
+  .vlxShellTopActions button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .vlxFinalProfileCover {
+    height: 170px !important;
+  }
+
+  .vlxFinalProfileMain {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    grid-template-columns: 1fr !important;
+    align-items: start !important;
+  }
+
+  .vlxFinalProfileAvatar {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  .vlxFinalProfileInfo h1 {
+    font-size: 34px !important;
+  }
+
+  .vlxFinalProfileInfo p {
+    font-size: 17px !important;
+  }
+}
