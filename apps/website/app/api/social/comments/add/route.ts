@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}))
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/follow/toggle`, {
+    const res = await fetch(`${BACKEND_URL}/api/v1/social/comments/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
