@@ -27650,3 +27650,298 @@ body:has(.waFinalRoot) .waFinalConversation {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* DYNAMIC CONNECTED PROFILE PAGE */
+.dynProfilePage {
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding-bottom: 130px !important;
+  overflow-x: hidden !important;
+}
+
+.dynProfileHero {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(12, 13, 28, .96) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,.35) !important;
+}
+
+.dynProfileCover {
+  height: 180px !important;
+  background: linear-gradient(135deg, #00c8ff, #673cff 55%, #ff00b8) !important;
+  overflow: hidden !important;
+}
+
+.dynProfileCover img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.dynProfileTop {
+  margin-top: -54px !important;
+  padding: 0 18px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 14px !important;
+  align-items: end !important;
+}
+
+.dynProfileAvatar {
+  width: 112px !important;
+  height: 112px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+  border: 7px solid rgba(5,6,15,.95) !important;
+  box-shadow: 0 18px 45px rgba(255,0,184,.22) !important;
+}
+
+.dynProfileAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.dynProfileAvatar b {
+  font-size: 48px !important;
+}
+
+.dynProfileAvatar i {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background: #00ff95 !important;
+  border: 3px solid #0c0d1c !important;
+}
+
+.dynProfileIdentity {
+  min-width: 0 !important;
+  padding-bottom: 8px !important;
+}
+
+.dynProfileIdentity h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: clamp(30px, 6vw, 50px) !important;
+  line-height: .95 !important;
+  letter-spacing: -.07em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dynProfileIdentity h1 em {
+  margin-left: 8px !important;
+  color: #00c8ff !important;
+  font-style: normal !important;
+}
+
+.dynProfileIdentity strong {
+  display: block !important;
+  margin-top: 7px !important;
+  color: #00eaff !important;
+  font-size: 18px !important;
+}
+
+.dynProfileIdentity p {
+  margin: 8px 0 0 !important;
+  color: rgba(255,255,255,.72) !important;
+}
+
+.dynProfileIdentity small {
+  display: block !important;
+  margin-top: 8px !important;
+  color: rgba(255,255,255,.55) !important;
+}
+
+.dynProfileStats {
+  padding: 0 18px 15px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
+}
+
+.dynProfileStats div {
+  min-height: 74px !important;
+  border-radius: 18px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 4px !important;
+  text-align: center !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.dynProfileStats b {
+  color: white !important;
+  font-size: 28px !important;
+}
+
+.dynProfileStats span {
+  color: rgba(255,255,255,.55) !important;
+  font-size: 13px !important;
+}
+
+.dynProfileActions {
+  padding: 0 18px 18px !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.dynProfileActions a,
+.dynProfileActions button,
+.dynProfileEmpty a {
+  width: 100% !important;
+  min-height: 44px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.dynProfileActions button.active {
+  background: rgba(255,255,255,.10) !important;
+}
+
+.dynProfileNotice {
+  margin: 0 18px 18px !important;
+  border-radius: 16px !important;
+  padding: 11px 13px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+}
+
+.dynProfileTabs {
+  margin-top: 16px !important;
+  border-radius: 999px !important;
+  padding: 6px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.dynProfileTabs button {
+  min-height: 42px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  color: rgba(255,255,255,.62) !important;
+  background: transparent !important;
+  font-weight: 900 !important;
+}
+
+.dynProfileTabs button.active {
+  color: white !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.dynProfileGrid {
+  margin-top: 12px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.dynProfileCard {
+  overflow: hidden !important;
+  border-radius: 22px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.dynProfileMedia {
+  aspect-ratio: 1 / 1 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #05050a !important;
+  color: white !important;
+  font-size: 44px !important;
+}
+
+.dynProfileMedia img,
+.dynProfileMedia video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.dynProfileCardText {
+  padding: 11px !important;
+}
+
+.dynProfileCardText b {
+  display: block !important;
+  color: white !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dynProfileCardText small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.58) !important;
+}
+
+.dynProfileEmpty,
+.dynProfileState {
+  grid-column: 1 / -1 !important;
+  min-height: 160px !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.62) !important;
+  background: rgba(255,255,255,.055) !important;
+  padding: 20px !important;
+}
+
+.dynProfileEmpty b,
+.dynProfileState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.dynProfileEmpty a {
+  width: auto !important;
+  min-height: 38px !important;
+  padding: 0 18px !important;
+  margin: 0 auto !important;
+}
+
+@media (max-width: 540px) {
+  .dynProfileTop {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    text-align: center !important;
+  }
+
+  .dynProfileStats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .dynProfileGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dynProfileIdentity h1 {
+    white-space: normal !important;
+  }
+}

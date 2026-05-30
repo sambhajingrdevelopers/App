@@ -1,31 +1,18 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
 
-type ProfileUser = {
-  id?: string
-  name: string
-  username: string
-  bio: string
-  avatarUrl?: string
-  bannerUrl?: string
-  verified?: boolean
-  followers?: number
-  following?: number
-  isPrivate?: boolean
-  allowMessages?: boolean
-  isOwner?: boolean
-}
-
 type ContentItem = {
   id: string
   kind: string
-  type: string
-  title?: string
+  title: string
   caption?: string
+  username: string
+  name?: string
   mediaUrl?: string
   videoUrl?: string
   mediaType?: string
@@ -35,197 +22,184 @@ type ContentItem = {
   createdAt?: string
 }
 
-type Tab = 'posts' | 'reels' | 'stories'
+type ProfileData = {
+  name: string
+  username: string
+  bio: string
+  location?: string
+  avatarUrl?: string
+  coverUrl?: string
+  verified?: boolean
+  followers: number
+  following: number
+  isFollowing: boolean
+  isOwner: boolean
+  counts: {
+    posts: number
+    reels: number
+    stories: number
+  }
+}
 
 function cleanUsername(value?: string | null) {
-  const clean = String(value || '').trim()
-  if (!clean) return '@you'
-  return clean.startsWith('@') ? clean : `@${clean}`
+  const text = String(value || '').trim()
+  if (!text) return '@creator'
+  return text.startsWith('@') ? text : `@${text}`
 }
 
 function firstLetter(value?: string) {
-  return String(value || 'V').replace('@', '').trim().slice(0, 1).toUpperCase()
+  return String(value || 'U').replace('@', '').slice(0, 1).toUpperCase()
 }
 
-function validMedia(url?: string) {
-  const clean = String(url || '').trim()
+function validUrl(value?: string) {
+  const clean = String(value || '').trim()
   return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
 }
 
-function compact(value?: number) {
-  const n = Number(value || 0)
-  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
-  return String(n)
+function formatCount(value: number) {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
+  return String(value || 0)
 }
 
-function Media({ item }: { item: ContentItem }) {
-  const src = item.videoUrl || item.mediaUrl || ''
-  const isVideo = item.mediaType === 'video' || item.kind === 'reel' || Boolean(item.videoUrl)
+function mediaSrc(item: ContentItem) {
+  return item.videoUrl || item.mediaUrl || ''
+}
 
-  if (!validMedia(src)) {
-    return (
-      <div className="vlxFinalProfileFallback">
-        <b>{isVideo ? '▶' : '✦'}</b>
+function ProfileContentCard({ item }: { item: ContentItem }) {
+  const src = mediaSrc(item)
+  const isVideo = item.kind === 'reel' || item.mediaType === 'video'
+
+  return (
+    <a className="dynProfileCard" href={`/post/${encodeURIComponent(item.id)}`}>
+      <div className="dynProfileMedia">
+        {validUrl(src) ? (
+          isVideo ? (
+            <video src={src} muted playsInline preload="metadata" />
+          ) : (
+            <img src={src} alt={item.title} />
+          )
+        ) : (
+          <span>{isVideo ? '▶' : '✦'}</span>
+        )}
       </div>
-    )
-  }
 
-  if (isVideo) {
-    return <video src={src} muted playsInline preload="metadata" />
-  }
-
-  return <img src={src} alt={item.title || item.kind} />
+      <div className="dynProfileCardText">
+        <b>{item.title}</b>
+        <small>♥ {formatCount(Number(item.likes || 0))} · 💬 {formatCount(Number(item.comments || 0))}</small>
+      </div>
+    </a>
+  )
 }
 
-export default function ProfilePage() {
-  const [viewer, setViewer] = useState('@guest')
-  const [profile, setProfile] = useState<ProfileUser>({
-    name: 'Creator',
-    username: '@you',
-    bio: 'Digital Creator',
-    followers: 0,
-    following: 0,
-    isOwner: true,
-    isPrivate: false,
-    allowMessages: true
-  })
+export default function DynamicProfilePage() {
+  const searchParams = useSearchParams()
 
+  const [viewer, setViewer] = useState('@guest')
+  const [profile, setProfile] = useState<ProfileData | null>(null)
   const [posts, setPosts] = useState<ContentItem[]>([])
   const [reels, setReels] = useState<ContentItem[]>([])
   const [stories, setStories] = useState<ContentItem[]>([])
-  const [tab, setTab] = useState<Tab>('posts')
-  const [isFollowing, setIsFollowing] = useState(false)
+  const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'stories'>('posts')
   const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
+
+  const targetUsername = useMemo(() => {
+    return cleanUsername(searchParams.get('username') || viewer)
+  }, [searchParams, viewer])
 
   async function loadProfile() {
     setLoading(true)
     setNotice('')
 
-    try {
-      const session = await getSessionUser()
-      const viewerUsername = cleanUsername(session.username)
-      setViewer(viewerUsername)
+    const session = await getSessionUser()
+    const currentViewer = cleanUsername(session.username || '@guest')
+    setViewer(currentViewer)
 
-      const params = new URLSearchParams(window.location.search)
-      const target = cleanUsername(params.get('username') || viewerUsername)
+    const target = cleanUsername(searchParams.get('username') || currentViewer)
 
-      const data = await fetch(
-        `/api/profile/final?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(viewerUsername)}`,
-        { cache: 'no-store' }
-      ).then((res) => res.json())
+    const data = await fetch(
+      `/api/profile/full?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(currentViewer)}`,
+      { cache: 'no-store' }
+    )
+      .then((res) => res.json())
+      .catch(() => ({ success: false, message: 'Profile backend failed.' }))
 
-      if (!data.success || !data.user) {
-        throw new Error(data.message || 'Profile load failed.')
-      }
-
-      setProfile(data.user)
-      setPosts(Array.isArray(data.posts) ? data.posts : [])
-      setReels(Array.isArray(data.reels) ? data.reels : [])
-      setStories(Array.isArray(data.stories) ? data.stories : [])
-
-      if (!data.user.isOwner) {
-        const followData = await fetch(
-          `/api/follow/status?follower=${encodeURIComponent(viewerUsername)}&following=${encodeURIComponent(target)}`,
-          { cache: 'no-store' }
-        ).then((res) => res.json()).catch(() => ({}))
-
-        setIsFollowing(Boolean(followData.isFollowing))
-
-        if (typeof followData.followers === 'number') {
-          setProfile((old) => ({ ...old, followers: followData.followers }))
-        }
-      }
-    } catch (error: any) {
-      setNotice(error?.message || 'Profile load failed.')
-    } finally {
+    if (!data.success || !data.profile) {
+      setProfile(null)
+      setPosts([])
+      setReels([])
+      setStories([])
+      setNotice(data.message || 'Profile not found.')
       setLoading(false)
+      return
     }
+
+    setProfile(data.profile)
+    setPosts(Array.isArray(data.posts) ? data.posts : [])
+    setReels(Array.isArray(data.reels) ? data.reels : [])
+    setStories(Array.isArray(data.stories) ? data.stories : [])
+    setLoading(false)
   }
 
   useEffect(() => {
     loadProfile()
-  }, [])
+  }, [searchParams])
 
-  const activeItems = useMemo(() => {
-    if (tab === 'reels') return reels
-    if (tab === 'stories') return stories
-    return posts
-  }, [tab, posts, reels, stories])
+  async function toggleFollow() {
+    if (!profile || profile.isOwner || busy) return
 
-  async function handleFollow() {
-    if (profile.isOwner) return
+    setBusy(true)
 
     const data = await fetch('/api/follow/toggle', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ follower: viewer, following: profile.username })
-    }).then((res) => res.json()).catch(() => ({
-      success: false,
-      message: 'Follow failed.'
-    }))
+      body: JSON.stringify({ follower: viewer, following: profile.username }),
+    })
+      .then((res) => res.json())
+      .catch(() => ({ success: false, message: 'Follow failed.' }))
 
     setNotice(data.message || 'Updated.')
 
     if (data.success) {
-      setIsFollowing(Boolean(data.isFollowing))
-      if (typeof data.followers === 'number') {
-        setProfile((old) => ({ ...old, followers: data.followers }))
-      }
+      setProfile((old) =>
+        old
+          ? {
+              ...old,
+              isFollowing: Boolean(data.isFollowing),
+              followers: Number(data.followers ?? old.followers),
+            }
+          : old
+      )
     }
+
+    setBusy(false)
   }
 
-  async function saveItem(item: ContentItem) {
-    const data = await fetch('/api/saved/toggle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: viewer, contentId: item.id, kind: item.kind })
-    }).then((res) => res.json()).catch(() => ({
-      success: false,
-      message: 'Save failed.'
-    }))
-
-    setNotice(data.message || 'Updated.')
-  }
-
-  async function trashItem(item: ContentItem) {
-    const data = await fetch('/api/trash/move', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: viewer, contentId: item.id })
-    }).then((res) => res.json()).catch(() => ({
-      success: false,
-      message: 'Move to trash failed.'
-    }))
-
-    setNotice(data.message || 'Updated.')
-
-    if (data.success) {
-      setPosts((old) => old.filter((x) => x.id !== item.id))
-      setReels((old) => old.filter((x) => x.id !== item.id))
-      setStories((old) => old.filter((x) => x.id !== item.id))
-    }
-  }
-
-  const canViewContent = profile.isOwner || !profile.isPrivate
+  const activeItems = activeTab === 'posts' ? posts : activeTab === 'reels' ? reels : stories
 
   return (
     <AuthGuard>
-      <SocialAppShell active="profile" title="" subtitle="" hideSearch>
-        <main className="vlxFinalProfilePage">
+      <SocialAppShell active="profile" hideSearch>
+        <main className="dynProfilePage">
           {loading ? (
-            <section className="vlxFinalProfileState">Loading profile...</section>
+            <section className="dynProfileState">Loading profile...</section>
+          ) : !profile ? (
+            <section className="dynProfileState">
+              <b>Profile not found</b>
+              <span>{notice}</span>
+            </section>
           ) : (
             <>
-              <section className="vlxFinalProfileHero">
-                <div className="vlxFinalProfileCover">
-                  {validMedia(profile.bannerUrl) ? <img src={profile.bannerUrl} alt="Cover" /> : <span />}
+              <section className="dynProfileHero">
+                <div className="dynProfileCover">
+                  {validUrl(profile.coverUrl) ? <img src={profile.coverUrl} alt="cover" /> : <span />}
                 </div>
 
-                <div className="vlxFinalProfileMain">
-                  <div className="vlxFinalProfileAvatar">
-                    {validMedia(profile.avatarUrl) ? (
+                <div className="dynProfileTop">
+                  <div className="dynProfileAvatar">
+                    {validUrl(profile.avatarUrl) ? (
                       <img src={profile.avatarUrl} alt={profile.name} />
                     ) : (
                       <b>{firstLetter(profile.name)}</b>
@@ -233,24 +207,37 @@ export default function ProfilePage() {
                     <i />
                   </div>
 
-                  <div className="vlxFinalProfileInfo">
+                  <div className="dynProfileIdentity">
                     <h1>
                       {profile.name}
                       {profile.verified && <em>✓</em>}
                     </h1>
-                    <p>{profile.username}</p>
-                    <small>{profile.bio}</small>
+                    <strong>{profile.username}</strong>
+                    <p>{profile.bio}</p>
+                    <small>📍 {profile.location || 'India'}</small>
                   </div>
                 </div>
 
-                <div className="vlxFinalProfileStats">
-                  <div><b>{posts.length}</b><span>Posts</span></div>
-                  <div><b>{reels.length}</b><span>Reels</span></div>
-                  <div><b>{compact(profile.followers)}</b><span>Followers</span></div>
-                  <div><b>{compact(profile.following)}</b><span>Following</span></div>
+                <div className="dynProfileStats">
+                  <div>
+                    <b>{formatCount(profile.counts.posts)}</b>
+                    <span>Posts</span>
+                  </div>
+                  <div>
+                    <b>{formatCount(profile.counts.reels)}</b>
+                    <span>Reels</span>
+                  </div>
+                  <div>
+                    <b>{formatCount(profile.followers)}</b>
+                    <span>Followers</span>
+                  </div>
+                  <div>
+                    <b>{formatCount(profile.following)}</b>
+                    <span>Following</span>
+                  </div>
                 </div>
 
-                <div className="vlxFinalProfileActions">
+                <div className="dynProfileActions">
                   {profile.isOwner ? (
                     <>
                       <a href="/settings">Edit Profile</a>
@@ -259,75 +246,48 @@ export default function ProfilePage() {
                     </>
                   ) : (
                     <>
-                      <button type="button" onClick={handleFollow}>
-                        {isFollowing ? 'Following' : 'Follow'}
+                      <button type="button" onClick={toggleFollow} disabled={busy} className={profile.isFollowing ? 'active' : ''}>
+                        {profile.isFollowing ? 'Following' : 'Follow'}
                       </button>
-                      {profile.allowMessages && (
-                        <a href={`/messages?to=${encodeURIComponent(profile.username)}`}>Message</a>
-                      )}
-                      <a href={`/search?q=${encodeURIComponent(profile.username)}`}>Search</a>
+                      <a href={`/messages?to=${encodeURIComponent(profile.username)}`}>Message</a>
+                      <button
+                        type="button"
+                        onClick={() => navigator.clipboard?.writeText(`${window.location.origin}/profile?username=${profile.username}`)}
+                      >
+                        Share
+                      </button>
                     </>
                   )}
                 </div>
 
-                {profile.isPrivate && !profile.isOwner && (
-                  <div className="vlxFinalProfilePrivate">
-                    Private profile. Follow request or owner permission is required.
-                  </div>
-                )}
-
-                {notice && <div className="vlxFinalProfileNotice">{notice}</div>}
+                {notice && <div className="dynProfileNotice">{notice}</div>}
               </section>
 
-              <section className="vlxFinalProfileTabs">
-                <button type="button" className={tab === 'posts' ? 'active' : ''} onClick={() => setTab('posts')}>
+              <section className="dynProfileTabs">
+                <button type="button" onClick={() => setActiveTab('posts')} className={activeTab === 'posts' ? 'active' : ''}>
                   Posts
                 </button>
-                <button type="button" className={tab === 'reels' ? 'active' : ''} onClick={() => setTab('reels')}>
+                <button type="button" onClick={() => setActiveTab('reels')} className={activeTab === 'reels' ? 'active' : ''}>
                   Reels
                 </button>
-                <button type="button" className={tab === 'stories' ? 'active' : ''} onClick={() => setTab('stories')}>
+                <button type="button" onClick={() => setActiveTab('stories')} className={activeTab === 'stories' ? 'active' : ''}>
                   Stories
                 </button>
               </section>
 
-              {!canViewContent ? (
-                <section className="vlxFinalProfileState">
-                  <b>Private profile</b>
-                  <span>Content is hidden by privacy settings.</span>
-                </section>
-              ) : activeItems.length === 0 ? (
-                <section className="vlxFinalProfileState">
-                  <b>No {tab} yet</b>
-                  <span>{profile.isOwner ? 'Create your first content.' : 'This creator has no content here.'}</span>
-                  {profile.isOwner && <a href="/create">Create now</a>}
-                </section>
-              ) : (
-                <section className="vlxFinalProfileGrid">
-                  {activeItems.map((item) => (
-                    <article className="vlxFinalProfilePost" key={item.id}>
-                      <a href={`/post/${encodeURIComponent(item.id)}`}>
-                        <Media item={item} />
-                        <span>{item.kind}</span>
-                      </a>
-
-                      <div>
-                        <h2>{item.title || item.kind}</h2>
-                        <p>{item.caption || 'Backend connected content.'}</p>
-                        <small>♡ {item.likes || 0} · �� {item.comments || 0} · ▶ {item.views || 0}</small>
-
-                        <div>
-                          <a href={`/post/${encodeURIComponent(item.id)}`}>Open</a>
-                          <button type="button" onClick={() => saveItem(item)}>Save</button>
-                          {profile.isOwner && (
-                            <button type="button" onClick={() => trashItem(item)}>Trash</button>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </section>
-              )}
+              <section className="dynProfileGrid">
+                {activeItems.length === 0 ? (
+                  <div className="dynProfileEmpty">
+                    <b>No {activeTab} yet</b>
+                    <span>
+                      {profile.isOwner ? 'Create your first content.' : `${profile.name} has not added ${activeTab} yet.`}
+                    </span>
+                    {profile.isOwner && <a href="/create">Create now</a>}
+                  </div>
+                ) : (
+                  activeItems.map((item) => <ProfileContentCard key={item.id} item={item} />)
+                )}
+              </section>
             </>
           )}
         </main>
