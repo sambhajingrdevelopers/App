@@ -1,3 +1,11 @@
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 import './globals.css';
 import type { Metadata } from 'next';
 

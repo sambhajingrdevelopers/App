@@ -24840,3 +24840,2498 @@ body,
     max-width: 1180px !important;
   }
 }
+
+/* TRUE WHATSAPP-LIKE FULL MESSAGE PAGE */
+.waFullRoot {
+  width: 100vw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+  color: #e9edef !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.waFullApp {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: 420px minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+}
+
+.waSidebar {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto 1fr !important;
+  background: #111b21 !important;
+  border-right: 1px solid #26353d !important;
+  overflow: hidden !important;
+}
+
+.waSidebarHeader {
+  height: 60px !important;
+  padding: 10px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  background: #202c33 !important;
+}
+
+.waCurrentUser {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+}
+
+.waHeaderActions {
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.waHeaderActions button,
+.waHeaderActions a,
+.waConversationHeader button,
+.waConversationHeader a {
+  width: 36px !important;
+  height: 36px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  font-size: 18px !important;
+}
+
+.waHeaderActions button:hover,
+.waHeaderActions a:hover,
+.waConversationHeader button:hover,
+.waConversationHeader a:hover {
+  background: rgba(255,255,255,.07) !important;
+}
+
+.waSidebarTitle {
+  padding: 18px 18px 8px !important;
+}
+
+.waSidebarTitle h1 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 28px !important;
+  font-weight: 850 !important;
+  letter-spacing: -.03em !important;
+}
+
+.waSearchBox {
+  margin: 0 14px 10px !important;
+  height: 42px !important;
+  border-radius: 9px !important;
+  padding: 0 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #202c33 !important;
+}
+
+.waSearchBox span {
+  color: #8696a0 !important;
+  font-size: 20px !important;
+}
+
+.waSearchBox input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  font-size: 15px !important;
+}
+
+.waFilterTabs {
+  padding: 0 14px 10px !important;
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.waFilterTabs::-webkit-scrollbar {
+  display: none !important;
+}
+
+.waFilterTabs button {
+  flex: 0 0 auto !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 7px 12px !important;
+  color: #aebac1 !important;
+  background: #202c33 !important;
+  font-weight: 700 !important;
+}
+
+.waFilterTabs button.active {
+  color: #111b21 !important;
+  background: #25d366 !important;
+}
+
+.waArchiveRow {
+  height: 54px !important;
+  padding: 0 22px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 18px !important;
+  color: #00a884 !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+
+.waArchiveRow b {
+  color: #e9edef !important;
+  font-weight: 500 !important;
+}
+
+.waChatList {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #374045 transparent !important;
+}
+
+.waChatItem {
+  width: 100% !important;
+  min-height: 72px !important;
+  border: 0 !important;
+  padding: 10px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+  text-align: left !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.05) !important;
+}
+
+.waChatItem:hover,
+.waChatItem.active {
+  background: #202c33 !important;
+}
+
+.waChatAvatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+}
+
+.waChatAvatar.small {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.waChatAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.waChatText {
+  min-width: 0 !important;
+}
+
+.waChatText b {
+  display: block !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waChatText em,
+.waConversationUser em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+  margin-left: 5px !important;
+}
+
+.waChatText small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: #8696a0 !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waChatMeta {
+  display: grid !important;
+  justify-items: end !important;
+  gap: 6px !important;
+  min-width: 36px !important;
+}
+
+.waChatMeta small {
+  color: #8696a0 !important;
+  font-size: 12px !important;
+}
+
+.waChatMeta i {
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #25d366 !important;
+  color: #111b21 !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.waConversation {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  background: #0b141a !important;
+  overflow: hidden !important;
+}
+
+.waEmptyChat {
+  height: 100% !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 10px !important;
+  color: #8696a0 !important;
+}
+
+.waEmptyChat span {
+  font-size: 70px !important;
+}
+
+.waEmptyChat h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 34px !important;
+  font-weight: 300 !important;
+}
+
+.waEmptyChat p {
+  margin: 0 !important;
+}
+
+.waConversationHeader {
+  height: 60px !important;
+  padding: 9px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto auto auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #202c33 !important;
+}
+
+.waMobileBack {
+  display: none !important;
+}
+
+.waConversationUser {
+  min-width: 0 !important;
+}
+
+.waConversationUser h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waConversationUser p {
+  margin: 3px 0 0 !important;
+  color: #8696a0 !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waMessagesArea {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 18px 7% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  background:
+    linear-gradient(rgba(11,20,26,.88), rgba(11,20,26,.88)),
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,.05), transparent 20%),
+    radial-gradient(circle at 80% 60%, rgba(255,255,255,.04), transparent 24%),
+    #0b141a !important;
+}
+
+.waDateChip,
+.waEncryptionChip {
+  align-self: center !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  color: #d1d7db !important;
+  background: #182229 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  margin-bottom: 6px !important;
+}
+
+.waEncryptionChip {
+  max-width: 80% !important;
+  color: #ffd279 !important;
+}
+
+.waMessageState {
+  margin: auto !important;
+  display: grid !important;
+  gap: 7px !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+}
+
+.waMessageState b {
+  color: #e9edef !important;
+  font-size: 22px !important;
+}
+
+.waMessageBubble {
+  max-width: 68% !important;
+  border-radius: 8px !important;
+  padding: 7px 9px 5px !important;
+  color: #e9edef !important;
+  box-shadow: 0 1px .5px rgba(0,0,0,.22) !important;
+}
+
+.waMessageBubble.mine {
+  align-self: flex-end !important;
+  border-top-right-radius: 2px !important;
+  background: #005c4b !important;
+}
+
+.waMessageBubble.their {
+  align-self: flex-start !important;
+  border-top-left-radius: 2px !important;
+  background: #202c33 !important;
+}
+
+.waMessageBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+}
+
+.waMessageBubble small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: #aebac1 !important;
+  text-align: right !important;
+  font-size: 11px !important;
+}
+
+.waMessageBubble small span {
+  color: #53bdeb !important;
+}
+
+.waNotice {
+  padding: 8px 14px !important;
+  color: #ffd279 !important;
+  background: #182229 !important;
+  font-size: 13px !important;
+}
+
+.waComposerBar {
+  min-height: 62px !important;
+  padding: 9px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #202c33 !important;
+}
+
+.waComposerBar button {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 18px !important;
+}
+
+.waComposerBar button[type='submit'] {
+  color: #111b21 !important;
+  background: #00a884 !important;
+  font-weight: 900 !important;
+}
+
+.waComposerBar input {
+  min-width: 0 !important;
+  height: 44px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: #e9edef !important;
+  background: #2a3942 !important;
+  font-size: 15px !important;
+}
+
+.waListEmpty {
+  margin: 20px !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+}
+
+@media (max-width: 760px) {
+  .waFullApp {
+    grid-template-columns: 1fr !important;
+  }
+
+  .waConversation {
+    display: none !important;
+  }
+
+  .waFullRoot.chatOpen .waSidebar {
+    display: none !important;
+  }
+
+  .waFullRoot.chatOpen .waConversation {
+    display: grid !important;
+  }
+
+  .waMobileBack {
+    display: grid !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 28px !important;
+  }
+
+  .waConversationHeader {
+    grid-template-columns: auto auto 1fr auto auto !important;
+    padding: 9px 10px !important;
+  }
+
+  .waConversationHeader button[title='Video call'],
+  .waConversationHeader button[title='Voice call'] {
+    display: none !important;
+  }
+
+  .waMessagesArea {
+    padding: 14px 12px !important;
+  }
+
+  .waMessageBubble {
+    max-width: 86% !important;
+  }
+
+  .waSidebarTitle h1 {
+    font-size: 26px !important;
+  }
+}
+
+/* TRUE WHATSAPP-LIKE FULL MESSAGE PAGE */
+.waFullRoot {
+  width: 100vw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+  color: #e9edef !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.waFullApp {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: 420px minmax(0, 1fr) !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+}
+
+.waSidebar {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto 1fr !important;
+  background: #111b21 !important;
+  border-right: 1px solid #26353d !important;
+  overflow: hidden !important;
+}
+
+.waSidebarHeader {
+  height: 60px !important;
+  padding: 10px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  background: #202c33 !important;
+}
+
+.waCurrentUser {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+}
+
+.waHeaderActions {
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.waHeaderActions button,
+.waHeaderActions a,
+.waConversationHeader button,
+.waConversationHeader a {
+  width: 36px !important;
+  height: 36px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  font-size: 18px !important;
+}
+
+.waHeaderActions button:hover,
+.waHeaderActions a:hover,
+.waConversationHeader button:hover,
+.waConversationHeader a:hover {
+  background: rgba(255,255,255,.07) !important;
+}
+
+.waSidebarTitle {
+  padding: 18px 18px 8px !important;
+}
+
+.waSidebarTitle h1 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 28px !important;
+  font-weight: 850 !important;
+  letter-spacing: -.03em !important;
+}
+
+.waSearchBox {
+  margin: 0 14px 10px !important;
+  height: 42px !important;
+  border-radius: 9px !important;
+  padding: 0 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #202c33 !important;
+}
+
+.waSearchBox span {
+  color: #8696a0 !important;
+  font-size: 20px !important;
+}
+
+.waSearchBox input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  font-size: 15px !important;
+}
+
+.waFilterTabs {
+  padding: 0 14px 10px !important;
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.waFilterTabs::-webkit-scrollbar {
+  display: none !important;
+}
+
+.waFilterTabs button {
+  flex: 0 0 auto !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 7px 12px !important;
+  color: #aebac1 !important;
+  background: #202c33 !important;
+  font-weight: 700 !important;
+}
+
+.waFilterTabs button.active {
+  color: #111b21 !important;
+  background: #25d366 !important;
+}
+
+.waArchiveRow {
+  height: 54px !important;
+  padding: 0 22px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 18px !important;
+  color: #00a884 !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+}
+
+.waArchiveRow b {
+  color: #e9edef !important;
+  font-weight: 500 !important;
+}
+
+.waChatList {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #374045 transparent !important;
+}
+
+.waChatItem {
+  width: 100% !important;
+  min-height: 72px !important;
+  border: 0 !important;
+  padding: 10px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+  text-align: left !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.05) !important;
+}
+
+.waChatItem:hover,
+.waChatItem.active {
+  background: #202c33 !important;
+}
+
+.waChatAvatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  color: white !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+}
+
+.waChatAvatar.small {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.waChatAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.waChatText {
+  min-width: 0 !important;
+}
+
+.waChatText b {
+  display: block !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waChatText em,
+.waConversationUser em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+  margin-left: 5px !important;
+}
+
+.waChatText small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: #8696a0 !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waChatMeta {
+  display: grid !important;
+  justify-items: end !important;
+  gap: 6px !important;
+  min-width: 36px !important;
+}
+
+.waChatMeta small {
+  color: #8696a0 !important;
+  font-size: 12px !important;
+}
+
+.waChatMeta i {
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #25d366 !important;
+  color: #111b21 !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.waConversation {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  background: #0b141a !important;
+  overflow: hidden !important;
+}
+
+.waEmptyChat {
+  height: 100% !important;
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  gap: 10px !important;
+  color: #8696a0 !important;
+}
+
+.waEmptyChat span {
+  font-size: 70px !important;
+}
+
+.waEmptyChat h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 34px !important;
+  font-weight: 300 !important;
+}
+
+.waEmptyChat p {
+  margin: 0 !important;
+}
+
+.waConversationHeader {
+  height: 60px !important;
+  padding: 9px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto auto auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #202c33 !important;
+}
+
+.waMobileBack {
+  display: none !important;
+}
+
+.waConversationUser {
+  min-width: 0 !important;
+}
+
+.waConversationUser h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waConversationUser p {
+  margin: 3px 0 0 !important;
+  color: #8696a0 !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waMessagesArea {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 18px 7% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  background:
+    linear-gradient(rgba(11,20,26,.88), rgba(11,20,26,.88)),
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,.05), transparent 20%),
+    radial-gradient(circle at 80% 60%, rgba(255,255,255,.04), transparent 24%),
+    #0b141a !important;
+}
+
+.waDateChip,
+.waEncryptionChip {
+  align-self: center !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  color: #d1d7db !important;
+  background: #182229 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  margin-bottom: 6px !important;
+}
+
+.waEncryptionChip {
+  max-width: 80% !important;
+  color: #ffd279 !important;
+}
+
+.waMessageState {
+  margin: auto !important;
+  display: grid !important;
+  gap: 7px !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+}
+
+.waMessageState b {
+  color: #e9edef !important;
+  font-size: 22px !important;
+}
+
+.waMessageBubble {
+  max-width: 68% !important;
+  border-radius: 8px !important;
+  padding: 7px 9px 5px !important;
+  color: #e9edef !important;
+  box-shadow: 0 1px .5px rgba(0,0,0,.22) !important;
+}
+
+.waMessageBubble.mine {
+  align-self: flex-end !important;
+  border-top-right-radius: 2px !important;
+  background: #005c4b !important;
+}
+
+.waMessageBubble.their {
+  align-self: flex-start !important;
+  border-top-left-radius: 2px !important;
+  background: #202c33 !important;
+}
+
+.waMessageBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+}
+
+.waMessageBubble small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: #aebac1 !important;
+  text-align: right !important;
+  font-size: 11px !important;
+}
+
+.waMessageBubble small span {
+  color: #53bdeb !important;
+}
+
+.waNotice {
+  padding: 8px 14px !important;
+  color: #ffd279 !important;
+  background: #182229 !important;
+  font-size: 13px !important;
+}
+
+.waComposerBar {
+  min-height: 62px !important;
+  padding: 9px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #202c33 !important;
+}
+
+.waComposerBar button {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 18px !important;
+}
+
+.waComposerBar button[type='submit'] {
+  color: #111b21 !important;
+  background: #00a884 !important;
+  font-weight: 900 !important;
+}
+
+.waComposerBar input {
+  min-width: 0 !important;
+  height: 44px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: #e9edef !important;
+  background: #2a3942 !important;
+  font-size: 15px !important;
+}
+
+.waListEmpty {
+  margin: 20px !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+}
+
+@media (max-width: 760px) {
+  .waFullApp {
+    grid-template-columns: 1fr !important;
+  }
+
+  .waConversation {
+    display: none !important;
+  }
+
+  .waFullRoot.chatOpen .waSidebar {
+    display: none !important;
+  }
+
+  .waFullRoot.chatOpen .waConversation {
+    display: grid !important;
+  }
+
+  .waMobileBack {
+    display: grid !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 28px !important;
+  }
+
+  .waConversationHeader {
+    grid-template-columns: auto auto 1fr auto auto !important;
+    padding: 9px 10px !important;
+  }
+
+  .waConversationHeader button[title='Video call'],
+  .waConversationHeader button[title='Voice call'] {
+    display: none !important;
+  }
+
+  .waMessagesArea {
+    padding: 14px 12px !important;
+  }
+
+  .waMessageBubble {
+    max-width: 86% !important;
+  }
+
+  .waSidebarTitle h1 {
+    font-size: 26px !important;
+  }
+}
+
+/* REAL FOLLOW LIKE COMMENT SAVE POST DETAIL */
+.postSocialPage {
+  width: 100% !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  padding-bottom: 132px !important;
+  overflow-x: hidden !important;
+}
+
+.postSocialCard {
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  background: rgba(12,13,28,.94) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.postSocialUser {
+  padding: 13px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.postSocialAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.postSocialAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.postSocialAvatar b {
+  font-size: 23px !important;
+}
+
+.postSocialUser div {
+  min-width: 0 !important;
+}
+
+.postSocialUser div a {
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+}
+
+.postSocialUser small {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255,255,255,.55) !important;
+}
+
+.postSocialUser button,
+.postSocialActions button,
+.postSocialActions a,
+.postSocialComments form button,
+.postSocialState a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.postSocialUser button {
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.postSocialMedia {
+  width: 100% !important;
+  min-height: 330px !important;
+  max-height: 700px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #05050a !important;
+}
+
+.postSocialMedia img,
+.postSocialMedia video {
+  width: 100% !important;
+  max-height: 700px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.postSocialMediaFallback {
+  width: 100% !important;
+  min-height: 330px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  font-size: 44px !important;
+}
+
+.postSocialBody {
+  padding: 15px !important;
+}
+
+.postSocialBody h1 {
+  margin: 0 0 7px !important;
+  color: white !important;
+  font-size: 28px !important;
+  line-height: 1.1 !important;
+}
+
+.postSocialBody p {
+  margin: 0 0 14px !important;
+  color: rgba(255,255,255,.68) !important;
+  line-height: 1.4 !important;
+}
+
+.postSocialActions {
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.postSocialActions button.active {
+  color: white !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.postSocialNotice {
+  margin-top: 12px !important;
+  border-radius: 16px !important;
+  padding: 10px 12px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+}
+
+.postSocialComments {
+  padding: 0 15px 15px !important;
+}
+
+.postSocialComments h2 {
+  margin: 0 0 12px !important;
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.postSocialComments form {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+}
+
+.postSocialComments form input {
+  min-width: 0 !important;
+  height: 46px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,.065) !important;
+}
+
+.postSocialComments form button {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.postSocialCommentList {
+  margin-top: 13px !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.postSocialCommentList p {
+  color: rgba(255,255,255,.58) !important;
+}
+
+.postSocialCommentList article {
+  border-radius: 18px !important;
+  padding: 12px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.postSocialCommentList b {
+  display: block !important;
+  color: white !important;
+}
+
+.postSocialCommentList span {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.72) !important;
+}
+
+.postSocialCommentList small {
+  display: block !important;
+  margin-top: 6px !important;
+  color: rgba(255,255,255,.45) !important;
+}
+
+.postSocialState {
+  min-height: 180px !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.64) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.postSocialState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+@media (max-width: 520px) {
+  .postSocialUser {
+    grid-template-columns: auto 1fr !important;
+  }
+
+  .postSocialUser button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .postSocialMedia,
+  .postSocialMediaFallback {
+    min-height: 290px !important;
+  }
+
+  .postSocialComments form {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* FINAL TRUE WHATSAPP FEATURE MESSAGE PAGE */
+body:has(.waTrueRoot) {
+  overflow: hidden !important;
+  background: #111b21 !important;
+}
+
+body:has(.waTrueRoot) .vlxShellTop,
+body:has(.waTrueRoot) .vlxShellBottom,
+body:has(.waTrueRoot) .vlxFloatingActions,
+body:has(.waTrueRoot) .vlxFloatDock,
+body:has(.waTrueRoot) .vlxQuickDock,
+body:has(.waTrueRoot) [class*="Floating"],
+body:has(.waTrueRoot) [class*="floating"] {
+  display: none !important;
+}
+
+.waTrueRoot {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  z-index: 99999 !important;
+  background: #111b21 !important;
+  color: #e9edef !important;
+}
+
+.waTrueApp {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: 410px minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+
+.waTrueSidebar {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto 1fr auto !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+  border-right: 1px solid #26353d !important;
+}
+
+.waTrueTop {
+  height: 60px !important;
+  padding: 10px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  background: #202c33 !important;
+}
+
+.waTrueLogo,
+.waTrueAvatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+  font-weight: 900 !important;
+}
+
+.waTrueAvatar.small {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.waTrueAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.waTrueAvatar i {
+  position: absolute !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background: #25d366 !important;
+  border: 2px solid #111b21 !important;
+}
+
+.waTrueTopActions {
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.waTrueTopActions button,
+.waTrueChatHeader button,
+.waTrueChatHeader a {
+  width: 36px !important;
+  height: 36px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  font-size: 17px !important;
+}
+
+.waTrueTitle {
+  padding: 18px 18px 8px !important;
+}
+
+.waTrueTitle h1 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 29px !important;
+  font-weight: 850 !important;
+}
+
+.waTrueSearch {
+  margin: 0 14px 10px !important;
+  height: 44px !important;
+  border-radius: 10px !important;
+  padding: 0 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #202c33 !important;
+}
+
+.waTrueSearch span {
+  color: #8696a0 !important;
+  font-size: 21px !important;
+}
+
+.waTrueSearch input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  font-size: 15px !important;
+}
+
+.waTrueFilters {
+  padding: 0 14px 10px !important;
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.waTrueFilters::-webkit-scrollbar {
+  display: none !important;
+}
+
+.waTrueFilters button {
+  flex: 0 0 auto !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 8px 13px !important;
+  color: #aebac1 !important;
+  background: #202c33 !important;
+  font-weight: 750 !important;
+}
+
+.waTrueFilters button.active {
+  color: #111b21 !important;
+  background: #25d366 !important;
+}
+
+.waTrueArchived {
+  height: 56px !important;
+  border: 0 !important;
+  padding: 0 20px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  text-align: left !important;
+}
+
+.waTrueArchived span {
+  color: #00a884 !important;
+  font-size: 20px !important;
+}
+
+.waTrueArchived small {
+  color: #aebac1 !important;
+}
+
+.waTrueList {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #374045 transparent !important;
+}
+
+.waTrueChatRow {
+  width: 100% !important;
+  min-height: 76px !important;
+  border: 0 !important;
+  padding: 11px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 13px !important;
+  text-align: left !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.05) !important;
+}
+
+.waTrueChatRow:hover,
+.waTrueChatRow.active {
+  background: #202c33 !important;
+}
+
+.waTrueChatText {
+  min-width: 0 !important;
+}
+
+.waTrueChatText b {
+  display: block !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waTrueChatText em,
+.waTrueChatName em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+  margin-left: 5px !important;
+}
+
+.waTrueChatText small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: #8696a0 !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waTrueChatText small.typing {
+  color: #25d366 !important;
+  font-weight: 850 !important;
+}
+
+.waTrueMeta {
+  min-width: 38px !important;
+  display: grid !important;
+  justify-items: end !important;
+  gap: 4px !important;
+}
+
+.waTrueMeta small {
+  color: #8696a0 !important;
+  font-size: 12px !important;
+}
+
+.waTrueMeta b {
+  font-size: 12px !important;
+}
+
+.waTrueMeta i {
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #25d366 !important;
+  color: #111b21 !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.waTrueSecureFoot {
+  min-height: 54px !important;
+  padding: 10px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+  background: #111b21 !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+}
+
+.waTrueSecureFoot p {
+  margin: 0 !important;
+  color: #8696a0 !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+}
+
+.waTrueConversation {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  overflow: hidden !important;
+  background: #0b141a !important;
+}
+
+.waTrueChatHeader {
+  height: 60px !important;
+  padding: 9px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto auto auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #202c33 !important;
+}
+
+.waTrueBack {
+  display: none !important;
+}
+
+.waTrueChatName {
+  min-width: 0 !important;
+}
+
+.waTrueChatName h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waTrueChatName p {
+  margin: 3px 0 0 !important;
+  color: #8696a0 !important;
+  font-size: 13px !important;
+}
+
+.waTrueMessages {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 18px 7% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  background:
+    linear-gradient(rgba(11,20,26,.92), rgba(11,20,26,.92)),
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.04), transparent 20%),
+    radial-gradient(circle at 80% 60%, rgba(255,255,255,.04), transparent 25%),
+    #0b141a !important;
+}
+
+.waTrueDateChip,
+.waTrueEncrypt {
+  align-self: center !important;
+  max-width: 82% !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  color: #d1d7db !important;
+  background: #182229 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+}
+
+.waTrueEncrypt {
+  color: #ffd279 !important;
+}
+
+.waTrueBubble {
+  max-width: 68% !important;
+  border-radius: 8px !important;
+  padding: 8px 10px 5px !important;
+  color: #e9edef !important;
+  box-shadow: 0 1px .5px rgba(0,0,0,.24) !important;
+}
+
+.waTrueBubble.mine {
+  align-self: flex-end !important;
+  border-top-right-radius: 2px !important;
+  background: #005c4b !important;
+}
+
+.waTrueBubble.their {
+  align-self: flex-start !important;
+  border-top-left-radius: 2px !important;
+  background: #202c33 !important;
+}
+
+.waTrueBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+}
+
+.waTrueBubble small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: #aebac1 !important;
+  font-size: 11px !important;
+  text-align: right !important;
+}
+
+.waTrueBubble small em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+}
+
+.waTrueComposer {
+  min-height: 62px !important;
+  padding: 9px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #202c33 !important;
+}
+
+.waTrueComposer button {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 18px !important;
+}
+
+.waTrueComposer button[type='submit'] {
+  color: #111b21 !important;
+  background: #00a884 !important;
+  font-weight: 950 !important;
+}
+
+.waTrueComposer input {
+  min-width: 0 !important;
+  height: 44px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: #e9edef !important;
+  background: #2a3942 !important;
+  font-size: 15px !important;
+}
+
+.waTrueState,
+.waTrueNoChat,
+.waTrueEmpty {
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+  gap: 7px !important;
+}
+
+.waTrueNoChat {
+  height: 100% !important;
+}
+
+.waTrueNoChat span {
+  font-size: 72px !important;
+}
+
+.waTrueNoChat h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 32px !important;
+  font-weight: 400 !important;
+}
+
+.waTrueNotice {
+  padding: 8px 14px !important;
+  color: #ffd279 !important;
+  background: #182229 !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 899px) {
+  .waTrueApp {
+    display: block !important;
+  }
+
+  .waTrueSidebar {
+    width: 100vw !important;
+    height: 100dvh !important;
+    display: grid !important;
+  }
+
+  .waTrueConversation {
+    width: 100vw !important;
+    height: 100dvh !important;
+    display: none !important;
+  }
+
+  .waTrueRoot.chatOpen .waTrueSidebar {
+    display: none !important;
+  }
+
+  .waTrueRoot.chatOpen .waTrueConversation {
+    display: grid !important;
+  }
+
+  .waTrueBack {
+    display: grid !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 28px !important;
+  }
+
+  .waTrueChatHeader {
+    grid-template-columns: auto auto 1fr auto auto !important;
+    padding: 9px 10px !important;
+  }
+
+  .waTrueChatHeader button[title='Video call'],
+  .waTrueChatHeader button[title='Voice call'] {
+    display: none !important;
+  }
+
+  .waTrueMessages {
+    padding: 14px 12px !important;
+  }
+
+  .waTrueBubble {
+    max-width: 86% !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .waTrueApp {
+    display: grid !important;
+    grid-template-columns: 410px minmax(0, 1fr) !important;
+  }
+
+  .waTrueSidebar,
+  .waTrueConversation {
+    display: grid !important;
+  }
+}
+
+/* FINAL WHATSAPP ADVANCED MESSAGE PAGE */
+body:has(.waFinalRoot) {
+  overflow: hidden !important;
+  background: #111b21 !important;
+}
+
+body:has(.waFinalRoot) .vlxShellTop,
+body:has(.waFinalRoot) .vlxShellBottom,
+body:has(.waFinalRoot) .vlxFloatingActions,
+body:has(.waFinalRoot) .vlxFloatDock,
+body:has(.waFinalRoot) .vlxQuickDock,
+body:has(.waFinalRoot) [class*="Floating"],
+body:has(.waFinalRoot) [class*="floating"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.waFinalRoot {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  z-index: 999999 !important;
+  background: #111b21 !important;
+  color: #e9edef !important;
+}
+
+.waFinalApp {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: 410px minmax(0, 1fr) !important;
+  overflow: hidden !important;
+}
+
+.waFinalSidebar {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto auto auto 1fr auto !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+  border-right: 1px solid #26353d !important;
+}
+
+.waFinalTop {
+  height: 60px !important;
+  padding: 10px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  background: #202c33 !important;
+}
+
+.waFinalMe,
+.waFinalAvatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  background: linear-gradient(135deg, #00a884, #128c7e) !important;
+  font-weight: 900 !important;
+}
+
+.waFinalAvatar.small {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.waFinalAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.waFinalAvatar i {
+  position: absolute !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background: #25d366 !important;
+  border: 2px solid #111b21 !important;
+}
+
+.waFinalTopActions {
+  justify-self: end !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.waFinalTopActions button,
+.waFinalChatHeader button,
+.waFinalChatHeader a,
+.waFinalTitle button {
+  width: 36px !important;
+  height: 36px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  font-size: 17px !important;
+}
+
+.waFinalTitle {
+  padding: 18px 18px 8px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+}
+
+.waFinalTitle h1 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 29px !important;
+  font-weight: 850 !important;
+}
+
+.waFinalSearch {
+  margin: 0 14px 10px !important;
+  height: 44px !important;
+  border-radius: 10px !important;
+  padding: 0 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #202c33 !important;
+}
+
+.waFinalSearch span {
+  color: #8696a0 !important;
+  font-size: 21px !important;
+}
+
+.waFinalSearch input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  font-size: 15px !important;
+}
+
+.waFinalFilters {
+  padding: 0 14px 10px !important;
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.waFinalFilters::-webkit-scrollbar {
+  display: none !important;
+}
+
+.waFinalFilters button {
+  flex: 0 0 auto !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 8px 13px !important;
+  color: #aebac1 !important;
+  background: #202c33 !important;
+  font-weight: 750 !important;
+}
+
+.waFinalFilters button.active {
+  color: #111b21 !important;
+  background: #25d366 !important;
+}
+
+.waFinalArchived {
+  height: 56px !important;
+  border: 0 !important;
+  padding: 0 20px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  text-align: left !important;
+}
+
+.waFinalArchived span {
+  color: #00a884 !important;
+  font-size: 20px !important;
+}
+
+.waFinalArchived small {
+  color: #aebac1 !important;
+}
+
+.waFinalList {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #374045 transparent !important;
+}
+
+.waFinalChatRow {
+  width: 100% !important;
+  min-height: 76px !important;
+  border: 0 !important;
+  padding: 11px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 13px !important;
+  text-align: left !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255,255,255,.05) !important;
+}
+
+.waFinalChatRow:hover,
+.waFinalChatRow.active {
+  background: #202c33 !important;
+}
+
+.waFinalChatText {
+  min-width: 0 !important;
+}
+
+.waFinalChatText b {
+  display: block !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waFinalChatText em,
+.waFinalChatName em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+  margin-left: 5px !important;
+}
+
+.waFinalChatText small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: #8696a0 !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waFinalChatText small.typing {
+  color: #25d366 !important;
+  font-weight: 850 !important;
+}
+
+.waFinalMeta {
+  min-width: 38px !important;
+  display: grid !important;
+  justify-items: end !important;
+  gap: 4px !important;
+}
+
+.waFinalMeta small {
+  color: #8696a0 !important;
+  font-size: 12px !important;
+}
+
+.waFinalMeta b {
+  font-size: 12px !important;
+}
+
+.waFinalMeta i {
+  min-width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #25d366 !important;
+  color: #111b21 !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+
+.waFinalFoot {
+  min-height: 54px !important;
+  padding: 10px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+  background: #111b21 !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+}
+
+.waFinalFoot p {
+  margin: 0 !important;
+  color: #8696a0 !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+}
+
+.waFinalConversation {
+  min-width: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  overflow: hidden !important;
+  background: #0b141a !important;
+}
+
+.waFinalChatHeader {
+  height: 60px !important;
+  padding: 9px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto auto auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #202c33 !important;
+}
+
+.waFinalBack {
+  display: none !important;
+}
+
+.waFinalChatName {
+  min-width: 0 !important;
+}
+
+.waFinalChatName h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.waFinalChatName p {
+  margin: 3px 0 0 !important;
+  color: #8696a0 !important;
+  font-size: 13px !important;
+}
+
+.waFinalMessages {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 18px 7% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+  background:
+    linear-gradient(rgba(11,20,26,.92), rgba(11,20,26,.92)),
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.04), transparent 20%),
+    radial-gradient(circle at 80% 60%, rgba(255,255,255,.04), transparent 25%),
+    #0b141a !important;
+}
+
+.waFinalDateChip,
+.waFinalEncrypt {
+  align-self: center !important;
+  max-width: 82% !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  color: #d1d7db !important;
+  background: #182229 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+}
+
+.waFinalEncrypt {
+  color: #ffd279 !important;
+}
+
+.waFinalBubble {
+  max-width: 68% !important;
+  border-radius: 8px !important;
+  padding: 8px 10px 5px !important;
+  color: #e9edef !important;
+  box-shadow: 0 1px .5px rgba(0,0,0,.24) !important;
+}
+
+.waFinalBubble.mine {
+  align-self: flex-end !important;
+  border-top-right-radius: 2px !important;
+  background: #005c4b !important;
+}
+
+.waFinalBubble.their {
+  align-self: flex-start !important;
+  border-top-left-radius: 2px !important;
+  background: #202c33 !important;
+}
+
+.waFinalBubble p {
+  margin: 0 !important;
+  line-height: 1.35 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+}
+
+.waFinalBubble small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: #aebac1 !important;
+  font-size: 11px !important;
+  text-align: right !important;
+}
+
+.waFinalBubble small em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+}
+
+.waFinalComposer {
+  min-height: 62px !important;
+  padding: 9px 14px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #202c33 !important;
+}
+
+.waFinalComposer button {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 18px !important;
+}
+
+.waFinalComposer button[type='submit'] {
+  color: #111b21 !important;
+  background: #00a884 !important;
+  font-weight: 950 !important;
+}
+
+.waFinalComposer input {
+  min-width: 0 !important;
+  height: 44px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 16px !important;
+  color: #e9edef !important;
+  background: #2a3942 !important;
+  font-size: 15px !important;
+}
+
+.waFinalState,
+.waFinalNoChat,
+.waFinalEmpty {
+  display: grid !important;
+  place-content: center !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+  gap: 7px !important;
+  padding: 20px !important;
+}
+
+.waFinalEmpty b,
+.waFinalState b {
+  color: #e9edef !important;
+}
+
+.waFinalNoChat {
+  height: 100% !important;
+}
+
+.waFinalNoChat span {
+  font-size: 72px !important;
+}
+
+.waFinalNoChat h2 {
+  margin: 0 !important;
+  color: #e9edef !important;
+  font-size: 32px !important;
+  font-weight: 400 !important;
+}
+
+.waFinalNotice {
+  padding: 8px 14px !important;
+  color: #ffd279 !important;
+  background: #182229 !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 899px) {
+  .waFinalApp {
+    display: block !important;
+  }
+
+  .waFinalSidebar {
+    width: 100vw !important;
+    height: 100dvh !important;
+    display: grid !important;
+  }
+
+  .waFinalConversation {
+    width: 100vw !important;
+    height: 100dvh !important;
+    display: none !important;
+  }
+
+  .waFinalRoot.chatOpen .waFinalSidebar {
+    display: none !important;
+  }
+
+  .waFinalRoot.chatOpen .waFinalConversation {
+    display: grid !important;
+  }
+
+  .waFinalBack {
+    display: grid !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 28px !important;
+  }
+
+  .waFinalChatHeader {
+    grid-template-columns: auto auto 1fr auto auto !important;
+    padding: 9px 10px !important;
+  }
+
+  .waFinalChatHeader button[title='Video call'],
+  .waFinalChatHeader button[title='Voice call'] {
+    display: none !important;
+  }
+
+  .waFinalMessages {
+    padding: 14px 12px !important;
+  }
+
+  .waFinalBubble {
+    max-width: 86% !important;
+  }
+}
+
+@media (min-width: 900px) {
+  .waFinalApp {
+    display: grid !important;
+    grid-template-columns: 410px minmax(0, 1fr) !important;
+  }
+
+  .waFinalSidebar,
+  .waFinalConversation {
+    display: grid !important;
+  }
+}
+
+/* ULTRA FORCE: MESSAGE PAGE MUST COVER OLD APP UI */
+html:has(.waFinalRoot),
+body:has(.waFinalRoot) {
+  width: 100vw !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #111b21 !important;
+}
+
+body:has(.waFinalRoot) > *:not(.waFinalRoot) {
+  pointer-events: none !important;
+}
+
+.waFinalRoot {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  z-index: 2147483647 !important;
+  transform: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #111b21 !important;
+}
+
+body:has(.waFinalRoot) header,
+body:has(.waFinalRoot) nav,
+body:has(.waFinalRoot) footer,
+body:has(.waFinalRoot) .vlxShellTop,
+body:has(.waFinalRoot) .vlxShellBottom,
+body:has(.waFinalRoot) .vlxShellRoot,
+body:has(.waFinalRoot) .vlxShellMain,
+body:has(.waFinalRoot) .bottomNav,
+body:has(.waFinalRoot) .bottom-navigation,
+body:has(.waFinalRoot) .floating-actions,
+body:has(.waFinalRoot) [class*="Bottom"],
+body:has(.waFinalRoot) [class*="bottom"],
+body:has(.waFinalRoot) [class*="Floating"],
+body:has(.waFinalRoot) [class*="floating"] {
+  display: none !important;
+}
+
+body:has(.waFinalRoot) .waFinalRoot,
+body:has(.waFinalRoot) .waFinalRoot *,
+body:has(.waFinalRoot) .waFinalApp,
+body:has(.waFinalRoot) .waFinalSidebar,
+body:has(.waFinalRoot) .waFinalConversation {
+  display: revert-layer;
+}
+
+.waFinalApp {
+  width: 100vw !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 899px) {
+  .waFinalApp {
+    display: block !important;
+  }
+
+  .waFinalSidebar {
+    width: 100vw !important;
+    height: 100dvh !important;
+    display: grid !important;
+  }
+
+  .waFinalConversation {
+    width: 100vw !important;
+    height: 100dvh !important;
+    display: none !important;
+  }
+
+  .waFinalRoot.chatOpen .waFinalSidebar {
+    display: none !important;
+  }
+
+  .waFinalRoot.chatOpen .waFinalConversation {
+    display: grid !important;
+  }
+}
