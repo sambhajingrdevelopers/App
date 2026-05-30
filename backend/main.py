@@ -803,3 +803,30 @@ except Exception:
     pass
 
 app.include_router(follow_real_fixed_router)
+
+
+# Real social actions routes: follow, like, comment, save
+try:
+    from routes.social_actions_real import router as social_actions_real_router
+except ImportError:
+    from .routes.social_actions_real import router as social_actions_real_router
+
+try:
+    social_paths = {
+        "/api/v1/social/summary",
+        "/api/v1/social/like/toggle",
+        "/api/v1/social/comments/list",
+        "/api/v1/social/comments/add",
+        "/api/v1/social/save/toggle",
+        "/api/v1/social/health",
+        "/api/v1/follow/status",
+        "/api/v1/follow/toggle",
+    }
+    app.router.routes = [
+        route for route in app.router.routes
+        if getattr(route, "path", "") not in social_paths
+    ]
+except Exception:
+    pass
+
+app.include_router(social_actions_real_router)

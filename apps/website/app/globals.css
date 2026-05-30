@@ -27335,3 +27335,318 @@ body:has(.waFinalRoot) .waFinalConversation {
     display: grid !important;
   }
 }
+
+/* DYNAMIC CONNECTED POST DETAIL */
+.vldPage {
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding-bottom: 130px !important;
+  overflow-x: hidden !important;
+}
+
+.vldCard {
+  overflow: hidden !important;
+  border-radius: 30px !important;
+  background: rgba(12, 13, 28, .96) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,.35) !important;
+}
+
+.vldUserHeader {
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.vldAvatar {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+  border: 3px solid rgba(255,255,255,.08) !important;
+}
+
+.vldAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vldAvatar b {
+  font-size: 24px !important;
+}
+
+.vldAvatar i {
+  position: absolute !important;
+  right: 2px !important;
+  bottom: 2px !important;
+  width: 13px !important;
+  height: 13px !important;
+  border-radius: 50% !important;
+  background: #00ff95 !important;
+  border: 2px solid #0c0d1c !important;
+}
+
+.vldUserHeader div {
+  min-width: 0 !important;
+}
+
+.vldUserHeader div a {
+  display: block !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+  font-size: 17px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vldUserHeader em {
+  color: #00c8ff !important;
+  font-style: normal !important;
+}
+
+.vldUserHeader small {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255,255,255,.55) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.vldUserHeader button,
+.vldActions button,
+.vldActions a,
+.vldShareBox button,
+.vldComments form button,
+.vldState a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 10px 15px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+  background: rgba(255,255,255,.09) !important;
+}
+
+.vldUserHeader button {
+  background: linear-gradient(135deg, #00c8ff, #673cff) !important;
+}
+
+.vldUserHeader button.active,
+.vldActions button.active {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vldMedia {
+  width: 100% !important;
+  min-height: 330px !important;
+  max-height: 760px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #05050a !important;
+}
+
+.vldMedia img,
+.vldMedia video {
+  width: 100% !important;
+  max-height: 760px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.vldMediaFallback {
+  width: 100% !important;
+  min-height: 330px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 12px !important;
+  text-align: center !important;
+  color: white !important;
+}
+
+.vldMediaFallback span {
+  font-size: 52px !important;
+}
+
+.vldBody {
+  padding: 16px !important;
+}
+
+.vldTitleRow {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 12px !important;
+  align-items: start !important;
+}
+
+.vldTitleRow h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 30px !important;
+  line-height: 1.05 !important;
+  letter-spacing: -.04em !important;
+}
+
+.vldTitleRow small {
+  display: block !important;
+  margin-top: 7px !important;
+  color: rgba(255,255,255,.50) !important;
+}
+
+.vldTitleRow > span {
+  border-radius: 999px !important;
+  padding: 8px 12px !important;
+  color: #00eaff !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+  font-size: 12px !important;
+  font-weight: 950 !important;
+}
+
+.vldBody p {
+  margin: 13px 0 0 !important;
+  color: rgba(255,255,255,.72) !important;
+  line-height: 1.45 !important;
+}
+
+.vldActions {
+  margin-top: 16px !important;
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.vldShareBox {
+  margin-top: 14px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+}
+
+.vldShareBox input,
+.vldComments form input {
+  min-width: 0 !important;
+  height: 46px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: white !important;
+  background: rgba(255,255,255,.065) !important;
+}
+
+.vldShareBox button,
+.vldComments form button {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.vldNotice {
+  margin-top: 13px !important;
+  border-radius: 17px !important;
+  padding: 11px 13px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+}
+
+.vldComments {
+  padding: 0 16px 16px !important;
+}
+
+.vldComments h2 {
+  margin: 0 0 12px !important;
+  color: white !important;
+  font-size: 23px !important;
+}
+
+.vldComments form {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+}
+
+.vldCommentList {
+  margin-top: 14px !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.vldCommentList p {
+  color: rgba(255,255,255,.58) !important;
+}
+
+.vldCommentList article {
+  border-radius: 18px !important;
+  padding: 12px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.vldCommentList b {
+  display: block !important;
+  color: white !important;
+}
+
+.vldCommentList span {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.72) !important;
+}
+
+.vldCommentList small {
+  display: block !important;
+  margin-top: 6px !important;
+  color: rgba(255,255,255,.45) !important;
+}
+
+.vldState {
+  min-height: 220px !important;
+  border-radius: 28px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.64) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.vldState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+@media (max-width: 540px) {
+  .vldUserHeader {
+    grid-template-columns: auto 1fr !important;
+  }
+
+  .vldUserHeader button {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .vldMedia,
+  .vldMediaFallback {
+    min-height: 300px !important;
+  }
+
+  .vldShareBox,
+  .vldComments form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vldTitleRow {
+    grid-template-columns: 1fr !important;
+  }
+}
