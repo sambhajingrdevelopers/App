@@ -27945,3 +27945,416 @@ body:has(.waFinalRoot) .waFinalConversation {
     white-space: normal !important;
   }
 }
+
+/* DYNAMIC CONNECTED HOME PAGE */
+.dynHomePage {
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding-bottom: 132px !important;
+  overflow-x: hidden !important;
+}
+
+.dynHomeHeader {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.dynHomeHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: clamp(34px, 8vw, 56px) !important;
+  letter-spacing: -.07em !important;
+  line-height: .95 !important;
+}
+
+.dynHomeHeader p {
+  margin: 7px 0 0 !important;
+  color: rgba(255,255,255,.58) !important;
+}
+
+.dynHomeHeader button {
+  width: 48px !important;
+  height: 48px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  color: white !important;
+  background: rgba(255,255,255,.08) !important;
+  font-size: 20px !important;
+}
+
+.dynHomeNotice {
+  margin-bottom: 14px !important;
+  border-radius: 18px !important;
+  padding: 12px 14px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+}
+
+.dynHomeSearch {
+  height: 58px !important;
+  border-radius: 999px !important;
+  padding: 0 18px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(255,255,255,.075) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+.dynHomeSearch span {
+  font-size: 22px !important;
+}
+
+.dynHomeSearch input {
+  min-width: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 16px !important;
+}
+
+.dynHomeStories {
+  margin-top: 16px !important;
+  display: flex !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  padding-bottom: 8px !important;
+  scrollbar-width: none !important;
+}
+
+.dynHomeStories::-webkit-scrollbar {
+  display: none !important;
+}
+
+.dynHomeStory,
+.dynHomeCreator {
+  flex: 0 0 auto !important;
+  width: 86px !important;
+  text-decoration: none !important;
+  color: white !important;
+  text-align: center !important;
+}
+
+.dynHomeStory span,
+.dynHomeCreator span {
+  width: 76px !important;
+  height: 76px !important;
+  margin: 0 auto !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+  border: 3px solid rgba(255,0,184,.38) !important;
+  box-shadow: 0 12px 30px rgba(255,0,184,.18) !important;
+}
+
+.dynHomeStory.create span {
+  font-size: 38px !important;
+  font-weight: 950 !important;
+}
+
+.dynHomeStory img,
+.dynHomeCreator img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.dynHomeStory b,
+.dynHomeCreator b {
+  font-size: 30px !important;
+}
+
+.dynHomeStory small,
+.dynHomeCreator small {
+  display: block !important;
+  margin-top: 7px !important;
+  color: rgba(255,255,255,.82) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dynHomeCreator span i {
+  position: absolute !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  width: 13px !important;
+  height: 13px !important;
+  border-radius: 50% !important;
+  background: #00ff95 !important;
+  border: 2px solid #080912 !important;
+}
+
+.dynHomeCreators {
+  margin-top: 10px !important;
+  border-radius: 26px !important;
+  padding: 15px !important;
+  background: rgba(255,255,255,.055) !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+
+.dynHomeSectionTitle {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.dynHomeSectionTitle h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 22px !important;
+}
+
+.dynHomeSectionTitle a {
+  color: #00eaff !important;
+  text-decoration: none !important;
+  font-weight: 900 !important;
+}
+
+.dynHomeCreators > div:last-child {
+  display: flex !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+
+.dynHomeCreators > div:last-child::-webkit-scrollbar {
+  display: none !important;
+}
+
+.dynHomeFilters {
+  margin-top: 16px !important;
+  border-radius: 999px !important;
+  padding: 6px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.dynHomeFilters button {
+  min-height: 42px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  color: rgba(255,255,255,.62) !important;
+  background: transparent !important;
+  font-weight: 950 !important;
+}
+
+.dynHomeFilters button.active {
+  color: white !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.dynHomeFeed {
+  margin-top: 14px !important;
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.dynHomePost {
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  background: rgba(12, 13, 28, .96) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,.32) !important;
+}
+
+.dynHomePostHeader {
+  padding: 13px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.dynHomeAvatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.dynHomeAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.dynHomeAvatar b {
+  font-size: 22px !important;
+}
+
+.dynHomeAvatar i {
+  position: absolute !important;
+  right: 2px !important;
+  bottom: 2px !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background: #00ff95 !important;
+  border: 2px solid #0c0d1c !important;
+}
+
+.dynHomePostHeader div {
+  min-width: 0 !important;
+}
+
+.dynHomePostHeader div a {
+  display: block !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dynHomePostHeader div a em {
+  color: #00c8ff !important;
+  font-style: normal !important;
+}
+
+.dynHomePostHeader small {
+  display: block !important;
+  margin-top: 4px !important;
+  color: rgba(255,255,255,.50) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.dynHomePostHeader > button {
+  width: 38px !important;
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  color: white !important;
+  background: rgba(255,255,255,.08) !important;
+  font-size: 20px !important;
+}
+
+.dynHomeMedia {
+  min-height: 320px !important;
+  max-height: 720px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #05050a !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.dynHomeMedia img,
+.dynHomeMedia video {
+  width: 100% !important;
+  max-height: 720px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.dynHomeMediaFallback {
+  min-height: 320px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+  color: white !important;
+}
+
+.dynHomeMediaFallback span {
+  font-size: 52px !important;
+}
+
+.dynHomePostBody {
+  padding: 15px !important;
+}
+
+.dynHomePostBody h2 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: 25px !important;
+  line-height: 1.1 !important;
+}
+
+.dynHomePostBody p {
+  margin: 9px 0 0 !important;
+  color: rgba(255,255,255,.70) !important;
+  line-height: 1.45 !important;
+}
+
+.dynHomeActions {
+  margin-top: 14px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.dynHomeActions button,
+.dynHomeActions a {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-weight: 950 !important;
+  background: rgba(255,255,255,.08) !important;
+}
+
+.dynHomeActions button.active {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.dynHomeState {
+  min-height: 180px !important;
+  border-radius: 26px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.62) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+.dynHomeState b {
+  color: white !important;
+  font-size: 22px !important;
+}
+
+@media (max-width: 540px) {
+  .dynHomeMedia,
+  .dynHomeMediaFallback {
+    min-height: 290px !important;
+  }
+
+  .dynHomeStory,
+  .dynHomeCreator {
+    width: 78px !important;
+  }
+
+  .dynHomeStory span,
+  .dynHomeCreator span {
+    width: 68px !important;
+    height: 68px !important;
+  }
+}
