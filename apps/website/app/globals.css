@@ -28358,3 +28358,91 @@ body:has(.waFinalRoot) .waFinalConversation {
     height: 68px !important;
   }
 }
+
+.socialShellHeader {
+  margin: 0 auto 18px !important;
+  max-width: 760px !important;
+  padding: 12px 4px !important;
+}
+
+.socialShellHeader h1 {
+  margin: 0 !important;
+  color: white !important;
+  font-size: clamp(32px, 7vw, 56px) !important;
+  line-height: .95 !important;
+  letter-spacing: -.06em !important;
+}
+
+.socialShellHeader p {
+  margin: 8px 0 0 !important;
+  color: rgba(255,255,255,.62) !important;
+  font-size: 16px !important;
+}
+
+/* FORCE WHATSAPP MESSAGES MOBILE FIX */
+@media (max-width: 1100px) {
+  .waFinalRoot {
+    width: 100vw !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .waFinalApp {
+    display: block !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    grid-template-columns: none !important;
+  }
+
+  .waFinalSidebar {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    height: 100dvh !important;
+    display: grid !important;
+    border-right: 0 !important;
+  }
+
+  .waFinalConversation {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    height: 100dvh !important;
+    display: none !important;
+  }
+
+  .waFinalRoot.chatOpen .waFinalSidebar {
+    display: none !important;
+  }
+
+  .waFinalRoot.chatOpen .waFinalConversation {
+    display: grid !important;
+  }
+
+  .waFinalChatHeader {
+    grid-template-columns: auto auto 1fr auto auto !important;
+    padding: 8px 10px !important;
+  }
+
+  .waFinalBack {
+    display: grid !important;
+  }
+
+  .waFinalMessages {
+    padding: 14px 12px !important;
+  }
+
+  .waFinalBubble {
+    max-width: 86% !important;
+  }
+
+  .waFinalComposer {
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto !important;
+    padding: 8px 10px !important;
+  }
+
+  .waFinalComposer input {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
