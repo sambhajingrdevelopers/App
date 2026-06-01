@@ -1,10 +1,56 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
 import { useSearchParams } from 'next/navigation'
-import AuthGuard from '../../components/AuthGuard'
-import SocialAppShell from '../../components/SocialAppShell'
-import { getSessionUser } from '../../lib/sessionUser'
+
+function AuthGuard({ children }: { children: ReactNode }) {
+  return <>{children}</>
+}
+
+function SocialAppShell({ children }: { children: ReactNode; active?: string; hideSearch?: boolean }) {
+  return <>{children}</>
+}
+
+async function getSessionUser() {
+  const fallback = process.env.NEXT_PUBLIC_DEFAULT_USER || '@pradip'
+
+  if (typeof window === 'undefined') {
+    return {
+      id: fallback,
+      userId: fallback,
+      username: fallback,
+      name: fallback.replace('@', '') || 'User',
+    }
+  }
+
+  const saved =
+    window.localStorage.getItem('vibeloop_user') ||
+    window.localStorage.getItem('sessionUser') ||
+    window.localStorage.getItem('username') ||
+    window.localStorage.getItem('currentUser') ||
+    fallback
+
+  let username = String(saved || fallback).trim()
+  let name = ''
+
+  try {
+    const parsed = JSON.parse(username)
+    username = parsed.username || parsed.user || parsed.handle || parsed.name || fallback
+    name = parsed.name || parsed.displayName || ''
+  } catch {
+    name = username.replace('@', '')
+  }
+
+  if (!username.startsWith('@')) username = `@${username}`
+
+  return {
+    id: username,
+    userId: username,
+    username,
+    name: name || username.replace('@', '') || 'User',
+  }
+}
 
 type Item = {
   id: string

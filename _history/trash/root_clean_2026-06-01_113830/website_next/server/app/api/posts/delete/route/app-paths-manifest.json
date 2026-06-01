@@ -1,0 +1,3 @@
+{
+  "/api/posts/delete/route": "app/api/posts/delete/route.js"
+}
