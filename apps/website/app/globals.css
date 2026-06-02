@@ -28446,3 +28446,427 @@ body:has(.waFinalRoot) .waFinalConversation {
     width: 100% !important;
   }
 }
+
+/* REAL-ONLY WHATSAPP MESSAGES PAGE */
+.realMsgRoot {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 2147483647 !important;
+  display: grid !important;
+  grid-template-columns: 420px 1fr !important;
+  overflow: hidden !important;
+  background: #0b141a !important;
+  color: #e9edef !important;
+}
+
+.realMsgList {
+  min-width: 0 !important;
+  height: 100dvh !important;
+  overflow-y: auto !important;
+  background: #111b21 !important;
+  border-right: 1px solid #26353d !important;
+}
+
+.realMsgListHeader {
+  padding: 30px 20px 16px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  align-items: center !important;
+}
+
+.realMsgListHeader h1 {
+  margin: 0 !important;
+  font-size: 42px !important;
+  letter-spacing: -.04em !important;
+}
+
+.realMsgListHeader button {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 24px !important;
+}
+
+.realMsgSearch {
+  margin: 0 16px 16px !important;
+  height: 58px !important;
+  border-radius: 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 18px !important;
+  background: #202c33 !important;
+}
+
+.realMsgSearch span {
+  color: #8696a0 !important;
+  font-size: 25px !important;
+}
+
+.realMsgSearch input {
+  border: 0 !important;
+  outline: 0 !important;
+  color: #e9edef !important;
+  background: transparent !important;
+  font-size: 18px !important;
+  min-width: 0 !important;
+}
+
+.realMsgFilters {
+  padding: 0 16px 16px !important;
+  display: flex !important;
+  gap: 10px !important;
+  overflow-x: auto !important;
+}
+
+.realMsgFilters button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 12px 18px !important;
+  color: #aebac1 !important;
+  background: #202c33 !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+}
+
+.realMsgFilters button.active {
+  color: #07130f !important;
+  background: #00a884 !important;
+}
+
+.realMsgArchived,
+.realMsgRow {
+  width: 100% !important;
+  min-height: 78px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(134,150,160,.16) !important;
+  display: grid !important;
+  grid-template-columns: 74px 1fr auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 10px 16px !important;
+  text-align: left !important;
+  color: #e9edef !important;
+  background: transparent !important;
+}
+
+.realMsgArchived span {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 14px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #202c33 !important;
+  color: #aebac1 !important;
+  font-size: 26px !important;
+}
+
+.realMsgArchived b,
+.realMsgRowBody strong {
+  font-size: 20px !important;
+  font-weight: 900 !important;
+}
+
+.realMsgArchived small {
+  color: #8696a0 !important;
+  font-size: 17px !important;
+}
+
+.realMsgAvatar {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(135deg, #00a884, #00c8a0) !important;
+  color: white !important;
+}
+
+.realMsgAvatar.small {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+.realMsgAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.realMsgAvatar b {
+  font-size: 25px !important;
+}
+
+.realMsgAvatar i {
+  position: absolute !important;
+  right: 2px !important;
+  bottom: 2px !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 50% !important;
+  background: #00ff95 !important;
+  border: 2px solid #111b21 !important;
+}
+
+.realMsgRowBody {
+  min-width: 0 !important;
+}
+
+.realMsgRowBody strong {
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.realMsgRowBody em {
+  color: #53bdeb !important;
+  font-style: normal !important;
+  margin-left: 5px !important;
+}
+
+.realMsgRowBody small {
+  display: block !important;
+  margin-top: 6px !important;
+  color: #8696a0 !important;
+  font-size: 17px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.realMsgMeta {
+  display: grid !important;
+  justify-items: end !important;
+  gap: 7px !important;
+}
+
+.realMsgMeta small {
+  color: #8696a0 !important;
+}
+
+.realMsgMeta b {
+  min-width: 25px !important;
+  height: 25px !important;
+  border-radius: 999px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #07130f !important;
+  background: #00a884 !important;
+}
+
+.realMsgState {
+  margin: 18px !important;
+  border-radius: 18px !important;
+  padding: 18px !important;
+  display: grid !important;
+  gap: 8px !important;
+  text-align: center !important;
+  background: #202c33 !important;
+  color: #aebac1 !important;
+}
+
+.realMsgState b {
+  color: white !important;
+  font-size: 19px !important;
+}
+
+.realMsgState.error {
+  border: 1px solid rgba(255,80,80,.35) !important;
+}
+
+.realMsgLock {
+  padding: 28px 22px !important;
+  color: #8696a0 !important;
+}
+
+.realMsgChat {
+  min-width: 0 !important;
+  height: 100dvh !important;
+  display: grid !important;
+  grid-template-rows: auto 1fr auto auto !important;
+  background: #0b141a !important;
+}
+
+.realMsgChatHeader {
+  min-height: 64px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 8px 14px !important;
+  background: #202c33 !important;
+}
+
+.realMsgBack {
+  display: none !important;
+  border: 0 !important;
+  color: white !important;
+  background: transparent !important;
+  font-size: 32px !important;
+}
+
+.realMsgChatHeader strong {
+  display: block !important;
+  color: #e9edef !important;
+  font-size: 17px !important;
+}
+
+.realMsgChatHeader small {
+  display: block !important;
+  color: #8696a0 !important;
+}
+
+.realMsgChatHeader a {
+  color: #aebac1 !important;
+  text-decoration: none !important;
+}
+
+.realMsgThread {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  background:
+    radial-gradient(circle at top, rgba(0,168,132,.08), transparent 30%),
+    #0b141a !important;
+}
+
+.realMsgDate,
+.realMsgEncrypt {
+  align-self: center !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  color: #aebac1 !important;
+  background: #182229 !important;
+  font-size: 12px !important;
+}
+
+.realMsgEmpty,
+.realMsgNoChat {
+  margin: auto !important;
+  display: grid !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: #8696a0 !important;
+}
+
+.realMsgEmpty b,
+.realMsgNoChat b {
+  color: #e9edef !important;
+  font-size: 19px !important;
+}
+
+.realMsgBubble {
+  max-width: 76% !important;
+  border-radius: 12px !important;
+  padding: 8px 10px !important;
+  display: grid !important;
+  gap: 3px !important;
+  color: #e9edef !important;
+}
+
+.realMsgBubble.mine {
+  align-self: flex-end !important;
+  background: #005c4b !important;
+}
+
+.realMsgBubble.their {
+  align-self: flex-start !important;
+  background: #202c33 !important;
+}
+
+.realMsgBubble small {
+  justify-self: end !important;
+  color: rgba(233,237,239,.65) !important;
+  font-size: 11px !important;
+}
+
+.realMsgNotice {
+  margin: 8px 12px !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  color: white !important;
+  background: rgba(255,80,80,.15) !important;
+  border: 1px solid rgba(255,80,80,.25) !important;
+}
+
+.realMsgComposer {
+  min-height: 68px !important;
+  display: grid !important;
+  grid-template-columns: auto auto 1fr auto auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 12px !important;
+  background: #202c33 !important;
+}
+
+.realMsgComposer button {
+  width: 42px !important;
+  height: 42px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: #aebac1 !important;
+  background: transparent !important;
+  font-size: 20px !important;
+}
+
+.realMsgComposer button.send {
+  color: #07130f !important;
+  background: #00a884 !important;
+}
+
+.realMsgComposer input {
+  min-width: 0 !important;
+  height: 44px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 15px !important;
+  color: #e9edef !important;
+  background: #2a3942 !important;
+}
+
+@media (max-width: 900px) {
+  .realMsgRoot {
+    display: block !important;
+  }
+
+  .realMsgList,
+  .realMsgChat {
+    width: 100vw !important;
+    height: 100dvh !important;
+  }
+
+  .realMsgChat {
+    display: none !important;
+  }
+
+  .realMsgRoot.chatOpen .realMsgList {
+    display: none !important;
+  }
+
+  .realMsgRoot.chatOpen .realMsgChat {
+    display: grid !important;
+  }
+
+  .realMsgBack {
+    display: grid !important;
+  }
+
+  .realMsgBubble {
+    max-width: 86% !important;
+  }
+}

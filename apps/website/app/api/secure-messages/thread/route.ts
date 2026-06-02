@@ -6,23 +6,48 @@ const BACKEND_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "http://43.205.145.63:8003"
 
+const PATHS = [
+  "/api/v1/secure/messages/thread",
+  "/api/v1/messages/thread",
+  "/api/v1/secure-messages/thread",
+]
+
 export async function GET(request: NextRequest) {
-  const user = request.nextUrl.searchParams.get("user") || "@guest"
-  const withUser = request.nextUrl.searchParams.get("with") || "@creator"
+  const qs = request.nextUrl.searchParams.toString()
+  const errors: string[] = []
 
-  try {
-    const res = await fetch(
-      `${BACKEND_URL}/api/v1/secure/messages/thread?user=${encodeURIComponent(user)}&with=${encodeURIComponent(withUser)}`,
-      { cache: "no-store" }
-    )
+  for (const path of PATHS) {
+    const url = `${BACKEND_URL}${path}${qs ? `?${qs}` : ""}`
 
-    const data = await res.json().catch(() => ({}))
-    return NextResponse.json(data, { status: res.status })
-  } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      message: error?.message || "Thread failed.",
-      messages: [],
-    }, { status: 500 })
+    try {
+      const res = await fetch(url, { cache: "no-store" })
+      const text = await res.text()
+      let data: any = {}
+
+      try {
+        data = text ? JSON.parse(text) : {}
+      } catch {
+        data = { success: false, message: text || "Invalid backend response" }
+      }
+
+      if (res.ok && data?.detail !== "Not Found") {
+        return NextResponse.json({
+          ...data,
+          success: data.success !== false,
+          backendUrl: url,
+        })
+      }
+
+      errors.push(`${url} -> ${res.status}`)
+    } catch (error: any) {
+      errors.push(`${url} -> ${error?.message || "failed"}`)
+    }
   }
+
+  return NextResponse.json({
+    success: false,
+    message: "Real message thread backend not available.",
+    messages: [],
+    errors,
+  }, { status: 502 })
 }
