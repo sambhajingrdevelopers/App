@@ -29406,3 +29406,316 @@ body:has(.realMsgRoot) {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* REAL POST DETAIL PAGE */
+.realPostPage {
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding: 24px 16px 130px !important;
+  color: white !important;
+  overflow-x: hidden !important;
+}
+
+.realPostTop {
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  gap: 14px !important;
+  align-items: center !important;
+  margin-bottom: 20px !important;
+}
+
+.realPostTop a,
+.realPostTop button {
+  width: 46px !important;
+  height: 46px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.08) !important;
+  font-size: 26px !important;
+}
+
+.realPostTop h1 {
+  margin: 0 !important;
+  font-size: clamp(34px, 8vw, 56px) !important;
+  line-height: .95 !important;
+  letter-spacing: -.06em !important;
+}
+
+.realPostTop p {
+  margin: 8px 0 0 !important;
+  color: rgba(255,255,255,.58) !important;
+}
+
+.realPostState {
+  min-height: 220px !important;
+  border-radius: 28px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.68) !important;
+  background: rgba(255,255,255,.06) !important;
+}
+
+.realPostState.error {
+  border: 1px solid rgba(0,200,255,.25) !important;
+  background: rgba(0,200,255,.08) !important;
+}
+
+.realPostState b {
+  color: white !important;
+  font-size: 24px !important;
+}
+
+.realPostState a {
+  margin-top: 10px !important;
+  border-radius: 999px !important;
+  padding: 11px 18px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+  font-weight: 900 !important;
+}
+
+.realPostCard {
+  overflow: hidden !important;
+  border-radius: 28px !important;
+  background: rgba(12,13,28,.96) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  box-shadow: 0 26px 80px rgba(0,0,0,.35) !important;
+}
+
+.realPostUser {
+  padding: 14px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+.realPostAvatar {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.realPostAvatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.realPostAvatar b {
+  font-size: 24px !important;
+}
+
+.realPostAvatar i {
+  position: absolute !important;
+  right: 2px !important;
+  bottom: 2px !important;
+  width: 13px !important;
+  height: 13px !important;
+  border-radius: 50% !important;
+  background: #00ff95 !important;
+  border: 2px solid #0c0d1c !important;
+}
+
+.realPostUser div {
+  min-width: 0 !important;
+}
+
+.realPostUser div a {
+  display: block !important;
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 18px !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.realPostUser em {
+  color: #00c8ff !important;
+  font-style: normal !important;
+}
+
+.realPostUser small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.55) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.realPostMsg {
+  border-radius: 999px !important;
+  padding: 10px 13px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.08) !important;
+  font-weight: 900 !important;
+}
+
+.realPostMedia {
+  min-height: 330px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #05050a !important;
+}
+
+.realPostMedia img,
+.realPostMedia video {
+  width: 100% !important;
+  max-height: 720px !important;
+  object-fit: contain !important;
+}
+
+.realPostFallback {
+  min-height: 330px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+}
+
+.realPostFallback span {
+  font-size: 52px !important;
+}
+
+.realPostBody,
+.realPostComments {
+  padding: 16px !important;
+}
+
+.realPostBody h2 {
+  margin: 0 !important;
+  font-size: 30px !important;
+  line-height: 1.05 !important;
+}
+
+.realPostBody p {
+  margin: 10px 0 0 !important;
+  color: rgba(255,255,255,.72) !important;
+  line-height: 1.45 !important;
+}
+
+.realPostActions {
+  margin-top: 15px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.realPostActions button,
+.realPostActions a,
+.realPostComments button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background: rgba(255,255,255,.08) !important;
+  font-weight: 950 !important;
+}
+
+.realPostActions button.active,
+.realPostComments button {
+  background: linear-gradient(135deg, #ff00b8, #673cff) !important;
+}
+
+.realPostNotice {
+  margin-top: 12px !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  color: white !important;
+  background: rgba(0,200,255,.10) !important;
+  border: 1px solid rgba(0,200,255,.18) !important;
+}
+
+.realPostComments h3 {
+  margin: 0 0 12px !important;
+  font-size: 24px !important;
+}
+
+.realPostComments form {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  margin-bottom: 14px !important;
+}
+
+.realPostComments input {
+  min-width: 0 !important;
+  height: 45px !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  outline: 0 !important;
+  border-radius: 999px !important;
+  padding: 0 14px !important;
+  color: white !important;
+  background: rgba(255,255,255,.06) !important;
+}
+
+.realPostComments article {
+  border-radius: 16px !important;
+  padding: 12px !important;
+  background: rgba(255,255,255,.055) !important;
+  margin-bottom: 10px !important;
+}
+
+.realPostComments article b,
+.realPostComments article span,
+.realPostComments article small {
+  display: block !important;
+}
+
+.realPostComments article span {
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.75) !important;
+}
+
+.realPostComments article small {
+  margin-top: 5px !important;
+  color: rgba(255,255,255,.45) !important;
+}
+
+@media (max-width: 540px) {
+  .realPostPage {
+    padding: 18px 12px 120px !important;
+  }
+
+  .realPostTop {
+    grid-template-columns: auto 1fr auto !important;
+  }
+
+  .realPostUser {
+    grid-template-columns: auto 1fr !important;
+  }
+
+  .realPostMsg {
+    grid-column: 1 / -1 !important;
+    text-align: center !important;
+  }
+
+  .realPostMedia,
+  .realPostFallback {
+    min-height: 290px !important;
+  }
+
+  .realPostComments form {
+    grid-template-columns: 1fr !important;
+  }
+}
