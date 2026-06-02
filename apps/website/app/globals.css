@@ -28870,3 +28870,226 @@ body:has(.waFinalRoot) .waFinalConversation {
     max-width: 86% !important;
   }
 }
+
+/* FINAL REAL MESSAGES RESPONSIVE + REAL STATUS FIX */
+html:has(.realMsgRoot),
+body:has(.realMsgRoot) {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #0b141a !important;
+}
+
+.realMsgRoot,
+.realMsgRoot * {
+  box-sizing: border-box !important;
+}
+
+.realMsgRoot {
+  inset: 0 !important;
+  width: 100dvw !important;
+  max-width: 100dvw !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  background: #0b141a !important;
+}
+
+.realMsgList,
+.realMsgChat {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.realMsgRows,
+.realMsgThread {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.realMsgRow,
+.realMsgArchived {
+  grid-template-columns: 62px minmax(0, 1fr) auto !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.realMsgRowBody,
+.realMsgMeta,
+.realMsgChatHeader div {
+  min-width: 0 !important;
+}
+
+.realMsgRowBody strong,
+.realMsgRowBody small,
+.realMsgChatHeader strong,
+.realMsgChatHeader small {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.realMsgAvatar {
+  flex-shrink: 0 !important;
+}
+
+.realMsgAvatar i {
+  display: none !important;
+}
+
+.realMsgRow.online .realMsgAvatar i,
+.realMsgChatHeader.online .realMsgAvatar i {
+  display: block !important;
+}
+
+.realMsgRow.offline .realMsgAvatar {
+  filter: saturate(.7) brightness(.86) !important;
+}
+
+.realMsgStatusText {
+  color: #8696a0 !important;
+}
+
+.realMsgStatusText.online {
+  color: #00a884 !important;
+}
+
+@media (max-width: 1200px) {
+  .realMsgRoot {
+    display: block !important;
+    grid-template-columns: none !important;
+  }
+
+  .realMsgList {
+    width: 100dvw !important;
+    max-width: 100dvw !important;
+    height: 100dvh !important;
+    border-right: 0 !important;
+  }
+
+  .realMsgChat {
+    width: 100dvw !important;
+    max-width: 100dvw !important;
+    height: 100dvh !important;
+    display: none !important;
+  }
+
+  .realMsgRoot.chatOpen .realMsgList {
+    display: none !important;
+  }
+
+  .realMsgRoot.chatOpen .realMsgChat {
+    display: grid !important;
+  }
+
+  .realMsgBack {
+    display: grid !important;
+  }
+
+  .realMsgListHeader {
+    padding: 26px 16px 14px !important;
+  }
+
+  .realMsgListHeader h1 {
+    font-size: clamp(34px, 10vw, 46px) !important;
+  }
+
+  .realMsgSearch {
+    margin: 0 12px 14px !important;
+    height: 54px !important;
+    border-radius: 16px !important;
+  }
+
+  .realMsgSearch input {
+    font-size: 16px !important;
+  }
+
+  .realMsgFilters {
+    padding: 0 12px 14px !important;
+    gap: 8px !important;
+  }
+
+  .realMsgFilters button {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+  }
+
+  .realMsgArchived,
+  .realMsgRow {
+    min-height: 74px !important;
+    grid-template-columns: 58px minmax(0, 1fr) auto !important;
+    gap: 10px !important;
+  }
+
+  .realMsgAvatar {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .realMsgAvatar b {
+    font-size: 22px !important;
+  }
+
+  .realMsgRowBody strong {
+    font-size: 18px !important;
+  }
+
+  .realMsgRowBody small {
+    font-size: 15px !important;
+  }
+
+  .realMsgArchived b {
+    font-size: 18px !important;
+  }
+
+  .realMsgArchived span {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .realMsgLock {
+    padding: 24px 18px !important;
+    font-size: 15px !important;
+  }
+
+  .realMsgChatHeader {
+    min-height: 60px !important;
+    grid-template-columns: 38px 46px minmax(0, 1fr) auto !important;
+    gap: 9px !important;
+    padding: 7px 10px !important;
+  }
+
+  .realMsgThread {
+    padding: 12px !important;
+  }
+
+  .realMsgComposer {
+    min-height: 64px !important;
+    grid-template-columns: 34px 34px minmax(0, 1fr) 34px 44px !important;
+    gap: 5px !important;
+    padding: 8px 8px !important;
+  }
+
+  .realMsgComposer button {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 18px !important;
+  }
+
+  .realMsgComposer button.send {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .realMsgComposer input {
+    height: 42px !important;
+    font-size: 14px !important;
+  }
+
+  .realMsgBubble {
+    max-width: 86% !important;
+  }
+}
