@@ -11,6 +11,7 @@ type Conversation = {
   lastAt?: string
   unread?: number
   online?: boolean
+  lastSeen?: string
   pinned?: boolean
   muted?: boolean
   verified?: boolean
@@ -89,10 +90,11 @@ function normalizeConversation(row: any, me: string): Conversation | null {
     lastMessage: row.lastMessage || row.last_message || row.text || row.message || '',
     lastAt: row.lastAt || row.last_at || row.createdAt || row.created_at || '',
     unread: Number(row.unread || row.unreadCount || row.unread_count || 0),
-    online: Boolean(row.online ?? true),
+    online: Boolean(row.online ?? false),
     pinned: Boolean(row.pinned),
     muted: Boolean(row.muted),
     verified: row.verified !== false,
+    lastSeen: row.lastSeen || row.last_seen || '',
   }
 }
 
@@ -153,9 +155,10 @@ export default function MessagesClient() {
       .map((item: any) => normalizeConversation(item, currentUser))
       .filter(Boolean) as Conversation[]
 
-    setConversations(normalized)
+    const withPresence = await applyPresence(normalized)
+    setConversations(withPresence)
     setLoadingList(false)
-    return normalized
+    return withPresence
   }
 
   async function loadThread(currentUser: string, otherUser: string) {
@@ -189,9 +192,47 @@ export default function MessagesClient() {
     setLoadingThread(false)
   }
 
-  async function boot() {
+  
+  async function sendHeartbeat(currentUser: string) {
+    await fetch('/api/presence/heartbeat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user: currentUser, device: 'web', page: 'messages' }),
+    }).catch(() => null)
+  }
+
+  async function applyPresence(list: Conversation[]) {
+    const users = list.map((item) => item.username).join(',')
+    if (!users) return list
+
+    const data = await fetch(`/api/presence/list?users=${encodeURIComponent(users)}`, {
+      cache: 'no-store',
+    })
+      .then((res) => res.json())
+      .catch(() => ({ success: false, presence: [] }))
+
+    const presenceMap = new Map<string, any>()
+
+    if (Array.isArray(data.presence)) {
+      data.presence.forEach((item: any) => {
+        presenceMap.set(cleanUsername(item.username).toLowerCase(), item)
+      })
+    }
+
+    return list.map((item) => {
+      const found = presenceMap.get(item.username.toLowerCase())
+      return {
+        ...item,
+        online: Boolean(found?.online),
+        lastSeen: found?.lastSeen || item.lastSeen || '',
+      }
+    })
+  }
+
+async function boot() {
     const currentUser = getCurrentUser()
     setMe(currentUser)
+    await sendHeartbeat(currentUser)
 
     const list = await loadConversations(currentUser)
     const to = cleanUsername(params.get('to') || params.get('user') || '')
@@ -255,6 +296,27 @@ export default function MessagesClient() {
     await loadThread(me, selected.username)
     await loadConversations(me)
   }
+
+
+  useEffect(() => {
+    const currentUser = getCurrentUser()
+    sendHeartbeat(currentUser)
+
+    const timer = window.setInterval(() => {
+      sendHeartbeat(currentUser)
+    }, 25000)
+
+    const offline = () => {
+      navigator.sendBeacon?.('/api/presence/offline', new Blob([JSON.stringify({ user: currentUser })], { type: 'application/json' }))
+    }
+
+    window.addEventListener('beforeunload', offline)
+
+    return () => {
+      window.clearInterval(timer)
+      window.removeEventListener('beforeunload', offline)
+    }
+  }, [])
 
   const hasRealConversations = conversations.length > 0
 
@@ -344,7 +406,7 @@ export default function MessagesClient() {
               </span>
               <div>
                 <strong>{selected.name}</strong>
-                <small>{selected.username} · {selected.online ? 'online' : 'offline'}</small>
+                <small>{selected.username} · {selected.online ? 'online' : selected.lastSeen ? `last seen ${timeLabel(selected.lastSeen)}` : 'offline'}</small>
               </div>
               <a href={`/profile?username=${encodeURIComponent(selected.username)}`}>Profile</a>
             </header>
