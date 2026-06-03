@@ -1,0 +1,12 @@
+{
+  "action": "real_post_backend_fix",
+  "time": "2026-06-03_064913",
+  "backend_url": "http://13.206.145.54:8003",
+  "hard_delete": false,
+  "changed_area": [
+    "apps/website/app/api backend URL fallbacks",
+    "apps/website/app/api/posts/[id]/detail/route.ts fallback to real content detail",
+    "apps/website/app/create/page.tsx publish success routing"
+  ],
+  "note": "No files deleted. Originals copied here before update."
+}
