@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
@@ -55,7 +55,6 @@ export default function ReelsPage() {
   const [loading, setLoading] = useState(true)
   const [notice, setNotice] = useState('')
   const [query, setQuery] = useState('')
-  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({})
 
   async function loadReels() {
     setLoading(true)
@@ -102,30 +101,6 @@ export default function ReelsPage() {
       )
     })
   }, [reels, query])
-
-
-  useEffect(() => {
-    const videos = Object.values(videoRefs.current).filter(Boolean) as HTMLVideoElement[]
-    if (!videos.length) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement
-
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.72) {
-            video.play().catch(() => undefined)
-          } else {
-            video.pause()
-          }
-        })
-      },
-      { threshold: [0, 0.5, 0.72, 0.95] }
-    )
-
-    videos.forEach((video) => observer.observe(video))
-    return () => observer.disconnect()
-  }, [filteredReels])
 
   async function saveReel(reel: ReelItem) {
     const data = await fetch('/api/saved/toggle', {
@@ -201,18 +176,7 @@ export default function ReelsPage() {
                   <article className="vlxRealReelCard" key={reel.id}>
                     <div className="vlxRealReelVideoBox">
                       {validMedia(videoSrc) ? (
-                        <video
-                          ref={(node) => {
-                            videoRefs.current[reel.id] = node
-                          }}
-                          src={videoSrc}
-                          controls
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                          poster={reel.mediaUrl || ''}
-                        />
+                        <video src={videoSrc} controls playsInline preload="metadata" poster={reel.mediaUrl || ''} />
                       ) : (
                         <div className="vlxRealReelFallback">
                           <b>▶</b>

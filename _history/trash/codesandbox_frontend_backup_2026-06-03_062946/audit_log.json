@@ -1,0 +1,8 @@
+{
+  "action": "codesandbox_frontend_safe_check",
+  "time": "2026-06-03_062946",
+  "hard_delete": false,
+  "platform": "CodeSandbox frontend terminal",
+  "deploy": "Vercel",
+  "backend": "EC2"
+}
