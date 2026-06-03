@@ -1,0 +1,20 @@
+{
+  "action": "instagram_style_create_editor_phase1",
+  "time": "2026-06-03_153916",
+  "hard_delete": false,
+  "backup": "_history/trash/instagram_create_editor_phase1_2026-06-03_153916",
+  "changed_files": [
+    "apps/website/app/create/page.tsx",
+    "apps/website/app/globals.css",
+    "apps/website/app/api/content/*.ts backend url fallback check"
+  ],
+  "features_added": [
+    "post/reel/story editor tabs",
+    "media upload and URL preview",
+    "caption, hashtags, mentions, tag people",
+    "location, music/audio, cover URL",
+    "collaborator, privacy, comment controls",
+    "hide like count, share reel to feed, save draft",
+    "publish preview/detail routing"
+  ]
+}
