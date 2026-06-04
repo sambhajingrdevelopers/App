@@ -5,9 +5,9 @@ import { useParams } from 'next/navigation'
 import AuthGuard from './AuthGuard'
 import SocialAppShell from './SocialAppShell'
 
-type Kind = 'post' | 'reel' | 'story'
+type DetailKind = 'post' | 'reel'
 
-function prox(url: any) {
+function mediaUrl(url: any) {
   const clean = String(url || '').trim()
   if (!clean) return ''
   if (clean.startsWith('/api/media/proxy')) return clean
@@ -18,39 +18,39 @@ function prox(url: any) {
   return clean
 }
 
-function normalize(raw: any, kind: Kind) {
-  const item = raw || {}
-  const usernameRaw = String(item.username || item.user || item.creator || '@creator')
+function normalize(item: any, kind: DetailKind) {
+  const raw = item || {}
+  const usernameRaw = String(raw.username || raw.user || raw.creator || '@creator')
   const username = usernameRaw.startsWith('@') ? usernameRaw : `@${usernameRaw}`
-  const media = item.mediaUrl || item.media_url || item.imageUrl || item.image_url || ''
-  const video = item.videoUrl || item.video_url || ''
-  const mediaType = item.mediaType || item.media_type || (kind === 'reel' || video ? 'video' : 'image')
+  const m = raw.mediaUrl || raw.media_url || raw.imageUrl || raw.image_url || ''
+  const v = raw.videoUrl || raw.video_url || ''
+  const mediaType = raw.mediaType || raw.media_type || (kind === 'reel' || v ? 'video' : 'image')
 
   return {
-    ...item,
+    ...raw,
+    id: raw.id,
     kind,
     type: kind,
     username,
     user: username,
     creator: username,
-    name: item.name || username.replace('@', '') || 'Creator',
-    title: item.title || item.caption || (kind === 'reel' ? 'Reel' : kind === 'story' ? 'Story' : 'Post'),
-    caption: item.caption || item.title || '',
-    location: item.location || 'VibeLoop',
+    name: raw.name || username.replace('@', '') || 'Creator',
+    title: raw.title || raw.caption || (kind === 'reel' ? 'Reel' : 'Post'),
+    caption: raw.caption || raw.title || '',
+    location: raw.location || 'VibeLoop',
     mediaType,
-    mediaUrl: prox(media || video),
-    imageUrl: prox(media),
-    videoUrl: prox(video || (mediaType === 'video' ? media : '')),
-    likes: Number(item.likes || 0),
-    comments: Number(item.comments || 0),
-    shares: Number(item.shares || 0),
-    views: Number(item.views || 0),
-    liked: Boolean(item.liked),
-    saved: Boolean(item.saved)
+    mediaUrl: mediaUrl(m || v),
+    videoUrl: mediaUrl(v || (mediaType === 'video' ? m : '')),
+    likes: Number(raw.likes || 0),
+    comments: Number(raw.comments || 0),
+    shares: Number(raw.shares || 0),
+    views: Number(raw.views || 0),
+    liked: Boolean(raw.liked),
+    saved: Boolean(raw.saved)
   }
 }
 
-export default function ContentDetailClient({ kind }: { kind: Kind }) {
+export default function ContentDetailClient({ kind }: { kind: DetailKind }) {
   const params = useParams()
   const id = String(params.id || '')
 
@@ -60,10 +60,10 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
   const [menu, setMenu] = useState(false)
   const [msg, setMsg] = useState('')
   const [loading, setLoading] = useState(true)
-  const [mediaBroken, setMediaBroken] = useState(false)
 
+  const apiBase = kind === 'reel' ? 'reels' : 'posts'
+  const title = kind === 'reel' ? 'Reel Detail' : 'Post Detail'
   const active = kind === 'reel' ? 'reels' : 'home'
-  const title = kind === 'reel' ? 'Reel Detail' : kind === 'story' ? 'Story Detail' : 'Post Detail'
 
   const isVideo = useMemo(() => {
     const src = item?.videoUrl || item?.mediaUrl || ''
@@ -73,13 +73,12 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
   async function load() {
     setLoading(true)
     setMsg('')
-    setMediaBroken(false)
 
     try {
-      const res = await fetch(`/api/detail/${kind}/${encodeURIComponent(id)}`, { cache: 'no-store' })
+      const res = await fetch(`/api/${apiBase}/${encodeURIComponent(id)}/detail`, { cache: 'no-store' })
       const data = await res.json()
 
-      const raw = data.item || data.post || data.reel || data.story
+      const raw = data.item || data.post || data.reel
       if (!res.ok || !data.success || !raw) throw new Error(data.message || `${title} not found`)
 
       setItem(normalize(raw, kind))
@@ -96,28 +95,30 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
     if (id) load()
   }, [id])
 
-  async function act(action: string, body: any = {}) {
-    await fetch(`/api/action/${kind}/${encodeURIComponent(id)}/${action}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).catch(() => {})
-  }
-
-  function like() {
+  async function like() {
     if (!item) return
     const liked = !item.liked
     const likes = Math.max(0, Number(item.likes || 0) + (liked ? 1 : -1))
     setItem({ ...item, liked, likes })
-    act('like', { liked, likes })
+
+    fetch(`/api/${apiBase}/${encodeURIComponent(id)}/like`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ liked, likes })
+    }).catch(() => {})
   }
 
-  function save() {
+  async function save() {
     if (!item) return
     const saved = !item.saved
     setItem({ ...item, saved })
     setMsg(saved ? 'Saved.' : 'Removed from saved.')
-    act('save', { saved })
+
+    fetch(`/api/${apiBase}/${encodeURIComponent(id)}/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ saved })
+    }).catch(() => {})
   }
 
   async function share() {
@@ -130,10 +131,9 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
       try { await navigator.clipboard.writeText(url) } catch {}
     }
 
-    const shares = Number(item?.shares || 0) + 1
-    setItem((prev: any) => prev ? { ...prev, shares } : prev)
+    setItem((prev: any) => prev ? { ...prev, shares: Number(prev.shares || 0) + 1 } : prev)
     setMsg('Link shared/copied.')
-    act('share', { shares })
+    fetch(`/api/${apiBase}/${encodeURIComponent(id)}/share`, { method: 'POST' }).catch(() => {})
   }
 
   async function addComment() {
@@ -156,12 +156,11 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
     setItem((prev: any) => prev ? { ...prev, comments: Number(prev.comments || 0) + 1 } : prev)
 
     try {
-      const res = await fetch(`/api/comment/${kind}/${encodeURIComponent(id)}`, {
+      const res = await fetch(`/api/${apiBase}/${encodeURIComponent(id)}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: clean, user: '@you' })
       })
-
       const data = await res.json()
       if (data.success && data.comment) {
         setComments((prev) => prev.map((x) => x.id === local.id ? data.comment : x))
@@ -171,26 +170,36 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
     setMsg('Comment added.')
   }
 
+  async function deleteComment(commentId: any) {
+    setComments((prev) => prev.filter((x) => String(x.id) !== String(commentId)))
+    setItem((prev: any) => prev ? { ...prev, comments: Math.max(0, Number(prev.comments || 0) - 1) } : prev)
+
+    if (kind === 'post') {
+      fetch(`/api/posts/${encodeURIComponent(id)}/comments/${encodeURIComponent(String(commentId))}`, { method: 'DELETE' }).catch(() => {})
+    }
+
+    setMsg('Comment removed.')
+  }
+
   return (
     <AuthGuard>
-      <SocialAppShell active={active as any} title={title} subtitle="Dynamic detail page connected to backend content.">
+      <SocialAppShell active={active as any} title={title} subtitle="Like, comment, save, share and open more actions.">
         {msg && <div className="vlSettingsMessage">{msg}</div>}
         {loading && <div className="adminEmpty">Loading...</div>}
         {!loading && !item && <div className="adminEmpty">{title} not found or backend not ready.</div>}
 
         {item && (
-          <section className={`vlxDynamicDetail ${kind}`}>
-            <article className="vlxDynamicCard">
-              <header className="vlxDynamicHeader">
+          <section className={kind === 'reel' ? 'vlxFixedDetail reel' : 'vlxFixedDetail'}>
+            <article className="vlxFixedCard">
+              <header className="vlxFixedHeader">
                 <div className="vlAvatar">{item.name?.[0] || item.user?.[1] || 'V'}</div>
-
                 <div>
                   <b>{item.user} ✓</b>
                   <span>{item.location}</span>
                 </div>
 
                 <div className="vlxMenuWrap">
-                  <button type="button" className="vlxMenuBtn" onClick={() => setMenu(!menu)}>⋯</button>
+                  <button className="vlxMenuBtn" type="button" onClick={() => setMenu(!menu)}>⋯</button>
                   {menu && (
                     <div className="vlxMenuBox">
                       <button type="button" onClick={save}>{item.saved ? 'Unsave' : 'Save'}</button>
@@ -201,61 +210,42 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
                 </div>
               </header>
 
-              <div className={`vlxDynamicMedia ${mediaBroken ? 'broken' : ''}`}>
-                {!mediaBroken && (item.mediaUrl || item.videoUrl) ? (
+              <div className={kind === 'reel' ? 'vlxFixedMedia reel' : 'vlxFixedMedia'}>
+                {(item.mediaUrl || item.videoUrl) ? (
                   isVideo ? (
-                    <video
-                      src={item.videoUrl || item.mediaUrl}
-                      controls
-                      playsInline
-                      onError={() => setMediaBroken(true)}
-                    />
+                    <video src={item.videoUrl || item.mediaUrl} controls playsInline />
                   ) : (
-                    <img
-                      src={item.mediaUrl}
-                      alt={item.title || item.caption || 'Content'}
-                      onError={() => setMediaBroken(true)}
-                    />
+                    <img src={item.mediaUrl} alt={item.title || 'Post'} />
                   )
                 ) : (
-                  <div className="vlxMediaFallback">
-                    <b>{item.title}</b>
-                    <p>{item.caption || 'Media file not available from backend.'}</p>
+                  <div className="vlxFixedFallback">
+                    <h2>{item.title}</h2>
+                    <p>{item.caption}</p>
                   </div>
                 )}
               </div>
 
-              <p className="vlxDynamicCaption"><b>{item.user}</b> {item.caption}</p>
+              <p className="vlxFixedCaption"><b>{item.user}</b> {item.caption}</p>
 
-              <div className="vlxDynamicActions">
-                <button type="button" className={item.liked ? 'active' : ''} onClick={like}>
+              <div className="vlxFixedActions">
+                <button className={item.liked ? 'active' : ''} type="button" onClick={like}>
                   {item.liked ? '♥' : '♡'} {item.likes || 0}
                 </button>
-
-                <button type="button" onClick={() => document.getElementById('dynamicCommentBox')?.focus()}>
-                  💬 {comments.length}
+                <button type="button" onClick={() => document.getElementById('vlxCommentBox')?.focus()}>
+                  �� {comments.length}
                 </button>
-
-                <button type="button" className={item.saved ? 'active' : ''} onClick={save}>
+                <button className={item.saved ? 'active' : ''} type="button" onClick={save}>
                   🔖 {item.saved ? 'Saved' : 'Save'}
                 </button>
-
-                <button type="button" onClick={share}>
-                  ↗ {item.shares || 0}
-                </button>
+                <button type="button" onClick={share}>↗ {item.shares || 0}</button>
               </div>
             </article>
 
-            <section className="vlxDynamicComments">
+            <section className="vlxFixedComments">
               <h3>Comments</h3>
 
               <div className="vlxCommentComposer">
-                <textarea
-                  id="dynamicCommentBox"
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Write comment..."
-                />
+                <textarea id="vlxCommentBox" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write comment..." />
                 <button type="button" onClick={addComment}>Post</button>
               </div>
 
@@ -267,9 +257,9 @@ export default function ContentDetailClient({ kind }: { kind: Kind }) {
                       <p>{comment.text}</p>
                       <span>{comment.createdAt ? new Date(comment.createdAt).toLocaleString() : 'Just now'}</span>
                     </div>
+                    <button type="button" onClick={() => deleteComment(comment.id)}>Delete</button>
                   </article>
                 ))}
-
                 {!comments.length && <div className="adminEmpty">No comments yet.</div>}
               </div>
             </section>
