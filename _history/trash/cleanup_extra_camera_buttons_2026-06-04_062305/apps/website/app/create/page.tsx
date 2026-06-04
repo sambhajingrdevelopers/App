@@ -617,14 +617,35 @@ export default function CreatePage() {
                     capture="environment"
                     onChange={handleFileUpload}
                   />
+
+                  <div className="vlxNativeCameraDirect">
+                    <button type="button" onClick={() => openNativeMobileCamera(false)}>📷 Open Mobile Camera</button>
+                    <button type="button" onClick={openNativeMobileVideo}>🎥 Record Reel Video</button>
+                  </div>
+
                   <input
                     type="file"
                     accept={type === 'reel' ? 'video/*' : 'image/*,video/*'}
                     onChange={handleFileUpload}
                   />
+                  <div className="vlxPhase3CameraBtns">
+                    <button type="button" onClick={() => openNativeMobileCamera(false)}>📷 Camera</button>
+                    <button type="button" onClick={openNativeMobileVideo}>🎥 Record</button>
+                  </div>
                   {selectedFileName && <small>Selected: {selectedFileName}</small>}
                   {uploading && <small>Uploading media...</small>}
                 </div>
+                {cameraOpen && (
+                  <section className="vlxPhase3CameraPanel">
+                    <video ref={camRef} muted playsInline autoPlay />
+                    <div>
+                      <button type="button" onClick={capturePhoto}>Capture photo</button>
+                      {recording ? <button type="button" onClick={stopRecording}>Stop video</button> : <button type="button" onClick={startRecording}>Start video</button>}
+                      <button type="button" onClick={stopCamera}>Close</button>
+                    </div>
+                  </section>
+                )}
+
                 <label className="vlxMediaUrlLabel">
                   Or paste media URL
                   <input
