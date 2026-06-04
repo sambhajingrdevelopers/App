@@ -168,12 +168,6 @@ export default function CameraPage() {
   const [timerSec, setTimerSec] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const [busy, setBusy] = useState(false)
-  const [processingVideo, setProcessingVideo] = useState(false)
-  const [trimStart, setTrimStart] = useState(0)
-  const [trimEnd, setTrimEnd] = useState(0)
-  const [muteOriginal, setMuteOriginal] = useState(false)
-  const [audioVolume, setAudioVolume] = useState(75)
-  const [coverAt, setCoverAt] = useState(1)
   const [enhancing, setEnhancing] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -569,78 +563,6 @@ export default function CameraPage() {
     }
   }
 
-
-  async function processCapturedVideo() {
-    if (!capturedBlob || capturedType !== 'video') {
-      setMessage('Record or select video first.')
-      return
-    }
-
-    try {
-      setProcessingVideo(true)
-      setMessage('Processing video: trim, cover and audio mix...')
-
-      const videoFile = new File(
-        [capturedBlob],
-        `vibeloop-video-${Date.now()}.webm`,
-        { type: capturedBlob.type || 'video/webm' }
-      )
-
-      const formData = new FormData()
-      formData.append('video', videoFile)
-      formData.append('trimStart', String(trimStart || 0))
-      formData.append('trimEnd', String(trimEnd || 0))
-      formData.append('muteOriginal', String(muteOriginal))
-      formData.append('audioVolume', String((audioVolume || 75) / 100))
-      formData.append('originalVolume', String(muteOriginal ? 0 : 1))
-      formData.append('coverAt', String(coverAt || 1))
-
-      const audioSource = String(audioUrl || voiceUrl || '').trim()
-
-      if (audioSource) {
-        try {
-          const audioResponse = await fetch(audioSource)
-          const audioBlob = await audioResponse.blob()
-          const audioFile = new File(
-            [audioBlob],
-            `vibeloop-audio-${Date.now()}.webm`,
-            { type: audioBlob.type || 'audio/webm' }
-          )
-          formData.append('audio', audioFile)
-        } catch {
-          setMessage('Audio URL could not be loaded. Processing video without audio mix...')
-        }
-      }
-
-      const response = await fetch('/api/media/process-video', {
-        method: 'POST',
-        body: formData
-      })
-
-      const data = await response.json()
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || data.error || 'Video processing failed.')
-      }
-
-      const finalUrl = data.videoUrl || data.mediaUrl || data.url
-      const proxyUrl = `/api/media/proxy?url=${encodeURIComponent(finalUrl)}`
-
-      const processedResponse = await fetch(proxyUrl, { cache: 'no-store' })
-      const processedBlob = await processedResponse.blob()
-
-      setCapturedBlob(processedBlob)
-      setCapturedUrl(URL.createObjectURL(processedBlob))
-      setCapturedType('video')
-
-      setMessage('Video processed successfully. Now Save or Edit.')
-    } catch (error: any) {
-      setMessage(error?.message || 'Video processing failed.')
-    } finally {
-      setProcessingVideo(false)
-    }
-  }
-
   function saveToPhone() {
     if (!capturedBlob || !capturedUrl) {
       setMessage('Capture photo/video first.')
@@ -846,44 +768,6 @@ export default function CameraPage() {
 
         {message && <p className="vlxCameraMessage">{message}</p>}
 
-        {capturedUrl && capturedType === 'video' && (
-          <section className="vlxVideoProcessPanel">
-            <div className="processHead">
-              <b>Video Studio</b>
-              <span>Trim + music / voice mix + cover</span>
-            </div>
-
-            <label>
-              Trim start: {trimStart}s
-              <input type="range" min="0" max="60" value={trimStart} onChange={(e) => setTrimStart(Number(e.target.value))} />
-            </label>
-
-            <label>
-              Trim end: {trimEnd === 0 ? 'Full' : `${trimEnd}s`}
-              <input type="range" min="0" max="120" value={trimEnd} onChange={(e) => setTrimEnd(Number(e.target.value))} />
-            </label>
-
-            <label>
-              Cover frame: {coverAt}s
-              <input type="range" min="1" max="30" value={coverAt} onChange={(e) => setCoverAt(Number(e.target.value))} />
-            </label>
-
-            <label>
-              Audio volume: {audioVolume}%
-              <input type="range" min="0" max="150" value={audioVolume} onChange={(e) => setAudioVolume(Number(e.target.value))} />
-            </label>
-
-            <button type="button" className={muteOriginal ? 'active muteBtn' : 'muteBtn'} onClick={() => setMuteOriginal(!muteOriginal)}>
-              {muteOriginal ? 'Original audio muted' : 'Keep original audio'}
-            </button>
-
-            <button type="button" className="processMainBtn" onClick={processCapturedVideo} disabled={processingVideo}>
-              {processingVideo ? 'Processing...' : 'Process Video'}
-            </button>
-          </section>
-        )}
-
-
         <div className="vlxCameraFilters">
           {(['original', 'dream', 'warm', 'cool', 'moody', 'vivid'] as FilterName[]).map((item) => (
             <button key={item} type="button" className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}><i /><span>{item}</span></button>
@@ -900,11 +784,6 @@ export default function CameraPage() {
               <button type="button" className="hdEnhanceBtn" onClick={enhanceCapturedMedia} disabled={enhancing}>
                 {enhancing ? 'HD...' : 'HD'}
               </button>
-              {capturedType === 'video' && (
-                <button type="button" className="videoProcessBtn" onClick={processCapturedVideo} disabled={processingVideo}>
-                  {processingVideo ? 'Wait...' : 'Process'}
-                </button>
-              )}
               <button type="button" onClick={uploadAndContinue} disabled={busy}>Edit</button>
             </div>
           ) : isVideoMode() ? (
