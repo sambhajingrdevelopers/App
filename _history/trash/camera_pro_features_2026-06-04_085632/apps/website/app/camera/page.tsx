@@ -7,8 +7,6 @@ type Mode = 'post' | 'reel' | 'story' | 'live'
 type FilterName = 'original' | 'dream' | 'warm' | 'cool' | 'moody' | 'vivid'
 type Ratio = '9:16' | '1:1' | '4:5' | '16:9'
 type DragKey = 'text' | 'emoji' | 'location'
-type Facing = 'environment' | 'user'
-type Panel = 'none' | 'tools' | 'music' | 'stickers' | 'crop' | 'pen'
 
 const MUSIC_LIBRARY = [
   'VibeLoop Dream Beat',
@@ -19,8 +17,7 @@ const MUSIC_LIBRARY = [
   'Fast Reel Energy'
 ]
 
-const STICKERS = ['✨', '🔥', '💫', '⭐', '❤️', '😎', '🎉', '📍', '🎵', '💎', '👑', '⚡']
-const TEXT_COLORS = ['#ffffff', '#ff2fb4', '#00c8ff', '#ffec4a', '#40ff8a', '#ff7a1a']
+const STICKERS = ['✨', '🔥', '💫', '⭐', '❤️', '😎', '🎉', '📍', '🎵', '💎']
 
 function getFilter(name: FilterName, brightness: number, contrast: number, saturation: number) {
   const base: Record<FilterName, string> = {
@@ -54,16 +51,11 @@ export default function CameraPage() {
   const galleryRef = useRef<HTMLInputElement | null>(null)
 
   const [mode, setMode] = useState<Mode>('post')
-  const [facing, setFacing] = useState<Facing>('environment')
   const [filter, setFilter] = useState<FilterName>('original')
   const [ratio, setRatio] = useState<Ratio>('9:16')
-  const [activePanel, setActivePanel] = useState<Panel>('none')
+  const [activePanel, setActivePanel] = useState<'none' | 'tools' | 'music' | 'stickers' | 'crop'>('none')
   const [recording, setRecording] = useState(false)
   const [voiceRecording, setVoiceRecording] = useState(false)
-  const [flash, setFlash] = useState(false)
-  const [grid, setGrid] = useState(true)
-  const [timerSec, setTimerSec] = useState(0)
-  const [countdown, setCountdown] = useState(0)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -78,14 +70,6 @@ export default function CameraPage() {
   const [emojiPos, setEmojiPos] = useState({ x: 50, y: 18 })
   const [locationPos, setLocationPos] = useState({ x: 50, y: 82 })
   const [dragKey, setDragKey] = useState<DragKey | null>(null)
-
-  const [textColor, setTextColor] = useState('#ffffff')
-  const [textSize, setTextSize] = useState(38)
-  const [stickerSize, setStickerSize] = useState(74)
-
-  const [penMode, setPenMode] = useState(false)
-  const [penColor, setPenColor] = useState('#ff2fb4')
-  const [paths, setPaths] = useState<{ color: string; points: { x: number; y: number }[] }[]>([])
 
   const [brightness, setBrightness] = useState(100)
   const [contrast, setContrast] = useState(100)
@@ -113,13 +97,13 @@ export default function CameraPage() {
     }
   }
 
-  async function openCamera(nextMode = mode, nextFacing = facing) {
+  async function openCamera(nextMode = mode) {
     try {
       stopCamera()
       setMessage('')
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: nextFacing },
+        video: { facingMode: 'environment' },
         audio: isVideoMode(nextMode)
       })
 
@@ -134,26 +118,6 @@ export default function CameraPage() {
     } catch (error: any) {
       setMessage(error?.message || 'Camera permission blocked.')
     }
-  }
-
-  async function toggleFlash() {
-    const next = !flash
-    setFlash(next)
-
-    try {
-      const track = streamRef.current?.getVideoTracks()?.[0]
-      if (track) {
-        await track.applyConstraints({ advanced: [{ torch: next } as any] } as MediaTrackConstraints)
-      }
-    } catch {
-      setMessage('Flash not supported on this device/browser.')
-    }
-  }
-
-  function flipCamera() {
-    const next: Facing = facing === 'environment' ? 'user' : 'environment'
-    setFacing(next)
-    openCamera(mode, next)
   }
 
   useEffect(() => {
@@ -186,77 +150,33 @@ export default function CameraPage() {
     openCamera(next)
   }
 
-  function getPercent(event: PointerEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const x = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100))
-    const y = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100))
-    return { x, y }
-  }
-
-  function onPointerDown(event: PointerEvent<HTMLDivElement>) {
-    if (!penMode) return
-    const point = getPercent(event)
-    setPaths((prev) => [...prev, { color: penColor, points: [point] }])
-  }
-
   function onPointerMove(event: PointerEvent<HTMLDivElement>) {
-    if (penMode && event.buttons === 1) {
-      const point = getPercent(event)
-      setPaths((prev) => {
-        const next = [...prev]
-        const last = next[next.length - 1]
-        if (last) last.points = [...last.points, point]
-        return next
-      })
-      return
-    }
-
     if (!dragKey) return
 
-    const point = getPercent(event)
-    const x = Math.max(5, Math.min(95, point.x))
-    const y = Math.max(8, Math.min(92, point.y))
+    const rect = event.currentTarget.getBoundingClientRect()
+    const x = Math.max(5, Math.min(95, ((event.clientX - rect.left) / rect.width) * 100))
+    const y = Math.max(8, Math.min(92, ((event.clientY - rect.top) / rect.height) * 100))
 
     if (dragKey === 'text') setTextPos({ x, y })
     if (dragKey === 'emoji') setEmojiPos({ x, y })
     if (dragKey === 'location') setLocationPos({ x, y })
   }
 
-  function drawPaths(ctx: CanvasRenderingContext2D, width: number, height: number) {
-    paths.forEach((path) => {
-      if (path.points.length < 2) return
-      ctx.strokeStyle = path.color
-      ctx.lineWidth = 10
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-      ctx.beginPath()
-      path.points.forEach((pt, index) => {
-        const x = (pt.x / 100) * width
-        const y = (pt.y / 100) * height
-        if (index === 0) ctx.moveTo(x, y)
-        else ctx.lineTo(x, y)
-      })
-      ctx.stroke()
-    })
-  }
-
   function drawOverlay(ctx: CanvasRenderingContext2D, width: number, height: number) {
-    drawPaths(ctx, width, height)
-
     ctx.filter = 'none'
     ctx.textAlign = 'center'
     ctx.shadowColor = 'rgba(0,0,0,.78)'
     ctx.shadowBlur = 18
 
     if (emoji.trim()) {
-      ctx.font = `${stickerSize}px sans-serif`
+      ctx.font = '110px sans-serif'
       ctx.fillStyle = 'white'
       ctx.fillText(emoji.trim(), (emojiPos.x / 100) * width, (emojiPos.y / 100) * height)
     }
 
     if (overlayText.trim()) {
-      ctx.font = `bold ${textSize}px sans-serif`
-      ctx.fillStyle = textColor
+      ctx.font = 'bold 74px sans-serif'
+      ctx.fillStyle = 'white'
       ctx.fillText(overlayText.trim(), (textPos.x / 100) * width, (textPos.y / 100) * height)
     }
 
@@ -267,17 +187,6 @@ export default function CameraPage() {
     }
   }
 
-  async function waitTimer() {
-    if (!timerSec) return
-
-    for (let i = timerSec; i > 0; i--) {
-      setCountdown(i)
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-    }
-
-    setCountdown(0)
-  }
-
   async function capturePhoto() {
     const video = videoRef.current
     if (!video) return
@@ -285,7 +194,6 @@ export default function CameraPage() {
     try {
       setBusy(true)
       setMessage('')
-      await waitTimer()
 
       const size = ratioSize(ratio)
       const canvas = document.createElement('canvas')
@@ -378,7 +286,7 @@ export default function CameraPage() {
         setVoiceUrl(URL.createObjectURL(blob))
         setVoiceRecording(false)
         stream.getTracks().forEach((track) => track.stop())
-        setMessage('Voice note recorded.')
+        setMessage('Voice note recorded. It will continue as metadata.')
       }
 
       recorder.start()
@@ -468,11 +376,16 @@ export default function CameraPage() {
 
   return (
     <main className="vlxCameraStudio">
-      <input ref={galleryRef} className="vlxCameraHiddenInput" type="file" accept="image/*,video/*" onChange={(event) => handleGallery(event.target.files)} />
+      <input
+        ref={galleryRef}
+        className="vlxCameraHiddenInput"
+        type="file"
+        accept="image/*,video/*"
+        onChange={(event) => handleGallery(event.target.files)}
+      />
 
       <section
-        className={`vlxCameraStage ratio-${ratio.replace(':', '-')} ${grid ? 'gridOn' : ''} ${penMode ? 'penOn' : ''}`}
-        onPointerDown={onPointerDown}
+        className={`vlxCameraStage ratio-${ratio.replace(':', '-')}`}
         onPointerMove={onPointerMove}
         onPointerUp={() => setDragKey(null)}
         onPointerCancel={() => setDragKey(null)}
@@ -489,24 +402,47 @@ export default function CameraPage() {
           <video ref={videoRef} muted playsInline autoPlay className="vlxCameraMedia" style={{ filter: liveFilter }} />
         )}
 
-        {countdown > 0 && <div className="vlxCountdown">{countdown}</div>}
-
-        <svg className="vlxPenLayer" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {paths.map((path, index) => (
-            <polyline key={index} points={path.points.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke={path.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          ))}
-        </svg>
-
         <div className="vlxCameraOverlay">
-          {emoji && <button type="button" className="dragEmoji" style={{ left: `${emojiPos.x}%`, top: `${emojiPos.y}%`, fontSize: stickerSize }} onPointerDown={() => setDragKey('emoji')}>{emoji}</button>}
-          {overlayText && <button type="button" className="dragText" style={{ left: `${textPos.x}%`, top: `${textPos.y}%`, color: textColor, fontSize: textSize }} onPointerDown={() => setDragKey('text')}>{overlayText}</button>}
-          {locationTag && <button type="button" className="dragLocation" style={{ left: `${locationPos.x}%`, top: `${locationPos.y}%` }} onPointerDown={() => setDragKey('location')}>📍 {locationTag}</button>}
+          {emoji && (
+            <button
+              type="button"
+              className="dragEmoji"
+              style={{ left: `${emojiPos.x}%`, top: `${emojiPos.y}%` }}
+              onPointerDown={() => setDragKey('emoji')}
+            >
+              {emoji}
+            </button>
+          )}
+
+          {overlayText && (
+            <button
+              type="button"
+              className="dragText"
+              style={{ left: `${textPos.x}%`, top: `${textPos.y}%` }}
+              onPointerDown={() => setDragKey('text')}
+            >
+              {overlayText}
+            </button>
+          )}
+
+          {locationTag && (
+            <button
+              type="button"
+              className="dragLocation"
+              style={{ left: `${locationPos.x}%`, top: `${locationPos.y}%` }}
+              onPointerDown={() => setDragKey('location')}
+            >
+              📍 {locationTag}
+            </button>
+          )}
         </div>
 
         <header className="vlxCameraTop">
           <button type="button" onClick={() => router.push('/home')}>×</button>
-          <button type="button" className="musicPill" onClick={() => setActivePanel('music')}>{musicTitle ? `♪ ${musicTitle}` : '♪ Add music'}</button>
-          <button type="button" onClick={flipCamera}>⇄</button>
+          <button type="button" className="musicPill" onClick={() => setActivePanel('music')}>
+            {musicTitle ? `♪ ${musicTitle}` : '♪ Add music'}
+          </button>
+          <button type="button" onClick={() => openCamera(mode)}>↻</button>
         </header>
 
         <aside className="vlxCameraLeftTools">
@@ -514,57 +450,61 @@ export default function CameraPage() {
           <button type="button" onClick={() => setActivePanel('stickers')}><b>☺</b><span>Sticker</span></button>
           <button type="button" onClick={() => setActivePanel('tools')}><b>⌖</b><span>Location</span></button>
           <button type="button" onClick={() => setActivePanel('music')}><b>♫</b><span>Music</span></button>
-          <button type="button" onClick={toggleVoiceRecord}><b>{voiceRecording ? '■' : '��'}</b><span>Voice</span></button>
+          <button type="button" onClick={toggleVoiceRecord}><b>{voiceRecording ? '■' : '🎙'}</b><span>Voice</span></button>
           <button type="button" onClick={() => setActivePanel('crop')}><b>⌗</b><span>Crop</span></button>
-          <button type="button" onClick={() => setActivePanel('pen')}><b>✎</b><span>Pen</span></button>
+          <button type="button" onClick={() => setActivePanel('tools')}><b>✦</b><span>Adjust</span></button>
         </aside>
 
         <aside className="vlxCameraRightTools">
-          <button type="button" onClick={toggleFlash}><b>{flash ? '⚡' : '⚡︎'}</b><span>Flash</span></button>
-          <button type="button" onClick={() => setGrid(!grid)}><b>▦</b><span>Grid</span></button>
-          <button type="button" onClick={() => setTimerSec(timerSec === 0 ? 3 : timerSec === 3 ? 5 : timerSec === 5 ? 10 : 0)}><b>{timerSec || 'Off'}</b><span>Timer</span></button>
+          <button type="button"><b>1x</b><span>Speed</span></button>
+          <button type="button" onClick={() => setFilter('dream')}><b>✧</b><span>Beauty</span></button>
+          <button type="button"><b>◷</b><span>Timer</span></button>
         </aside>
 
         {activePanel !== 'none' && (
           <section className="vlxCameraToolSheet">
             <div className="sheetHead">
-              <b>{activePanel === 'music' ? 'Music library' : activePanel === 'stickers' ? 'Stickers' : activePanel === 'crop' ? 'Crop & frame' : activePanel === 'pen' ? 'Drawing pen' : 'Edit tools'}</b>
+              <b>
+                {activePanel === 'music' && 'Music library'}
+                {activePanel === 'stickers' && 'Stickers'}
+                {activePanel === 'crop' && 'Crop & frame'}
+                {activePanel === 'tools' && 'Edit tools'}
+              </b>
               <button type="button" onClick={() => setActivePanel('none')}>Done</button>
             </div>
 
             {activePanel === 'music' && (
               <div className="vlxMusicGrid">
-                {MUSIC_LIBRARY.map((item) => <button key={item} type="button" className={musicTitle === item ? 'active' : ''} onClick={() => setMusicTitle(item)}>♪ {item}</button>)}
+                {MUSIC_LIBRARY.map((item) => (
+                  <button key={item} type="button" className={musicTitle === item ? 'active' : ''} onClick={() => setMusicTitle(item)}>
+                    ♪ {item}
+                  </button>
+                ))}
                 <input value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} placeholder="Or paste audio URL..." />
               </div>
             )}
 
             {activePanel === 'stickers' && (
               <div className="vlxStickerGrid">
-                {STICKERS.map((item) => <button key={item} type="button" onClick={() => setEmoji(item)}>{item}</button>)}
-                <label>Sticker size<input type="range" min="40" max="130" value={stickerSize} onChange={(e) => setStickerSize(Number(e.target.value))} /></label>
+                {STICKERS.map((item) => (
+                  <button key={item} type="button" onClick={() => setEmoji(item)}>{item}</button>
+                ))}
               </div>
             )}
 
             {activePanel === 'crop' && (
               <div className="vlxRatioGrid">
-                {(['9:16', '1:1', '4:5', '16:9'] as Ratio[]).map((item) => <button key={item} type="button" className={ratio === item ? 'active' : ''} onClick={() => setRatio(item)}>{item}</button>)}
+                {(['9:16', '1:1', '4:5', '16:9'] as Ratio[]).map((item) => (
+                  <button key={item} type="button" className={ratio === item ? 'active' : ''} onClick={() => setRatio(item)}>
+                    {item}
+                  </button>
+                ))}
               </div>
-            )}
-
-            {activePanel === 'pen' && (
-              <>
-                <div className="vlxColorRow">{TEXT_COLORS.map((color) => <button key={color} type="button" style={{ background: color }} onClick={() => setPenColor(color)} />)}</div>
-                <button type="button" className={penMode ? 'active bigTool' : 'bigTool'} onClick={() => setPenMode(!penMode)}>{penMode ? 'Stop drawing' : 'Start drawing'}</button>
-                <button type="button" className="bigTool" onClick={() => setPaths([])}>Clear drawing</button>
-              </>
             )}
 
             {activePanel === 'tools' && (
               <>
                 <label>Text<input value={overlayText} onChange={(e) => setOverlayText(e.target.value)} placeholder="Add text..." /></label>
-                <label>Text size<input type="range" min="22" max="74" value={textSize} onChange={(e) => setTextSize(Number(e.target.value))} /></label>
-                <div className="vlxColorRow">{TEXT_COLORS.map((color) => <button key={color} type="button" style={{ background: color }} onClick={() => setTextColor(color)} />)}</div>
                 <label>Emoji<input value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="✨" /></label>
                 <label>Location<input value={locationTag} onChange={(e) => setLocationTag(e.target.value)} placeholder="Add location..." /></label>
                 <label>Brightness<input type="range" min="60" max="160" value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} /></label>
@@ -579,12 +519,17 @@ export default function CameraPage() {
 
         <div className="vlxCameraFilters">
           {(['original', 'dream', 'warm', 'cool', 'moody', 'vivid'] as FilterName[]).map((item) => (
-            <button key={item} type="button" className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}><i /><span>{item}</span></button>
+            <button key={item} type="button" className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}>
+              <i />
+              <span>{item}</span>
+            </button>
           ))}
         </div>
 
         <div className="vlxCameraCaptureArea">
-          <button type="button" className="galleryBtn" onClick={() => galleryRef.current?.click()}><span>▣</span><small>Gallery</small></button>
+          <button type="button" className="galleryBtn" onClick={() => galleryRef.current?.click()}>
+            <span>▣</span><small>Gallery</small>
+          </button>
 
           {capturedUrl ? (
             <div className="capturedActions">
@@ -593,16 +538,24 @@ export default function CameraPage() {
               <button type="button" onClick={uploadAndContinue} disabled={busy}>Edit</button>
             </div>
           ) : isVideoMode() ? (
-            <button type="button" className={recording ? 'shutter recording' : 'shutter'} onClick={recording ? stopRecording : startRecording}>{recording ? '■' : '●'}</button>
+            <button type="button" className={recording ? 'shutter recording' : 'shutter'} onClick={recording ? stopRecording : startRecording}>
+              {recording ? '■' : '●'}
+            </button>
           ) : (
             <button type="button" className="shutter" onClick={capturePhoto} disabled={busy}>●</button>
           )}
 
-          <button type="button" className="effectsBtn" onClick={() => setActivePanel('tools')}><span>✦</span><small>Effects</small></button>
+          <button type="button" className="effectsBtn" onClick={() => setActivePanel('tools')}>
+            <span>✦</span><small>Effects</small>
+          </button>
         </div>
 
         <nav className="vlxCameraModes">
-          {(['post', 'reel', 'story', 'live'] as Mode[]).map((item) => <button key={item} type="button" className={mode === item ? 'active' : ''} onClick={() => switchMode(item)}>{item}</button>)}
+          {(['post', 'reel', 'story', 'live'] as Mode[]).map((item) => (
+            <button key={item} type="button" className={mode === item ? 'active' : ''} onClick={() => switchMode(item)}>
+              {item}
+            </button>
+          ))}
         </nav>
       </section>
     </main>
