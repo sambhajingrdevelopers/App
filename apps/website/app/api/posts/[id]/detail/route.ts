@@ -1,105 +1,98 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server"
+
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
 
 const BACKEND_URL =
   process.env.EC2_BACKEND_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://13.206.145.54:8003";
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://13.206.145.54:8003"
 
-function normalizePost(item: any) {
-  const username = String(item?.username || item?.user || item?.owner || '@creator').trim();
-  const finalUsername = username.startsWith('@') ? username : `@${username}`;
-  const mediaUrl = item?.mediaUrl || item?.media_url || item?.imageUrl || item?.image_url || item?.videoUrl || item?.video_url || '';
-  const videoUrl = item?.videoUrl || item?.video_url || '';
-  const mediaType = item?.mediaType || item?.media_type || (videoUrl || String(mediaUrl).match(/\.(mp4|webm|mov)(\?|$)/i) ? 'video' : 'image');
+function proxy(url: any) {
+  const clean = String(url || "").trim()
+  if (!clean) return ""
+  if (clean.startsWith("/api/media/proxy")) return clean
+  if (clean.startsWith("data:")) return clean
+  if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("/media/")) {
+    return `/api/media/proxy?url=${encodeURIComponent(clean)}`
+  }
+  return clean
+}
+
+function normalize(raw: any, fallbackType: "post" | "reel") {
+  const item = raw || {}
+  const usernameRaw = String(item.username || item.user || item.creator || "@creator")
+  const username = usernameRaw.startsWith("@") ? usernameRaw : `@${usernameRaw}`
+  const mediaRaw = item.mediaUrl || item.media_url || item.imageUrl || item.image_url || item.url || ""
+  const videoRaw = item.videoUrl || item.video_url || ""
+  const type = String(item.kind || item.type || fallbackType).toLowerCase()
+  const mediaType = item.mediaType || item.media_type || (type === "reel" || videoRaw ? "video" : "image")
 
   return {
-    id: String(item?.id || item?.contentId || item?.content_id || ''),
-    kind: item?.kind || item?.type || 'post',
-    type: item?.kind || item?.type || 'post',
-    user: finalUsername,
-    username: finalUsername,
-    name: item?.name || finalUsername.replace('@', '') || 'Creator',
-    location: item?.location || 'VibeLoop',
-    title: item?.title || item?.caption || 'Creator Post',
-    caption: item?.caption || '',
-    likes: Number(item?.likes || 0),
-    comments: Number(item?.comments || 0),
-    shares: Number(item?.shares || 0),
-    views: Number(item?.views || 0),
-    color: item?.color || 'pink',
-    mediaUrl,
-    videoUrl,
+    ...item,
+    id: String(item.id || item.contentId || item.postId || item.reelId || ""),
+    kind: type,
+    type,
+    username,
+    user: username,
+    creator: username,
+    name: item.name || username.replace("@", "") || "Creator",
+    title: item.title || item.caption || (type === "reel" ? "Reel" : "Post"),
+    caption: item.caption || item.title || "",
+    location: item.location || "VibeLoop",
     mediaType,
-    liked: Boolean(item?.liked),
-    saved: Boolean(item?.saved),
-    commentList: Array.isArray(item?.commentList) ? item.commentList : [],
-    createdAt: item?.createdAt || item?.created_at || ''
-  };
-}
-
-async function safeJson(response: Response) {
-  const text = await response.text();
-  try {
-    return text ? JSON.parse(text) : {};
-  } catch {
-    return { success: false, message: text || 'Invalid backend JSON' };
+    mediaUrl: proxy(mediaRaw || videoRaw),
+    imageUrl: proxy(mediaRaw),
+    videoUrl: proxy(videoRaw || (mediaType === "video" ? mediaRaw : "")),
+    coverUrl: proxy(item.coverUrl || item.coverImage || ""),
+    likes: Number(item.likes || 0),
+    comments: Number(item.comments || item.commentCount || 0),
+    shares: Number(item.shares || item.shareCount || 0),
+    views: Number(item.views || 0),
+    liked: Boolean(item.liked),
+    saved: Boolean(item.saved)
   }
 }
 
-export async function GET(
-  _request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const params = await context.params;
-    const id = encodeURIComponent(params.id);
+async function readJson(res: Response) {
+  const text = await res.text()
+  try { return text ? JSON.parse(text) : {} } catch { return { success: false, message: text } }
+}
 
+async function getBackend(paths: string[]) {
+  for (const path of paths) {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/posts/${id}/detail`, {
-        cache: 'no-store'
-      });
-      const data = await safeJson(response);
+      const res = await fetch(`${BACKEND_URL}${path}`, { cache: "no-store" })
+      const data = await readJson(res)
+      const raw = data.item || data.post || data.reel || data.story || data.content || data.data
 
-      if (response.ok && data?.success && data?.post) {
-        return NextResponse.json({
-          success: true,
-          source: 'posts-detail',
-          post: normalizePost(data.post),
-          comments: data.comments || data.post?.commentList || []
-        });
+      if (res.ok && data.success !== false && raw) {
+        return { ok: true, data, raw }
       }
     } catch {}
-
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/content/detail?id=${id}`, {
-        cache: 'no-store'
-      });
-      const data = await safeJson(response);
-      const item = data?.item || data?.post || data?.reel || data?.story || data?.content || data?.data;
-
-      if (response.ok && data?.success && item) {
-        return NextResponse.json({
-          success: true,
-          source: 'content-detail',
-          post: normalizePost(item),
-          comments: item.commentList || []
-        });
-      }
-    } catch {}
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Post not found in EC2 real backend.',
-        backend: BACKEND_URL
-      },
-      { status: 404 }
-    );
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, message: error?.message || 'Post detail server error', backend: BACKEND_URL },
-      { status: 500 }
-    );
   }
+
+  return { ok: false, data: {}, raw: null }
+}
+export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params
+
+  const result = await getBackend([
+    `/api/v1/content/detail?id=${encodeURIComponent(id)}`,
+    `/api/v1/posts/${encodeURIComponent(id)}/detail`
+  ])
+
+  if (result.ok) {
+    const post = normalize(result.raw, "post")
+    return NextResponse.json({
+      success: true,
+      post,
+      item: post,
+      comments: Array.isArray(result.data.comments) ? result.data.comments : []
+    })
+  }
+
+  return NextResponse.json({ success: false, message: "Post not found", post: null, comments: [] }, { status: 200 })
 }
