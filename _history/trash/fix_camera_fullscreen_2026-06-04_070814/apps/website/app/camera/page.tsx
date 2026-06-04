@@ -22,16 +22,6 @@ function filterCss(name: FilterName) {
 
 // PHASE_CAMERA_EDITOR_TOOLS
 export default function CameraPage() {
-  // PHASE_CAMERA_FULLSCREEN_BODY_LOCK
-  useEffect(() => {
-    document.documentElement.classList.add('vlxCameraFullscreenRoot')
-    document.body.classList.add('vlxCameraFullscreenBody')
-
-    return () => {
-      document.documentElement.classList.remove('vlxCameraFullscreenRoot')
-      document.body.classList.remove('vlxCameraFullscreenBody')
-    }
-  }, [])
   const router = useRouter()
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
