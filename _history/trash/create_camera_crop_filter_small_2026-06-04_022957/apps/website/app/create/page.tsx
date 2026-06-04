@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
@@ -8,8 +8,6 @@ import { getSessionUser } from '../../lib/sessionUser'
 type CreateType = 'post' | 'reel' | 'story'
 type MediaType = 'image' | 'video'
 type PrivacyType = 'public' | 'followers' | 'private'
-type FilterType = 'normal' | 'vivid' | 'warm' | 'cool' | 'noir' | 'vintage'
-type CropRatio = 'original' | '1:1' | '4:5' | '9:16' | '16:9'
 
 type SessionUser = {
   userId: string
@@ -53,15 +51,6 @@ function normalizeUser(value: string) {
   return clean ? `@${clean}` : ''
 }
 
-function filterCss(name: FilterType, b: number, c: number, sat: number) {
-  const presets: Record<FilterType, string> = {
-    normal: '', vivid: 'contrast(1.12) saturate(1.28)', warm: 'sepia(.18) saturate(1.18) hue-rotate(-8deg)',
-    cool: 'saturate(1.1) hue-rotate(10deg)', noir: 'grayscale(1) contrast(1.16)', vintage: 'sepia(.34) contrast(1.08) saturate(.9)'
-  }
-  return `${presets[name]} brightness(${b}%) contrast(${c}%) saturate(${sat}%)`.trim()
-}
-
-// PHASE3_CAMERA_CROP_FILTER_SMALL
 export default function CreatePage() {
   const [session, setSession] = useState<SessionUser>({
     userId: 'USR-YOU',
@@ -94,22 +83,6 @@ export default function CreatePage() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [createdId, setCreatedId] = useState('')
-  const [cameraOpen, setCameraOpen] = useState(false)
-  const [recording, setRecording] = useState(false)
-  const [filterName, setFilterName] = useState<FilterType>('normal')
-  const [cropRatio, setCropRatio] = useState<CropRatio>('original')
-  const [zoom, setZoom] = useState(1)
-  const [cropX, setCropX] = useState(0)
-  const [cropY, setCropY] = useState(0)
-  const [brightness, setBrightness] = useState(100)
-  const [contrast, setContrast] = useState(100)
-  const [saturation, setSaturation] = useState(100)
-  const [trimStart, setTrimStart] = useState('')
-  const [trimEnd, setTrimEnd] = useState('')
-  const camRef = useRef<HTMLVideoElement | null>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const recRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
 
   useEffect(() => {
     async function loadSession() {
@@ -135,9 +108,6 @@ export default function CreatePage() {
   }, [])
 
   const previewUrl = useMemo(() => videoUrl || mediaUrl, [videoUrl, mediaUrl])
-  const editFilter = useMemo(() => filterCss(filterName, brightness, contrast, saturation), [filterName, brightness, contrast, saturation])
-  const editTransform = useMemo(() => `translate(${cropX}px, ${cropY}px) scale(${zoom})`, [cropX, cropY, zoom])
-  const cropClass = `crop-${cropRatio.replace(':', '-')}`
 
   const hashtagList = useMemo(() => {
     const manual = splitSmart(hashtags).map(normalizeHash).filter(Boolean)
@@ -179,108 +149,6 @@ export default function CreatePage() {
     setCreatedId('')
     setMessage('')
     setMediaType(nextType === 'reel' ? 'video' : detectMediaType(previewUrl, nextType))
-    if (nextType === 'reel' || nextType === 'story') setCropRatio('9:16')
-  }
-
-  function stopCamera() {
-    streamRef.current?.getTracks().forEach((track) => track.stop())
-    streamRef.current = null
-    setCameraOpen(false)
-    setRecording(false)
-  }
-
-  async function startCamera(video = false) {
-    try {
-      stopCamera()
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: video })
-      streamRef.current = stream
-      setCameraOpen(true)
-      setTimeout(() => {
-        if (camRef.current) { camRef.current.srcObject = stream; camRef.current.play().catch(() => undefined) }
-      }, 80)
-    } catch (e: any) { setMessage(e?.message || 'Camera permission failed') }
-  }
-
-  async function uploadBlob(blob: Blob, fileName: string) {
-    const formData = new FormData()
-    formData.append('file', new File([blob], fileName, { type: blob.type }))
-    const res = await fetch('/api/content/upload', { method: 'POST', body: formData })
-    const data = await res.json()
-    if (!res.ok || !data.success) throw new Error(data.message || 'Upload failed')
-    return data
-  }
-
-  async function capturePhoto() {
-    const video = camRef.current
-    if (!video) return
-    setUploading(true)
-    try {
-      const canvas = document.createElement('canvas')
-      canvas.width = video.videoWidth || 1080
-      canvas.height = video.videoHeight || 1920
-      const ctx = canvas.getContext('2d')!
-      ctx.filter = editFilter || 'none'
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-      const blob = await new Promise<Blob>((ok, bad) => canvas.toBlob((b) => b ? ok(b) : bad(new Error('Capture failed')), 'image/jpeg', .92))
-      const data = await uploadBlob(blob, `camera-${Date.now()}.jpg`)
-      setMediaUrl(data.mediaUrl || data.url || '')
-      setVideoUrl('')
-      setMediaType('image')
-      setSelectedFileName('Camera photo')
-      setMessage('Camera photo captured. Crop/filter ready.')
-      stopCamera()
-    } catch (e: any) { setMessage(e?.message || 'Photo capture failed') } finally { setUploading(false) }
-  }
-
-  function startRecording() {
-    const stream = streamRef.current
-    if (!stream || typeof MediaRecorder === 'undefined') return setMessage('Recording not supported')
-    chunksRef.current = []
-    const rec = new MediaRecorder(stream)
-    recRef.current = rec
-    rec.ondataavailable = (e) => { if (e.data.size) chunksRef.current.push(e.data) }
-    rec.onstop = async () => {
-      setUploading(true)
-      try {
-        const blob = new Blob(chunksRef.current, { type: 'video/webm' })
-        const data = await uploadBlob(blob, `camera-${Date.now()}.webm`)
-        setMediaUrl(data.mediaUrl || data.url || '')
-        setVideoUrl(data.videoUrl || data.mediaUrl || data.url || '')
-        setMediaType('video')
-        setSelectedFileName('Camera video')
-        setMessage('Camera video uploaded. Trim/filter metadata ready.')
-        stopCamera()
-      } catch (e: any) { setMessage(e?.message || 'Video upload failed') } finally { setUploading(false) }
-    }
-    rec.start()
-    setRecording(true)
-  }
-
-  function stopRecording() { recRef.current?.stop(); setRecording(false) }
-
-  async function applyImageEditor() {
-    if (!previewUrl || mediaType !== 'image') return setMessage('Crop/filter apply works for images. Video settings save as metadata.')
-    setUploading(true)
-    try {
-      const image = new Image()
-      image.crossOrigin = 'anonymous'
-      image.src = previewUrl
-      await new Promise((ok, bad) => { image.onload = ok; image.onerror = bad })
-      const canvas = document.createElement('canvas')
-      canvas.width = 1080
-      canvas.height = cropRatio === '9:16' ? 1920 : cropRatio === '4:5' ? 1350 : cropRatio === '16:9' ? 608 : 1080
-      const ctx = canvas.getContext('2d')!
-      ctx.fillStyle = '#05050a'; ctx.fillRect(0,0,canvas.width,canvas.height)
-      ctx.filter = editFilter || 'none'
-      const scale = Math.max(canvas.width / image.width, canvas.height / image.height) * zoom
-      const w = image.width * scale, h = image.height * scale
-      ctx.drawImage(image, (canvas.width - w) / 2 + cropX, (canvas.height - h) / 2 + cropY, w, h)
-      const blob = await new Promise<Blob>((ok, bad) => canvas.toBlob((b) => b ? ok(b) : bad(new Error('Edit failed')), 'image/jpeg', .92))
-      const data = await uploadBlob(blob, `edited-${Date.now()}.jpg`)
-      setMediaUrl(data.mediaUrl || data.url || '')
-      setVideoUrl('')
-      setMessage('Crop/filter applied and uploaded.')
-    } catch (e: any) { setMessage(e?.message || 'Apply edit failed') } finally { setUploading(false) }
   }
 
   async function handleFileUpload(event: ChangeEvent<HTMLInputElement>) {
@@ -396,7 +264,6 @@ export default function CreatePage() {
         shareToFeed: type === 'reel' ? shareToFeed : true,
         status: saveAsDraft ? 'draft' : 'published',
         isDraft: saveAsDraft,
-        editorSettings: { cropRatio, zoom, cropX, cropY, filterName, brightness, contrast, saturation, trimStart, trimEnd },
         likes: 0,
         comments: 0,
         views: 0
@@ -478,23 +345,10 @@ export default function CreatePage() {
                     accept={type === 'reel' ? 'video/*' : 'image/*,video/*'}
                     onChange={handleFileUpload}
                   />
-                  <div className="vlxPhase3CameraBtns">
-                    <button type="button" onClick={() => startCamera(false)}>📷 Camera</button>
-                    <button type="button" onClick={() => startCamera(true)}>🎥 Record</button>
-                  </div>
+
                   {selectedFileName && <small>Selected: {selectedFileName}</small>}
                   {uploading && <small>Uploading media...</small>}
                 </div>
-                {cameraOpen && (
-                  <section className="vlxPhase3CameraPanel">
-                    <video ref={camRef} muted playsInline autoPlay />
-                    <div>
-                      <button type="button" onClick={capturePhoto}>Capture photo</button>
-                      {recording ? <button type="button" onClick={stopRecording}>Stop video</button> : <button type="button" onClick={startRecording}>Start video</button>}
-                      <button type="button" onClick={stopCamera}>Close</button>
-                    </div>
-                  </section>
-                )}
 
                 <label>
                   Or paste media URL
@@ -509,27 +363,15 @@ export default function CreatePage() {
                   <section className={`vlxCreatePreview ${type === 'reel' ? 'reelPreview' : ''}`}>
                     <h2>Live Preview</h2>
 
-                    <div className={`vlxPhase3Preview ${cropClass}`}>
+                    <div>
                       {mediaType === 'video' ? (
-                        <video src={previewUrl} controls playsInline loop muted style={{ filter: editFilter }} />
+                        <video src={previewUrl} controls playsInline loop muted />
                       ) : validPreview(previewUrl) ? (
-                        <img src={previewUrl} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
+                        <img src={previewUrl} alt="Preview" />
                       ) : (
                         <span>Invalid preview URL</span>
                       )}
                     </div>
-                    <section className="vlxPhase3Tools">
-                      <label>Crop ratio<select value={cropRatio} onChange={(e) => setCropRatio(e.target.value as CropRatio)}><option value="original">Original</option><option value="1:1">1:1</option><option value="4:5">4:5</option><option value="9:16">9:16</option><option value="16:9">16:9</option></select></label>
-                      <label>Filter<select value={filterName} onChange={(e) => setFilterName(e.target.value as FilterType)}><option value="normal">Normal</option><option value="vivid">Vivid</option><option value="warm">Warm</option><option value="cool">Cool</option><option value="noir">Noir</option><option value="vintage">Vintage</option></select></label>
-                      <label>Zoom<input type="range" min="1" max="2" step="0.05" value={zoom} onChange={(e) => setZoom(Number(e.target.value))} /></label>
-                      <label>Crop X<input type="range" min="-90" max="90" value={cropX} onChange={(e) => setCropX(Number(e.target.value))} /></label>
-                      <label>Crop Y<input type="range" min="-90" max="90" value={cropY} onChange={(e) => setCropY(Number(e.target.value))} /></label>
-                      <label>Brightness<input type="range" min="60" max="160" value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} /></label>
-                      <label>Contrast<input type="range" min="60" max="160" value={contrast} onChange={(e) => setContrast(Number(e.target.value))} /></label>
-                      <label>Saturation<input type="range" min="40" max="180" value={saturation} onChange={(e) => setSaturation(Number(e.target.value))} /></label>
-                      {mediaType === 'video' && <div className="vlxCreateTwoCol"><label>Trim start<input value={trimStart} onChange={(e) => setTrimStart(e.target.value)} placeholder="0:00" /></label><label>Trim end<input value={trimEnd} onChange={(e) => setTrimEnd(e.target.value)} placeholder="0:30" /></label></div>}
-                      <button type="button" onClick={applyImageEditor}>Apply crop/filter</button>
-                    </section>
                   </section>
                 )}
               </div>
