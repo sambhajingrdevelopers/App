@@ -75,7 +75,6 @@ function filterCss(name: FilterType, b: number, c: number, sat: number) {
 
 // PHASE3_CAMERA_CROP_FILTER_SMALL
 // PHASE4_STEP_MEDIA_FIX
-// PHASE_NATIVE_MOBILE_CAMERA_FLOW
 export default function CreatePage() {
   const [session, setSession] = useState<SessionUser>({
     userId: 'USR-YOU',
@@ -108,8 +107,6 @@ export default function CreatePage() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [createdId, setCreatedId] = useState('')
-  const nativePhotoInputRef = useRef<HTMLInputElement | null>(null)
-  const nativeVideoInputRef = useRef<HTMLInputElement | null>(null)
   const [createStep, setCreateStep] = useState<CreateStep>('upload')
   const [cameraOpen, setCameraOpen] = useState(false)
   const [recording, setRecording] = useState(false)
@@ -199,49 +196,7 @@ export default function CreatePage() {
     }
   }, [])
 
-  // PHASE_NATIVE_CAMERA_QUERY_AUTO_OPEN
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const shouldOpenCamera = params.get('camera') === '1' || params.get('native') === '1'
-    if (!shouldOpenCamera) return
-
-    const requestedType = params.get('type')
-    if (requestedType === 'reel') {
-      setType('reel')
-      setMediaType('video')
-    }
-
-    // Browser may block auto-open on some phones. Button remains visible if blocked.
-    setTimeout(() => {
-      if (requestedType === 'reel' || params.get('record') === '1') {
-        nativeVideoInputRef.current?.click()
-      } else {
-        nativePhotoInputRef.current?.click()
-      }
-    }, 500)
-  }, [])
-
   const publishLabel = saveAsDraft ? `Save ${type} draft` : `Publish ${type}`
-
-
-  // PHASE_NATIVE_MOBILE_CAMERA_FLOW
-  function openNativeMobileCamera(recordVideo = false) {
-    setMessage('')
-    if (recordVideo) {
-      setType('reel')
-      setMediaType('video')
-      nativeVideoInputRef.current?.click()
-      return
-    }
-
-    nativePhotoInputRef.current?.click()
-  }
-
-  function openNativeMobileVideo() {
-    setType('reel')
-    setMediaType('video')
-    nativeVideoInputRef.current?.click()
-  }
 
   function switchType(nextType: CreateType) {
     setType(nextType)
@@ -511,8 +466,7 @@ export default function CreatePage() {
 
             {/* PHASE_CAMERA_CREATE_TOP_LINK */}
             <div className="vlxCreateHeaderActions">
-              <button className="vlxCreateNativeTopCamera" type="button" onClick={() => openNativeMobileCamera(false)}>📷 Camera</button>
-              <button className="vlxCreateNativeTopCamera video" type="button" onClick={openNativeMobileVideo}>🎥 Reel</button>
+              <a className="vlxCreateCameraTop" href="/create?camera=1&type=post">📷 Camera</a>
               <a href="/home">Home</a>
             </div>
           </header>
@@ -554,29 +508,6 @@ export default function CreatePage() {
                         ? 'Choose MP4/WebM video. It will appear in full-screen reels.'
                         : 'Choose image/video or paste a media URL.'}
                     </p>
-                  </div>
-
-                  <input
-                    ref={nativePhotoInputRef}
-                    className="vlxNativeCameraHidden"
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleFileUpload}
-                  />
-
-                  <input
-                    ref={nativeVideoInputRef}
-                    className="vlxNativeCameraHidden"
-                    type="file"
-                    accept="video/*"
-                    capture="environment"
-                    onChange={handleFileUpload}
-                  />
-
-                  <div className="vlxNativeCameraDirect">
-                    <button type="button" onClick={() => openNativeMobileCamera(false)}>📷 Open Mobile Camera</button>
-                    <button type="button" onClick={openNativeMobileVideo}>🎥 Record Reel Video</button>
                   </div>
 
                   <input

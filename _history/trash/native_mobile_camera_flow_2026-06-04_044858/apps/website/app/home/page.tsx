@@ -457,7 +457,7 @@ export default function DynamicHomePage() {
               <span>+</span>
               <small>Create</small>
             </a>
-            <a className="dynHomeStory camera" href="/create?camera=1&type=post&native=1" aria-label="Open camera">
+            <a className="dynHomeStory camera" href="/create?camera=1&type=post" aria-label="Open camera">
               <span>📷</span>
               <small>Camera</small>
             </a>
