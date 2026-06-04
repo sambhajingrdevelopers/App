@@ -3,73 +3,80 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-type CameraMode = 'post' | 'reel' | 'story'
-type FilterName = 'normal' | 'vivid' | 'warm' | 'cool' | 'noir' | 'vintage'
-type CropRatio = '9:16' | '1:1' | '4:5' | '16:9'
+type Mode = 'post' | 'reel' | 'story' | 'live'
+type FilterName = 'original' | 'dream' | 'warm' | 'cool' | 'moody' | 'vivid'
+type Ratio = '9:16' | '1:1' | '4:5' | '16:9'
 
-function filterCss(name: FilterName) {
-  const map: Record<FilterName, string> = {
-    normal: 'none',
-    vivid: 'contrast(1.12) saturate(1.35)',
+function getFilter(name: FilterName, brightness: number, contrast: number, saturation: number) {
+  const base: Record<FilterName, string> = {
+    original: '',
+    dream: 'contrast(1.05) saturate(1.28) hue-rotate(8deg)',
     warm: 'sepia(.18) saturate(1.18) hue-rotate(-8deg)',
-    cool: 'saturate(1.12) hue-rotate(12deg)',
-    noir: 'grayscale(1) contrast(1.2)',
-    vintage: 'sepia(.35) contrast(1.08) saturate(.9)'
+    cool: 'saturate(1.14) hue-rotate(14deg)',
+    moody: 'contrast(1.18) saturate(.82) brightness(.9)',
+    vivid: 'contrast(1.15) saturate(1.45)'
   }
 
-  return map[name]
+  return `${base[name]} brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`.trim()
 }
 
-// PHASE_CAMERA_EDITOR_TOOLS
 export default function CameraPage() {
-  // PHASE_CAMERA_FULLSCREEN_BODY_LOCK
-  useEffect(() => {
-    document.documentElement.classList.add('vlxCameraFullscreenRoot')
-    document.body.classList.add('vlxCameraFullscreenBody')
-
-    return () => {
-      document.documentElement.classList.remove('vlxCameraFullscreenRoot')
-      document.body.classList.remove('vlxCameraFullscreenBody')
-    }
-  }, [])
   const router = useRouter()
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
+  const galleryRef = useRef<HTMLInputElement | null>(null)
 
-  const [mode, setMode] = useState<CameraMode>('post')
-  const [filter, setFilter] = useState<FilterName>('normal')
-  const [overlayText, setOverlayText] = useState('')
-  const [emoji, setEmoji] = useState('✨')
+  const [mode, setMode] = useState<Mode>('post')
+  const [filter, setFilter] = useState<FilterName>('original')
+  const [ratio, setRatio] = useState<Ratio>('9:16')
+  const [showTools, setShowTools] = useState(false)
   const [recording, setRecording] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
-  const [toolsOpen, setToolsOpen] = useState(false)
+
+  const [overlayText, setOverlayText] = useState('')
+  const [emoji, setEmoji] = useState('✨')
   const [locationTag, setLocationTag] = useState('')
   const [musicTitle, setMusicTitle] = useState('')
   const [audioUrl, setAudioUrl] = useState('')
-  const [cropRatio, setCropRatio] = useState<CropRatio>('9:16')
+
   const [brightness, setBrightness] = useState(100)
   const [contrast, setContrast] = useState(100)
   const [saturation, setSaturation] = useState(100)
+
   const [capturedUrl, setCapturedUrl] = useState('')
   const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null)
   const [capturedType, setCapturedType] = useState<'image' | 'video'>('image')
 
-  const isVideoMode = mode === 'reel'
-  const liveFilter = useMemo(() => `${filterCss(filter)} brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`, [filter, brightness, contrast, saturation])
+  const liveFilter = useMemo(
+    () => getFilter(filter, brightness, contrast, saturation),
+    [filter, brightness, contrast, saturation]
+  )
+
+  function isVideoMode(nextMode = mode) {
+    return nextMode === 'reel' || nextMode === 'live'
+  }
+
+  function stopCamera(clear = false) {
+    streamRef.current?.getTracks().forEach((track) => track.stop())
+    streamRef.current = null
+
+    if (clear && videoRef.current) {
+      videoRef.current.srcObject = null
+    }
+  }
 
   async function openCamera(nextMode = mode) {
     try {
-      stopCamera(false)
+      stopCamera()
       setMessage('')
-      const videoMode = nextMode === 'reel'
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
-        audio: videoMode
+        audio: isVideoMode(nextMode)
       })
 
       streamRef.current = stream
@@ -85,29 +92,35 @@ export default function CameraPage() {
     }
   }
 
-  function stopCamera(clear = true) {
-    streamRef.current?.getTracks().forEach((track) => track.stop())
-    streamRef.current = null
-
-    if (clear && videoRef.current) {
-      videoRef.current.srcObject = null
-    }
-  }
-
   useEffect(() => {
+    document.documentElement.classList.add('vlxCameraStudioRoot')
+    document.body.classList.add('vlxCameraStudioBody')
+
     const query = new URLSearchParams(window.location.search)
-    const requestedType = query.get('type')
-    const nextMode: CameraMode =
-      requestedType === 'reel' || requestedType === 'story' || requestedType === 'post'
-        ? requestedType
+    const requested = query.get('type')
+    const nextMode: Mode =
+      requested === 'reel' || requested === 'story' || requested === 'live' || requested === 'post'
+        ? requested
         : 'post'
 
     setMode(nextMode)
-    setCapturedType(nextMode === 'reel' ? 'video' : 'image')
+    setCapturedType(isVideoMode(nextMode) ? 'video' : 'image')
     openCamera(nextMode)
 
-    return () => stopCamera()
+    return () => {
+      stopCamera(true)
+      document.documentElement.classList.remove('vlxCameraStudioRoot')
+      document.body.classList.remove('vlxCameraStudioBody')
+    }
   }, [])
+
+  function switchMode(next: Mode) {
+    setMode(next)
+    setCapturedUrl('')
+    setCapturedBlob(null)
+    setCapturedType(isVideoMode(next) ? 'video' : 'image')
+    openCamera(next)
+  }
 
   async function capturePhoto() {
     const video = videoRef.current
@@ -124,43 +137,38 @@ export default function CameraPage() {
       const ctx = canvas.getContext('2d')
       if (!ctx) throw new Error('Canvas not supported.')
 
-      ctx.filter = liveFilter
+      ctx.filter = liveFilter || 'none'
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-      if (overlayText.trim()) {
-        ctx.filter = 'none'
-        ctx.font = 'bold 72px sans-serif'
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'white'
-        ctx.shadowColor = 'rgba(0,0,0,.65)'
-        ctx.shadowBlur = 18
-        ctx.fillText(overlayText.trim(), canvas.width / 2, canvas.height - 180)
-      }
+      ctx.filter = 'none'
+      ctx.textAlign = 'center'
+      ctx.shadowColor = 'rgba(0,0,0,.75)'
+      ctx.shadowBlur = 18
 
       if (emoji.trim()) {
-        ctx.filter = 'none'
         ctx.font = '110px sans-serif'
-        ctx.textAlign = 'center'
-        ctx.fillText(emoji.trim(), canvas.width / 2, 160)
+        ctx.fillStyle = 'white'
+        ctx.fillText(emoji.trim(), canvas.width / 2, 150)
+      }
+
+      if (overlayText.trim()) {
+        ctx.font = 'bold 74px sans-serif'
+        ctx.fillStyle = 'white'
+        ctx.fillText(overlayText.trim(), canvas.width / 2, canvas.height - 220)
       }
 
       if (locationTag.trim()) {
-        ctx.filter = 'none'
-        ctx.font = 'bold 52px sans-serif'
-        ctx.textAlign = 'center'
+        ctx.font = 'bold 48px sans-serif'
         ctx.fillStyle = 'white'
-        ctx.shadowColor = 'rgba(0,0,0,.75)'
-        ctx.shadowBlur = 16
-        ctx.fillText(`📍 ${locationTag.trim()}`, canvas.width / 2, canvas.height - 270)
+        ctx.fillText(`📍 ${locationTag.trim()}`, canvas.width / 2, canvas.height - 130)
       }
 
       const blob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((file) => file ? resolve(file) : reject(new Error('Capture failed.')), 'image/jpeg', 0.92)
       })
 
-      const localUrl = URL.createObjectURL(blob)
       setCapturedBlob(blob)
-      setCapturedUrl(localUrl)
+      setCapturedUrl(URL.createObjectURL(blob))
       setCapturedType('image')
       setMessage('Photo captured. Save or continue to edit.')
     } catch (error: any) {
@@ -172,13 +180,13 @@ export default function CameraPage() {
 
   function startRecording() {
     const stream = streamRef.current
+
     if (!stream || typeof MediaRecorder === 'undefined') {
       setMessage('Video recording not supported in this browser.')
       return
     }
 
     chunksRef.current = []
-
     const recorder = new MediaRecorder(stream)
     recorderRef.current = recorder
 
@@ -188,9 +196,8 @@ export default function CameraPage() {
 
     recorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: 'video/webm' })
-      const localUrl = URL.createObjectURL(blob)
       setCapturedBlob(blob)
-      setCapturedUrl(localUrl)
+      setCapturedUrl(URL.createObjectURL(blob))
       setCapturedType('video')
       setRecording(false)
       setMessage('Video recorded. Save or continue to edit.')
@@ -213,17 +220,17 @@ export default function CameraPage() {
 
     const link = document.createElement('a')
     link.href = capturedUrl
-    link.download = capturedType === 'video' ? `vibeloop-${Date.now()}.webm` : `vibeloop-${Date.now()}.jpg`
+    link.download = capturedType === 'video' ? `vibeloop-video-${Date.now()}.webm` : `vibeloop-photo-${Date.now()}.jpg`
     document.body.appendChild(link)
     link.click()
     link.remove()
 
-    setMessage('Saved to phone downloads. Gallery auto-save needs native Android app.')
+    setMessage('Saved to downloads. Direct gallery save needs Android app.')
   }
 
-  async function continueToEditor() {
+  async function uploadAndContinue() {
     if (!capturedBlob) {
-      setMessage('Capture photo/video first.')
+      setMessage('Capture or select media first.')
       return
     }
 
@@ -251,7 +258,17 @@ export default function CameraPage() {
       const videoUrl = capturedType === 'video' ? (data.videoUrl || mediaUrl) : ''
       const finalMode = capturedType === 'video' ? 'reel' : mode
 
-      const url = `/create?type=${encodeURIComponent(finalMode)}&fromCamera=1&mediaType=${capturedType}&mediaUrl=${encodeURIComponent(mediaUrl)}&videoUrl=${encodeURIComponent(videoUrl)}&location=${encodeURIComponent(locationTag)}&musicTitle=${encodeURIComponent(musicTitle)}&audioUrl=${encodeURIComponent(audioUrl)}&cropRatio=${encodeURIComponent(cropRatio)}`
+      const url =
+        `/create?type=${encodeURIComponent(finalMode)}` +
+        `&fromCamera=1` +
+        `&mediaType=${encodeURIComponent(capturedType)}` +
+        `&mediaUrl=${encodeURIComponent(mediaUrl)}` +
+        `&videoUrl=${encodeURIComponent(videoUrl)}` +
+        `&location=${encodeURIComponent(locationTag)}` +
+        `&musicTitle=${encodeURIComponent(musicTitle)}` +
+        `&audioUrl=${encodeURIComponent(audioUrl)}` +
+        `&cropRatio=${encodeURIComponent(ratio)}`
+
       router.push(url)
     } catch (error: any) {
       setMessage(error?.message || 'Could not continue.')
@@ -260,84 +277,112 @@ export default function CameraPage() {
     }
   }
 
-  function changeMode(next: CameraMode) {
-    setMode(next)
-    setCapturedBlob(null)
-    setCapturedUrl('')
-    setCapturedType(next === 'reel' ? 'video' : 'image')
-    openCamera(next)
+  async function handleGallery(fileList: FileList | null) {
+    const file = fileList?.[0]
+    if (!file) return
+
+    const isVideo = file.type.startsWith('video/')
+    setCapturedBlob(file)
+    setCapturedUrl(URL.createObjectURL(file))
+    setCapturedType(isVideo ? 'video' : 'image')
+    setMode(isVideo ? 'reel' : mode)
+    setMessage('Gallery media ready. Save or continue to edit.')
   }
 
   return (
-    <main className="vlxSnapCameraPage">
-      <section className="vlxSnapCameraView">
+    <main className="vlxCameraStudio">
+      <input
+        ref={galleryRef}
+        className="vlxCameraHiddenInput"
+        type="file"
+        accept="image/*,video/*"
+        onChange={(event) => handleGallery(event.target.files)}
+      />
+
+      <section className="vlxCameraStage">
         {capturedUrl ? (
           capturedType === 'video' ? (
-            <video src={capturedUrl} controls playsInline className="vlxSnapCameraMedia" />
+            <video src={capturedUrl} controls playsInline className="vlxCameraMedia" />
           ) : (
-            <img src={capturedUrl} alt="Captured" className="vlxSnapCameraMedia" />
+            <img src={capturedUrl} alt="Captured" className="vlxCameraMedia" />
           )
         ) : (
-          <video ref={videoRef} muted playsInline autoPlay className="vlxSnapCameraMedia" style={{ filter: liveFilter }} />
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            autoPlay
+            className="vlxCameraMedia"
+            style={{ filter: liveFilter }}
+          />
         )}
 
         {!capturedUrl && (
-          <div className="vlxSnapOverlay">
+          <div className="vlxCameraOverlay">
             {emoji && <span>{emoji}</span>}
             {overlayText && <b>{overlayText}</b>}
+            {locationTag && <em>📍 {locationTag}</em>}
           </div>
         )}
 
-        <header className="vlxSnapTop">
-          <button type="button" onClick={() => router.push('/home')}>‹</button>
-          <strong>Camera</strong>
+        <header className="vlxCameraTop">
+          <button type="button" onClick={() => router.push('/home')}>×</button>
+          <button type="button" className="musicPill" onClick={() => setShowTools(true)}>♪ Add music</button>
           <button type="button" onClick={() => openCamera(mode)}>↻</button>
         </header>
 
-        <div className="vlxSnapModes">
-          <button className={mode === 'post' ? 'active' : ''} onClick={() => changeMode('post')}>Post</button>
-          <button className={mode === 'reel' ? 'active' : ''} onClick={() => changeMode('reel')}>Reel</button>
-          <button className={mode === 'story' ? 'active' : ''} onClick={() => changeMode('story')}>Story</button>
-        </div>
+        <aside className="vlxCameraLeftTools">
+          <button type="button" onClick={() => setShowTools(true)}><b>T</b><span>Text</span></button>
+          <button type="button" onClick={() => setShowTools(true)}><b>☺</b><span>Sticker</span></button>
+          <button type="button" onClick={() => setShowTools(true)}><b>⌖</b><span>Location</span></button>
+          <button type="button" onClick={() => setShowTools(true)}><b>♫</b><span>Music</span></button>
+          <button type="button" onClick={() => setShowTools(true)}><b>🎙</b><span>Voice</span></button>
+          <button type="button" onClick={() => setShowTools(true)}><b>⌗</b><span>Crop</span></button>
+          <button type="button" onClick={() => setShowTools(true)}><b>✦</b><span>Adjust</span></button>
+        </aside>
 
-        <div className="vlxSnapFilters">
-          {(['normal','vivid','warm','cool','noir','vintage'] as FilterName[]).map((item) => (
-            <button key={item} className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}>
-              {item}
-            </button>
-          ))}
-        </div>
+        <aside className="vlxCameraRightTools">
+          <button type="button"><b>1x</b><span>Speed</span></button>
+          <button type="button" onClick={() => setFilter('dream')}><b>✧</b><span>Beauty</span></button>
+          <button type="button"><b>◷</b><span>Timer</span></button>
+        </aside>
 
-        <div className="vlxSnapInputs">
-          <input value={overlayText} onChange={(e) => setOverlayText(e.target.value)} placeholder="Add text..." />
-          <input value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="Emoji" />
-        </div>
+        {showTools && (
+          <section className="vlxCameraToolSheet">
+            <div className="sheetHead">
+              <b>Edit tools</b>
+              <button type="button" onClick={() => setShowTools(false)}>Done</button>
+            </div>
 
-        <button type="button" className="vlxSnapToolsToggle" onClick={() => setToolsOpen((v) => !v)}>
-          ✨ Edit tools
-        </button>
-
-        {toolsOpen && (
-          <section className="vlxSnapToolsPanel">
             <label>
-              📍 Location
+              Text
+              <input value={overlayText} onChange={(e) => setOverlayText(e.target.value)} placeholder="Add text..." />
+            </label>
+
+            <label>
+              Emoji / Sticker
+              <input value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="✨" />
+            </label>
+
+            <label>
+              Location
               <input value={locationTag} onChange={(e) => setLocationTag(e.target.value)} placeholder="Add location..." />
             </label>
 
             <label>
-              🎵 Music title
-              <input value={musicTitle} onChange={(e) => setMusicTitle(e.target.value)} placeholder="Song / audio name..." />
+              Music title
+              <input value={musicTitle} onChange={(e) => setMusicTitle(e.target.value)} placeholder="Song name..." />
             </label>
 
             <label>
-              🎙 Voice / audio URL
+              Voice / audio URL
               <input value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} placeholder="Paste audio URL..." />
             </label>
 
             <label>
-              Crop
-              <select value={cropRatio} onChange={(e) => setCropRatio(e.target.value as CropRatio)}>
-                <option value="9:16">9:16 Story/Reel</option>
+              Crop ratio
+              <select value={ratio} onChange={(e) => setRatio(e.target.value as Ratio)}>
+                <option value="9:16">9:16 Reel / Story</option>
                 <option value="1:1">1:1 Square</option>
                 <option value="4:5">4:5 Post</option>
                 <option value="16:9">16:9 Wide</option>
@@ -361,25 +406,60 @@ export default function CameraPage() {
           </section>
         )}
 
-        <div className="vlxSnapCaptureBar">
-          {capturedUrl ? (
-            <>
-              <button type="button" onClick={() => { setCapturedUrl(''); setCapturedBlob(null); openCamera(mode) }}>Retake</button>
-              <button type="button" onClick={saveToPhone}>Save</button>
-              <button type="button" onClick={continueToEditor} disabled={busy}>Edit</button>
-            </>
-          ) : isVideoMode ? (
-            <>
-              <button type="button" onClick={recording ? stopRecording : startRecording} className={recording ? 'recording' : ''}>
-                {recording ? 'Stop' : 'Record'}
-              </button>
-            </>
-          ) : (
-            <button type="button" onClick={capturePhoto} disabled={busy} className="shutter">●</button>
-          )}
+        {message && <p className="vlxCameraMessage">{message}</p>}
+
+        <div className="vlxCameraFilters">
+          {(['original', 'dream', 'warm', 'cool', 'moody', 'vivid'] as FilterName[]).map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={filter === item ? 'active' : ''}
+              onClick={() => setFilter(item)}
+            >
+              <i />
+              <span>{item}</span>
+            </button>
+          ))}
         </div>
 
-        {message && <p className="vlxSnapMessage">{message}</p>}
+        <div className="vlxCameraCaptureArea">
+          <button type="button" className="galleryBtn" onClick={() => galleryRef.current?.click()}>
+            <span>▣</span>
+            <small>Gallery</small>
+          </button>
+
+          {capturedUrl ? (
+            <div className="capturedActions">
+              <button type="button" onClick={() => { setCapturedUrl(''); setCapturedBlob(null); openCamera(mode) }}>Retake</button>
+              <button type="button" onClick={saveToPhone}>Save</button>
+              <button type="button" onClick={uploadAndContinue} disabled={busy}>Edit</button>
+            </div>
+          ) : isVideoMode() ? (
+            <button type="button" className={recording ? 'shutter recording' : 'shutter'} onClick={recording ? stopRecording : startRecording}>
+              {recording ? '■' : '●'}
+            </button>
+          ) : (
+            <button type="button" className="shutter" onClick={capturePhoto} disabled={busy}>●</button>
+          )}
+
+          <button type="button" className="effectsBtn" onClick={() => setShowTools(true)}>
+            <span>✦</span>
+            <small>Effects</small>
+          </button>
+        </div>
+
+        <nav className="vlxCameraModes">
+          {(['post', 'reel', 'story', 'live'] as Mode[]).map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={mode === item ? 'active' : ''}
+              onClick={() => switchMode(item)}
+            >
+              {item}
+            </button>
+          ))}
+        </nav>
       </section>
     </main>
   )
