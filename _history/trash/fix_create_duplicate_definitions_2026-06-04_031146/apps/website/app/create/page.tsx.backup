@@ -36,6 +36,17 @@ function displayMediaUrl(url: string) {
   return clean
 }
 
+function displayMediaUrl(url: string) {
+  const clean = String(url || '').trim()
+  if (!clean) return ''
+  if (clean.startsWith('data:')) return clean
+  if (clean.startsWith('/api/media/proxy')) return clean
+  if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('/media/')) {
+    return `/api/media/proxy?url=${encodeURIComponent(clean)}`
+  }
+  return clean
+}
+
 function validPreview(url: string) {
   const clean = String(url || '').trim()
   return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
