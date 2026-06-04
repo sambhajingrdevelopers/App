@@ -30592,15 +30592,3 @@ body:has(.realMsgRoot) {
     font-size: 13px !important;
   }
 }
-
-
-/* BOTTOM_NAV_CAMERA_REPLACE_FIX */
-.vlxHomeFloatingCamera {
-  display: none !important;
-}
-
-/* Make bottom center camera feel like action button */
-a[href="/camera?type=post"],
-button[href="/camera?type=post"] {
-  text-decoration: none;
-}

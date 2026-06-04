@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useSearchParams } from 'next/navigation'
 
-
 function AuthGuard({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
@@ -55,7 +54,7 @@ async function getSessionUser() {
 
 type Item = {
   id: string
-  kind?: string
+  kind: string
   title?: string
   caption?: string
   mediaUrl?: string
@@ -68,7 +67,7 @@ type Item = {
 type Profile = {
   name: string
   username: string
-  bio?: string
+  bio: string
   location?: string
   avatarUrl?: string
   coverUrl?: string
@@ -77,32 +76,27 @@ type Profile = {
   following: number
   isFollowing: boolean
   isOwner: boolean
-  counts: {
-    posts: number
-    reels: number
-    stories: number
-  }
+  counts: { posts: number; reels: number; stories: number }
 }
 
-function cleanUsername(value?: string | null) {
-  const text = String(value || '').trim()
-  if (!text) return '@creator'
-  return text.startsWith('@') ? text : `@${text}`
+function cleanUsername(v?: string | null) {
+  const t = String(v || '').trim()
+  return t ? (t.startsWith('@') ? t : `@${t}`) : '@creator'
 }
 
-function firstLetter(value?: string) {
-  return String(value || 'U').replace('@', '').slice(0, 1).toUpperCase()
+function firstLetter(v?: string) {
+  return String(v || 'U').replace('@', '').slice(0, 1).toUpperCase()
 }
 
-function goodUrl(value?: string) {
-  const text = String(value || '').trim()
-  return text.startsWith('http') || text.startsWith('/media/') || text.startsWith('data:')
+function goodUrl(v?: string) {
+  const t = String(v || '').trim()
+  return t.startsWith('http') || t.startsWith('/media/') || t.startsWith('data:')
 }
 
-function count(value: number) {
-  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
-  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
-  return String(value || 0)
+function count(v: number) {
+  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
+  if (v >= 1000) return `${(v / 1000).toFixed(1)}K`
+  return String(v || 0)
 }
 
 export default function ProfileClient() {
@@ -118,25 +112,23 @@ export default function ProfileClient() {
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
 
-  const targetUsername = useMemo(() => {
-    return cleanUsername(params.get('username') || viewer)
-  }, [params, viewer])
+  const username = useMemo(() => cleanUsername(params.get('username') || viewer), [params, viewer])
 
   async function loadProfile() {
     setLoading(true)
     setNotice('')
 
     const session = await getSessionUser()
-    const currentViewer = cleanUsername(session.username || '@guest')
-    setViewer(currentViewer)
+    const currentUser = cleanUsername(session.username || '@guest')
+    setViewer(currentUser)
 
-    const target = cleanUsername(params.get('username') || currentViewer)
+    const target = cleanUsername(params.get('username') || currentUser)
 
     const data = await fetch(
-      `/api/profile/full?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(currentViewer)}`,
+      `/api/profile/full?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(currentUser)}`,
       { cache: 'no-store' }
     )
-      .then((res) => res.json())
+      .then((r) => r.json())
       .catch(() => ({ success: false, message: 'Profile backend failed.' }))
 
     if (!data.success || !data.profile) {
@@ -170,7 +162,7 @@ export default function ProfileClient() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ follower: viewer, following: profile.username }),
     })
-      .then((res) => res.json())
+      .then((r) => r.json())
       .catch(() => ({ success: false, message: 'Follow failed.' }))
 
     setNotice(data.message || 'Updated.')
@@ -212,11 +204,7 @@ export default function ProfileClient() {
 
                 <div className="dynProfileTop">
                   <div className="dynProfileAvatar">
-                    {goodUrl(profile.avatarUrl) ? (
-                      <img src={profile.avatarUrl} alt={profile.name} />
-                    ) : (
-                      <b>{firstLetter(profile.name)}</b>
-                    )}
+                    {goodUrl(profile.avatarUrl) ? <img src={profile.avatarUrl} alt={profile.name} /> : <b>{firstLetter(profile.name)}</b>}
                     <i />
                   </div>
 
@@ -242,7 +230,7 @@ export default function ProfileClient() {
                   {profile.isOwner ? (
                     <>
                       <a href="/settings">Edit Profile</a>
-                      <a href="/camera?type=post">Camera</a>
+                      <a href="/create">Create</a>
                       <a href="/trash">Trash</a>
                     </>
                   ) : (
@@ -272,7 +260,7 @@ export default function ProfileClient() {
                   <div className="dynProfileEmpty">
                     <b>No {tab} yet</b>
                     <span>{profile.isOwner ? 'Create your first content.' : `${profile.name} has not added ${tab} yet.`}</span>
-                    {profile.isOwner && <a href="/camera?type=post">Create now</a>}
+                    {profile.isOwner && <a href="/create">Create now</a>}
                   </div>
                 ) : (
                   activeItems.map((item) => {
@@ -289,7 +277,7 @@ export default function ProfileClient() {
                           )}
                         </div>
                         <div className="dynProfileCardText">
-                          <b>{item.title || item.kind || 'Content'}</b>
+                          <b>{item.title || item.kind}</b>
                           <small>♥ {count(Number(item.likes || 0))} · 💬 {count(Number(item.comments || 0))}</small>
                         </div>
                       </a>
