@@ -30219,38 +30219,3 @@ body:has(.realMsgRoot) {
     font-size: 13px !important;
   }
 }
-
-
-/* PHASE_NATIVE_CAMERA_ONLY_STYLE */
-.vlxNativeCameraHidden {
-  position: fixed !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  width: 1px !important;
-  height: 1px !important;
-  left: -9999px !important;
-  top: -9999px !important;
-}
-
-.vlxCreateNativeTopCamera {
-  border: 0 !important;
-  border-radius: 999px !important;
-  min-height: 46px !important;
-  padding: 0 18px !important;
-  color: #fff !important;
-  font-weight: 1000 !important;
-  background: linear-gradient(135deg, #ff00b8, #00c8ff) !important;
-  box-shadow: 0 18px 42px rgba(255,0,184,.22) !important;
-}
-
-.vlxCreateHeaderActions .vlxCreateNativeTopCamera + .vlxCreateNativeTopCamera {
-  background: linear-gradient(135deg, #6d5cff, #00c8ff) !important;
-}
-
-@media (max-width: 820px) {
-  .vlxCreateNativeTopCamera {
-    min-height: 42px !important;
-    padding: 0 14px !important;
-    font-size: 13px !important;
-  }
-}

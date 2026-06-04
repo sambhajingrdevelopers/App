@@ -193,7 +193,7 @@ export default function CreatePage() {
   // PHASE_AUTO_OPEN_CAMERA_QUERY
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('web') === '1') {
+    if (params.get('camera') === '1') {
       const shouldRecord = params.get('record') === '1' || params.get('type') === 'reel'
       setTimeout(() => startCamera(shouldRecord), 450)
     }
@@ -202,7 +202,7 @@ export default function CreatePage() {
   // PHASE_NATIVE_CAMERA_QUERY_AUTO_OPEN
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const shouldOpenCamera = params.get('native') === '1'
+    const shouldOpenCamera = params.get('camera') === '1' || params.get('native') === '1'
     if (!shouldOpenCamera) return
 
     const requestedType = params.get('type')
@@ -219,28 +219,6 @@ export default function CreatePage() {
         nativePhotoInputRef.current?.click()
       }
     }, 500)
-  }, [])
-
-  // PHASE_NATIVE_ONLY_QUERY_OPEN
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('native') !== '1') return
-
-    const requestedType = params.get('type')
-    const record = params.get('record') === '1' || requestedType === 'reel'
-
-    if (record) {
-      setType('reel')
-      setMediaType('video')
-    }
-
-    setTimeout(() => {
-      if (record) {
-        nativeVideoInputRef.current?.click()
-      } else {
-        nativePhotoInputRef.current?.click()
-      }
-    }, 350)
   }, [])
 
   const publishLabel = saveAsDraft ? `Save ${type} draft` : `Publish ${type}`
@@ -405,7 +383,6 @@ export default function CreatePage() {
       setMediaUrl(nextMediaUrl)
       setVideoUrl(nextVideoUrl)
       setMediaType(nextMediaType)
-      setCreateStep('edit')
       setCreateStep('edit')
       setMessage('Media uploaded successfully. Now add caption, tags and publish.')
     } catch (error: any) {
@@ -608,8 +585,8 @@ export default function CreatePage() {
                     onChange={handleFileUpload}
                   />
                   <div className="vlxPhase3CameraBtns">
-                    <button type="button" onClick={() => openNativeMobileCamera(false)}>📷 Camera</button>
-                    <button type="button" onClick={openNativeMobileVideo}>🎥 Record</button>
+                    <button type="button" onClick={() => startCamera(false)}>📷 Camera</button>
+                    <button type="button" onClick={() => startCamera(true)}>🎥 Record</button>
                   </div>
                   {selectedFileName && <small>Selected: {selectedFileName}</small>}
                   {uploading && <small>Uploading media...</small>}
