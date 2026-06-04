@@ -187,15 +187,6 @@ export default function CreatePage() {
     return `/post/${encodeURIComponent(createdId)}`
   }, [createdId, type])
 
-  // PHASE_AUTO_OPEN_CAMERA_QUERY
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('camera') === '1') {
-      const shouldRecord = params.get('record') === '1' || params.get('type') === 'reel'
-      setTimeout(() => startCamera(shouldRecord), 450)
-    }
-  }, [])
-
   const publishLabel = saveAsDraft ? `Save ${type} draft` : `Publish ${type}`
 
   function switchType(nextType: CreateType) {
@@ -464,11 +455,7 @@ export default function CreatePage() {
               <p>Instagram-style post, reel and story upload editor connected to backend.</p>
             </div>
 
-            {/* PHASE_CAMERA_CREATE_TOP_LINK */}
-            <div className="vlxCreateHeaderActions">
-              <a className="vlxCreateCameraTop" href="/create?camera=1&type=post">📷 Camera</a>
-              <a href="/home">Home</a>
-            </div>
+            <a href="/home">Home</a>
           </header>
 
           <nav className="vlxCreateTabs vlxCreateTypeTabs" aria-label="Create type">

@@ -452,14 +452,9 @@ export default function DynamicHomePage() {
           </section>
 
           <section className="dynHomeStories">
-            {/* PHASE_CAMERA_HOME_CREATE_LINK */}
             <a className="dynHomeStory create" href="/create">
               <span>+</span>
               <small>Create</small>
-            </a>
-            <a className="dynHomeStory camera" href="/create?camera=1&type=post" aria-label="Open camera">
-              <span>📷</span>
-              <small>Camera</small>
             </a>
             {stories.slice(0, 15).map((story) => (
               <StoryCircle key={story.id} item={story} />
