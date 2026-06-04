@@ -262,15 +262,6 @@ export default function CreatePage() {
     setMediaType(incomingType === 'video' || incomingCreateType === 'reel' ? 'video' : 'image')
     setCreateStep('edit')
     setMessage('Camera media ready. Edit it, then continue to publish.')
-
-    const qLocation = params.get('location') || ''
-    const qMusicTitle = params.get('musicTitle') || ''
-    const qAudioUrl = params.get('audioUrl') || ''
-
-    if (qLocation && typeof setLocation === 'function') setLocation(qLocation)
-    if (qMusicTitle && typeof setMusicTitle === 'function') setMusicTitle(qMusicTitle)
-    if (qAudioUrl && typeof setAudioUrl === 'function') setAudioUrl(qAudioUrl)
-    // PHASE_CAMERA_QUERY_EXTRA_FIELDS
   }, [])
 
   const publishLabel = saveAsDraft ? `Save ${type} draft` : `Publish ${type}`

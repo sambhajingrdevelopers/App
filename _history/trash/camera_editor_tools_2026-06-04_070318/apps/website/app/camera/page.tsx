@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 
 type CameraMode = 'post' | 'reel' | 'story'
 type FilterName = 'normal' | 'vivid' | 'warm' | 'cool' | 'noir' | 'vintage'
-type CropRatio = '9:16' | '1:1' | '4:5' | '16:9'
 
 function filterCss(name: FilterName) {
   const map: Record<FilterName, string> = {
@@ -20,7 +19,6 @@ function filterCss(name: FilterName) {
   return map[name]
 }
 
-// PHASE_CAMERA_EDITOR_TOOLS
 export default function CameraPage() {
   const router = useRouter()
 
@@ -36,20 +34,12 @@ export default function CameraPage() {
   const [recording, setRecording] = useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
-  const [toolsOpen, setToolsOpen] = useState(false)
-  const [locationTag, setLocationTag] = useState('')
-  const [musicTitle, setMusicTitle] = useState('')
-  const [audioUrl, setAudioUrl] = useState('')
-  const [cropRatio, setCropRatio] = useState<CropRatio>('9:16')
-  const [brightness, setBrightness] = useState(100)
-  const [contrast, setContrast] = useState(100)
-  const [saturation, setSaturation] = useState(100)
   const [capturedUrl, setCapturedUrl] = useState('')
   const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null)
   const [capturedType, setCapturedType] = useState<'image' | 'video'>('image')
 
   const isVideoMode = mode === 'reel'
-  const liveFilter = useMemo(() => `${filterCss(filter)} brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`, [filter, brightness, contrast, saturation])
+  const liveFilter = useMemo(() => filterCss(filter), [filter])
 
   async function openCamera(nextMode = mode) {
     try {
@@ -132,16 +122,6 @@ export default function CameraPage() {
         ctx.font = '110px sans-serif'
         ctx.textAlign = 'center'
         ctx.fillText(emoji.trim(), canvas.width / 2, 160)
-      }
-
-      if (locationTag.trim()) {
-        ctx.filter = 'none'
-        ctx.font = 'bold 52px sans-serif'
-        ctx.textAlign = 'center'
-        ctx.fillStyle = 'white'
-        ctx.shadowColor = 'rgba(0,0,0,.75)'
-        ctx.shadowBlur = 16
-        ctx.fillText(`📍 ${locationTag.trim()}`, canvas.width / 2, canvas.height - 270)
       }
 
       const blob = await new Promise<Blob>((resolve, reject) => {
@@ -241,7 +221,7 @@ export default function CameraPage() {
       const videoUrl = capturedType === 'video' ? (data.videoUrl || mediaUrl) : ''
       const finalMode = capturedType === 'video' ? 'reel' : mode
 
-      const url = `/create?type=${encodeURIComponent(finalMode)}&fromCamera=1&mediaType=${capturedType}&mediaUrl=${encodeURIComponent(mediaUrl)}&videoUrl=${encodeURIComponent(videoUrl)}&location=${encodeURIComponent(locationTag)}&musicTitle=${encodeURIComponent(musicTitle)}&audioUrl=${encodeURIComponent(audioUrl)}&cropRatio=${encodeURIComponent(cropRatio)}`
+      const url = `/create?type=${encodeURIComponent(finalMode)}&fromCamera=1&mediaType=${capturedType}&mediaUrl=${encodeURIComponent(mediaUrl)}&videoUrl=${encodeURIComponent(videoUrl)}`
       router.push(url)
     } catch (error: any) {
       setMessage(error?.message || 'Could not continue.')
@@ -302,54 +282,6 @@ export default function CameraPage() {
           <input value={overlayText} onChange={(e) => setOverlayText(e.target.value)} placeholder="Add text..." />
           <input value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="Emoji" />
         </div>
-
-        <button type="button" className="vlxSnapToolsToggle" onClick={() => setToolsOpen((v) => !v)}>
-          ✨ Edit tools
-        </button>
-
-        {toolsOpen && (
-          <section className="vlxSnapToolsPanel">
-            <label>
-              📍 Location
-              <input value={locationTag} onChange={(e) => setLocationTag(e.target.value)} placeholder="Add location..." />
-            </label>
-
-            <label>
-              🎵 Music title
-              <input value={musicTitle} onChange={(e) => setMusicTitle(e.target.value)} placeholder="Song / audio name..." />
-            </label>
-
-            <label>
-              🎙 Voice / audio URL
-              <input value={audioUrl} onChange={(e) => setAudioUrl(e.target.value)} placeholder="Paste audio URL..." />
-            </label>
-
-            <label>
-              Crop
-              <select value={cropRatio} onChange={(e) => setCropRatio(e.target.value as CropRatio)}>
-                <option value="9:16">9:16 Story/Reel</option>
-                <option value="1:1">1:1 Square</option>
-                <option value="4:5">4:5 Post</option>
-                <option value="16:9">16:9 Wide</option>
-              </select>
-            </label>
-
-            <label>
-              Brightness
-              <input type="range" min="60" max="160" value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} />
-            </label>
-
-            <label>
-              Contrast
-              <input type="range" min="60" max="160" value={contrast} onChange={(e) => setContrast(Number(e.target.value))} />
-            </label>
-
-            <label>
-              Saturation
-              <input type="range" min="40" max="180" value={saturation} onChange={(e) => setSaturation(Number(e.target.value))} />
-            </label>
-          </section>
-        )}
 
         <div className="vlxSnapCaptureBar">
           {capturedUrl ? (
