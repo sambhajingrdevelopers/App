@@ -556,7 +556,8 @@ export default function CreatePage() {
             {/* PHASE_CAMERA_CREATE_TOP_LINK */}
             <div className="vlxCreateHeaderActions">
               <a className="vlxCreateCameraTop" href="/camera?type=post">📷 Camera</a>
-<a href="/home">Home</a>
+              <a className="vlxCreateCameraTop" href="/camera?type=reel">🎥 Reel</a>
+              <a href="/home">Home</a>
             </div>
           </header>
 

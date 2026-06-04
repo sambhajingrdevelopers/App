@@ -506,12 +506,6 @@ export default function DynamicHomePage() {
               ))
             )}
           </section>
-        
-          {/* PHASE_HOME_BOTTOM_CAMERA_BUTTON */}
-          <a className="vlxHomeFloatingCamera" href="/camera?type=post" aria-label="Open camera">
-            <span>📷</span>
-          </a>
-
         </main>
       </SocialAppShell>
     </AuthGuard>
