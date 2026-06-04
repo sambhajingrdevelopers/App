@@ -31834,16 +31834,3 @@ body.vlxCameraStudioBody [class*="bottomNav"] {
 .vlxCameraRightTools button b {
   font-size: 16px;
 }
-
-/* FRONTEND_HD_ENHANCE_BUTTON */
-.capturedActions .hdEnhanceBtn {
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255,255,255,.34), transparent 35%),
-    linear-gradient(135deg, #ffec4a, #ff00b8, #00c8ff) !important;
-  color: #fff !important;
-  box-shadow: 0 18px 44px rgba(255,236,74,.18), 0 18px 44px rgba(255,0,184,.20) !important;
-}
-
-.vlxCameraRightTools button b {
-  letter-spacing: -.5px;
-}

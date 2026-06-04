@@ -168,7 +168,6 @@ export default function CameraPage() {
   const [timerSec, setTimerSec] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const [busy, setBusy] = useState(false)
-  const [enhancing, setEnhancing] = useState(false)
   const [message, setMessage] = useState('')
 
   const [overlayText, setOverlayText] = useState('')
@@ -512,57 +511,6 @@ export default function CameraPage() {
     }
   }
 
-  async function enhanceCapturedMedia() {
-    if (!capturedBlob) {
-      setMessage('Capture photo/video first.')
-      return
-    }
-
-    try {
-      setEnhancing(true)
-      setMessage('VibeLoop HD Enhance processing...')
-
-      const isVideo = capturedType === 'video'
-      const fileName = isVideo ? `vibeloop-hd-${Date.now()}.webm` : `vibeloop-hd-${Date.now()}.jpg`
-      const file = new File([capturedBlob], fileName, { type: capturedBlob.type })
-
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('sharpness', String(typeof sharpness !== 'undefined' ? sharpness : 45))
-      formData.append('denoise', String(typeof denoise !== 'undefined' ? denoise : 24))
-      formData.append('clarity', String(typeof clarity !== 'undefined' ? clarity : 38))
-      formData.append('faceGlow', String(typeof faceGlow !== 'undefined' ? faceGlow : 18))
-      formData.append('lowLightBoost', String(typeof lowLightBoost !== 'undefined' ? lowLightBoost : 0))
-
-      const response = await fetch('/api/media/enhance', {
-        method: 'POST',
-        body: formData
-      })
-
-      const data = await response.json()
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || data.error || 'HD enhance failed.')
-      }
-
-      const enhancedMediaUrl = data.mediaUrl || data.url || ''
-      const proxyUrl = `/api/media/proxy?url=${encodeURIComponent(enhancedMediaUrl)}`
-
-      const enhancedResponse = await fetch(proxyUrl, { cache: 'no-store' })
-      const enhancedBlob = await enhancedResponse.blob()
-
-      setCapturedBlob(enhancedBlob)
-      setCapturedUrl(URL.createObjectURL(enhancedBlob))
-      setCapturedType(data.mediaType === 'video' ? 'video' : capturedType)
-
-      setMessage('HD Enhance completed. Now save or continue edit.')
-    } catch (error: any) {
-      setMessage(error?.message || 'HD Enhance failed.')
-    } finally {
-      setEnhancing(false)
-    }
-  }
-
   function saveToPhone() {
     if (!capturedBlob || !capturedUrl) {
       setMessage('Capture photo/video first.')
@@ -781,9 +729,6 @@ export default function CameraPage() {
             <div className="capturedActions">
               <button type="button" onClick={() => { setCapturedUrl(''); setCapturedBlob(null); openCamera(mode) }}>Retake</button>
               <button type="button" onClick={saveToPhone}>Save</button>
-              <button type="button" className="hdEnhanceBtn" onClick={enhanceCapturedMedia} disabled={enhancing}>
-                {enhancing ? 'HD...' : 'HD'}
-              </button>
               <button type="button" onClick={uploadAndContinue} disabled={busy}>Edit</button>
             </div>
           ) : isVideoMode() ? (
