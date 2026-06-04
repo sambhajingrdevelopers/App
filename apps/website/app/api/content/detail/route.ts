@@ -23,7 +23,7 @@ function normalize(item: any, fallbackKind = "post") {
     username: finalUsername,
     user: finalUsername,
     name: item.name || finalUsername.replace("@", ""),
-    avatarUrl: item.avatarUrl || item.avatar_url || "",
+    avatarUrl: proxifyUrl( item.avatarUrl || item.avatar_url || ""),
     mediaUrl: item.mediaUrl || item.media_url || item.imageUrl || item.image_url || "",
     videoUrl: item.videoUrl || item.video_url || "",
     mediaType: item.mediaType || item.media_type || (item.videoUrl || item.video_url ? "video" : "image"),
@@ -44,6 +44,33 @@ async function getJson(url: string) {
   } catch {
     return { ok: false, status: res.status, data: { success: false, message: text } }
   }
+}
+
+function proxifyUrl(url: any) {
+  const clean = String(url || "").trim()
+  if (!clean) return ""
+  if (clean.startsWith("/api/media/proxy")) return clean
+  if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("/media/")) {
+    return `/api/media/proxy?url=${encodeURIComponent(clean)}`
+  }
+  return clean
+}
+
+function proxifyMedia(value: any): any {
+  if (Array.isArray(value)) return value.map(proxifyMedia)
+  if (!value || typeof value !== "object") return value
+
+  const next: any = { ...value }
+
+  for (const key of ["mediaUrl", "media_url", "videoUrl", "video_url", "coverUrl", "coverImage", "imageUrl", "image_url", "avatarUrl", "avatar_url"]) {
+    if (next[key]) next[key] = proxifyUrl(next[key])
+  }
+
+  for (const key of Object.keys(next)) {
+    if (next[key] && typeof next[key] === "object") next[key] = proxifyMedia(next[key])
+  }
+
+  return next
 }
 
 export async function GET(request: NextRequest) {

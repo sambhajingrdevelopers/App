@@ -24,17 +24,6 @@ function normalizeUsername(value?: string) {
   return clean.startsWith('@') ? clean : `@${clean}`
 }
 
-function displayMediaUrl(url: string) {
-  const clean = String(url || '').trim()
-  if (!clean) return ''
-  if (clean.startsWith('data:')) return clean
-  if (clean.startsWith('/api/media/proxy')) return clean
-  if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('/media/')) {
-    return `/api/media/proxy?url=${encodeURIComponent(clean)}`
-  }
-  return clean
-}
-
 function validPreview(url: string) {
   const clean = String(url || '').trim()
   return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
@@ -146,7 +135,6 @@ export default function CreatePage() {
   }, [])
 
   const previewUrl = useMemo(() => videoUrl || mediaUrl, [videoUrl, mediaUrl])
-  const previewDisplayUrl = useMemo(() => displayMediaUrl(previewUrl), [previewUrl])
   const editFilter = useMemo(() => filterCss(filterName, brightness, contrast, saturation), [filterName, brightness, contrast, saturation])
   const editTransform = useMemo(() => `translate(${cropX}px, ${cropY}px) scale(${zoom})`, [cropX, cropY, zoom])
   const cropClass = `crop-${cropRatio.replace(':', '-')}`
@@ -276,7 +264,7 @@ export default function CreatePage() {
     try {
       const image = new Image()
       image.crossOrigin = 'anonymous'
-      image.src = previewDisplayUrl
+      image.src = previewUrl
       await new Promise((ok, bad) => { image.onload = ok; image.onerror = bad })
       const canvas = document.createElement('canvas')
       canvas.width = 1080
@@ -523,9 +511,9 @@ export default function CreatePage() {
 
                     <div className={`vlxPhase3Preview ${cropClass}`}>
                       {mediaType === 'video' ? (
-                        <video src={previewDisplayUrl} controls playsInline loop muted style={{ filter: editFilter }} />
+                        <video src={previewUrl} controls playsInline loop muted style={{ filter: editFilter }} />
                       ) : validPreview(previewUrl) ? (
-                        <img src={previewDisplayUrl} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
+                        <img src={previewUrl} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
                       ) : (
                         <span>Invalid preview URL</span>
                       )}
