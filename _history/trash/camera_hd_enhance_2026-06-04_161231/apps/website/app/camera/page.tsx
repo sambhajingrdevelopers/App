@@ -42,109 +42,6 @@ function ratioSize(ratio: Ratio) {
   return { width: 1080, height: 1920 }
 }
 
-// VIBELOOP_HD_ENHANCE_ENGINE
-function clampByte(value: number) {
-  return Math.max(0, Math.min(255, value))
-}
-
-function applySharpen(data: ImageData, strength: number) {
-  if (strength <= 0) return data
-
-  const w = data.width
-  const h = data.height
-  const src = new Uint8ClampedArray(data.data)
-  const dst = data.data
-  const amount = strength / 100
-
-  for (let y = 1; y < h - 1; y++) {
-    for (let x = 1; x < w - 1; x++) {
-      const i = (y * w + x) * 4
-
-      for (let c = 0; c < 3; c++) {
-        const center = src[i + c] * (1 + 4 * amount)
-        const top = src[((y - 1) * w + x) * 4 + c] * amount
-        const bottom = src[((y + 1) * w + x) * 4 + c] * amount
-        const left = src[(y * w + (x - 1)) * 4 + c] * amount
-        const right = src[(y * w + (x + 1)) * 4 + c] * amount
-        dst[i + c] = clampByte(center - top - bottom - left - right)
-      }
-    }
-  }
-
-  return data
-}
-
-function applyDenoise(data: ImageData, strength: number) {
-  if (strength <= 0) return data
-
-  const w = data.width
-  const h = data.height
-  const src = new Uint8ClampedArray(data.data)
-  const dst = data.data
-  const blend = Math.min(0.72, strength / 160)
-
-  for (let y = 1; y < h - 1; y++) {
-    for (let x = 1; x < w - 1; x++) {
-      const i = (y * w + x) * 4
-
-      for (let c = 0; c < 3; c++) {
-        const avg =
-          (
-            src[((y - 1) * w + x) * 4 + c] +
-            src[((y + 1) * w + x) * 4 + c] +
-            src[(y * w + (x - 1)) * 4 + c] +
-            src[(y * w + (x + 1)) * 4 + c] +
-            src[i + c]
-          ) / 5
-
-        dst[i + c] = clampByte(src[i + c] * (1 - blend) + avg * blend)
-      }
-    }
-  }
-
-  return data
-}
-
-function applyClarity(data: ImageData, clarity: number, glow: number) {
-  const d = data.data
-  const c = clarity / 100
-  const g = glow / 100
-
-  for (let i = 0; i < d.length; i += 4) {
-    const r = d[i]
-    const gg = d[i + 1]
-    const b = d[i + 2]
-    const lum = (r + gg + b) / 3
-
-    d[i] = clampByte(r + (r - lum) * c + 10 * g)
-    d[i + 1] = clampByte(gg + (gg - lum) * c + 8 * g)
-    d[i + 2] = clampByte(b + (b - lum) * c + 5 * g)
-  }
-
-  return data
-}
-
-function enhanceCanvas(ctx: CanvasRenderingContext2D, width: number, height: number, options: {
-  hd: boolean
-  sharpness: number
-  denoise: number
-  clarity: number
-  faceGlow: number
-}) {
-  if (!options.hd) return
-
-  try {
-    let image = ctx.getImageData(0, 0, width, height)
-    image = applyDenoise(image, options.denoise)
-    image = applyClarity(image, options.clarity, options.faceGlow)
-    image = applySharpen(image, options.sharpness)
-    ctx.putImageData(image, 0, 0)
-  } catch {
-    // Canvas enhancement skipped safely.
-  }
-}
-
-
 export default function CameraPage() {
   const router = useRouter()
 
@@ -193,25 +90,14 @@ export default function CameraPage() {
   const [brightness, setBrightness] = useState(100)
   const [contrast, setContrast] = useState(100)
   const [saturation, setSaturation] = useState(100)
-  const [hdEnhance, setHdEnhance] = useState(true)
-  const [sharpness, setSharpness] = useState(42)
-  const [denoise, setDenoise] = useState(24)
-  const [clarity, setClarity] = useState(38)
-  const [faceGlow, setFaceGlow] = useState(18)
-  const [lowLightBoost, setLowLightBoost] = useState(0)
 
   const [capturedUrl, setCapturedUrl] = useState('')
   const [capturedBlob, setCapturedBlob] = useState<Blob | null>(null)
   const [capturedType, setCapturedType] = useState<'image' | 'video'>('image')
 
   const liveFilter = useMemo(
-    () => {
-      const boostBrightness = hdEnhance ? brightness + lowLightBoost : brightness
-      const boostContrast = hdEnhance ? contrast + Math.round(clarity / 4) : contrast
-      const boostSaturation = hdEnhance ? saturation + 8 : saturation
-      return getFilter(filter, boostBrightness, boostContrast, boostSaturation)
-    },
-    [filter, brightness, contrast, saturation, hdEnhance, lowLightBoost, clarity]
+    () => getFilter(filter, brightness, contrast, saturation),
+    [filter, brightness, contrast, saturation]
   )
 
   function isVideoMode(nextMode = mode) {
@@ -418,14 +304,6 @@ export default function CameraPage() {
       const drawW = (video.videoWidth || 1080) * scale
       const drawH = (video.videoHeight || 1920) * scale
       ctx.drawImage(video, (canvas.width - drawW) / 2, (canvas.height - drawH) / 2, drawW, drawH)
-
-      enhanceCanvas(ctx, canvas.width, canvas.height, {
-        hd: hdEnhance,
-        sharpness,
-        denoise,
-        clarity,
-        faceGlow
-      })
 
       drawOverlay(ctx, canvas.width, canvas.height)
 
@@ -645,7 +523,6 @@ export default function CameraPage() {
           <button type="button" onClick={toggleFlash}><b>{flash ? '⚡' : '⚡︎'}</b><span>Flash</span></button>
           <button type="button" onClick={() => setGrid(!grid)}><b>▦</b><span>Grid</span></button>
           <button type="button" onClick={() => setTimerSec(timerSec === 0 ? 3 : timerSec === 3 ? 5 : timerSec === 5 ? 10 : 0)}><b>{timerSec || 'Off'}</b><span>Timer</span></button>
-          <button type="button" onClick={() => setActivePanel('tools')}><b>{hdEnhance ? 'HD' : 'SD'}</b><span>HD</span></button>
         </aside>
 
         {activePanel !== 'none' && (
@@ -690,22 +567,6 @@ export default function CameraPage() {
                 <div className="vlxColorRow">{TEXT_COLORS.map((color) => <button key={color} type="button" style={{ background: color }} onClick={() => setTextColor(color)} />)}</div>
                 <label>Emoji<input value={emoji} onChange={(e) => setEmoji(e.target.value)} placeholder="✨" /></label>
                 <label>Location<input value={locationTag} onChange={(e) => setLocationTag(e.target.value)} placeholder="Add location..." /></label>
-                <div className="vlxHdBox">
-                  <div>
-                    <b>VibeLoop HD Enhance</b>
-                    <span>Blur fix + noise clean + sharp detail</span>
-                  </div>
-                  <button type="button" className={hdEnhance ? 'active' : ''} onClick={() => setHdEnhance(!hdEnhance)}>
-                    {hdEnhance ? 'ON' : 'OFF'}
-                  </button>
-                </div>
-
-                <label>Blur Fix / Sharpness<input type="range" min="0" max="100" value={sharpness} onChange={(e) => setSharpness(Number(e.target.value))} /></label>
-                <label>Noise Cleaner<input type="range" min="0" max="100" value={denoise} onChange={(e) => setDenoise(Number(e.target.value))} /></label>
-                <label>Detail Clarity<input type="range" min="0" max="100" value={clarity} onChange={(e) => setClarity(Number(e.target.value))} /></label>
-                <label>Face Glow<input type="range" min="0" max="80" value={faceGlow} onChange={(e) => setFaceGlow(Number(e.target.value))} /></label>
-                <label>Low Light Boost<input type="range" min="0" max="60" value={lowLightBoost} onChange={(e) => setLowLightBoost(Number(e.target.value))} /></label>
-
                 <label>Brightness<input type="range" min="60" max="160" value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} /></label>
                 <label>Contrast<input type="range" min="60" max="160" value={contrast} onChange={(e) => setContrast(Number(e.target.value))} /></label>
                 <label>Saturation<input type="range" min="40" max="180" value={saturation} onChange={(e) => setSaturation(Number(e.target.value))} /></label>
