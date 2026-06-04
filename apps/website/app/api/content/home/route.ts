@@ -85,8 +85,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       source: "backend-home-clean",
-      posts,
-      reels,
+      posts: proxifyMedia(posts),
+      reels: proxifyMedia(reels),
       stories
     })
   } catch (error: any) {

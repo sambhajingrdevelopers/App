@@ -8,7 +8,6 @@ import { getSessionUser } from '../../lib/sessionUser'
 type CreateType = 'post' | 'reel' | 'story'
 type MediaType = 'image' | 'video'
 type PrivacyType = 'public' | 'followers' | 'private'
-type CreateStep = 'upload' | 'edit' | 'details'
 type FilterType = 'normal' | 'vivid' | 'warm' | 'cool' | 'noir' | 'vintage'
 type CropRatio = 'original' | '1:1' | '4:5' | '9:16' | '16:9'
 
@@ -23,17 +22,6 @@ function normalizeUsername(value?: string) {
   const clean = String(value || '').trim()
   if (!clean) return '@you'
   return clean.startsWith('@') ? clean : `@${clean}`
-}
-
-function displayMediaUrl(url: string) {
-  const clean = String(url || '').trim()
-  if (!clean) return ''
-  if (clean.startsWith('data:')) return clean
-  if (clean.startsWith('/api/media/proxy')) return clean
-  if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('/media/')) {
-    return `/api/media/proxy?url=${encodeURIComponent(clean)}`
-  }
-  return clean
 }
 
 function displayMediaUrl(url: string) {
@@ -85,7 +73,6 @@ function filterCss(name: FilterType, b: number, c: number, sat: number) {
 }
 
 // PHASE3_CAMERA_CROP_FILTER_SMALL
-// PHASE4_STEP_MEDIA_FIX
 export default function CreatePage() {
   const [session, setSession] = useState<SessionUser>({
     userId: 'USR-YOU',
@@ -118,7 +105,6 @@ export default function CreatePage() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [createdId, setCreatedId] = useState('')
-  const [createStep, setCreateStep] = useState<CreateStep>('upload')
   const [cameraOpen, setCameraOpen] = useState(false)
   const [recording, setRecording] = useState(false)
   const [filterName, setFilterName] = useState<FilterType>('normal')
@@ -160,7 +146,6 @@ export default function CreatePage() {
   }, [])
 
   const previewUrl = useMemo(() => videoUrl || mediaUrl, [videoUrl, mediaUrl])
-  const previewDisplayUrl = useMemo(() => displayMediaUrl(previewUrl), [previewUrl])
   const previewDisplayUrl = useMemo(() => displayMediaUrl(previewUrl), [previewUrl])
   const editFilter = useMemo(() => filterCss(filterName, brightness, contrast, saturation), [filterName, brightness, contrast, saturation])
   const editTransform = useMemo(() => `translate(${cropX}px, ${cropY}px) scale(${zoom})`, [cropX, cropY, zoom])
@@ -341,7 +326,6 @@ export default function CreatePage() {
       setMediaUrl(nextMediaUrl)
       setVideoUrl(nextVideoUrl)
       setMediaType(nextMediaType)
-      setCreateStep('edit')
       setMessage('Media uploaded successfully. Now add caption, tags and publish.')
     } catch (error: any) {
       setMessage(error?.message || 'Upload failed.')
@@ -355,7 +339,6 @@ export default function CreatePage() {
     const detected = detectMediaType(value, type)
     setMediaType(detected)
     setVideoUrl(detected === 'video' ? value : '')
-    if (value.trim()) setCreateStep('edit')
   }
 
   function resetAfterCreate() {
@@ -373,7 +356,6 @@ export default function CreatePage() {
     setSelectedFileName('')
     setMediaType(type === 'reel' ? 'video' : 'image')
     setSaveAsDraft(false)
-    setCreateStep('upload')
   }
 
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
@@ -490,13 +472,7 @@ export default function CreatePage() {
             </span>
           </section>
 
-          <section className="vlxPhase4Steps">
-            <button type="button" className={createStep === 'upload' ? 'active' : ''} onClick={() => setCreateStep('upload')}>1 Upload</button>
-            <button type="button" className={createStep === 'edit' ? 'active' : ''} onClick={() => setCreateStep('edit')} disabled={!previewUrl}>2 Edit</button>
-            <button type="button" className={createStep === 'details' ? 'active' : ''} onClick={() => setCreateStep('details')} disabled={!previewUrl}>3 Publish</button>
-          </section>
-
-          <form className="vlxCreateForm vlxPhase4StepForm" data-step={createStep} onSubmit={handleCreate}>
+          <form className="vlxCreateForm" onSubmit={handleCreate}>
             <section className="vlxCreateEditorGrid">
               <div className="vlxCreateEditorLeft">
                 <div className="vlxUploadBox vlxCreateMediaDrop">
@@ -532,7 +508,7 @@ export default function CreatePage() {
                   </section>
                 )}
 
-                <label className="vlxMediaUrlLabel">
+                <label>
                   Or paste media URL
                   <input
                     value={mediaUrl}
@@ -548,7 +524,7 @@ export default function CreatePage() {
                     <div className={`vlxPhase3Preview ${cropClass}`}>
                       {mediaType === 'video' ? (
                         <video src={previewDisplayUrl} controls playsInline loop muted style={{ filter: editFilter }} />
-                      ) : validPreview(previewDisplayUrl) ? (
+                      ) : validPreview(previewUrl) ? (
                         <img src={previewDisplayUrl} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
                       ) : (
                         <span>Invalid preview URL</span>
@@ -722,14 +698,6 @@ export default function CreatePage() {
                 </section>
               </div>
             </section>
-
-            {createStep === 'upload' && previewUrl && (
-              <button type="button" className="vlxPhase4NextBtn" onClick={() => setCreateStep('edit')}>Continue to Edit</button>
-            )}
-
-            {createStep === 'edit' && previewUrl && (
-              <button type="button" className="vlxPhase4NextBtn" onClick={() => setCreateStep('details')}>Next: Caption & Publish</button>
-            )}
 
             {message && (
               <section className={`vlxCreateMessage ${createdId ? 'success' : ''}`}>
