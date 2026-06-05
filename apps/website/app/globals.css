@@ -32136,3 +32136,17 @@ body.vlxCameraStudioBody [class*="bottomNav"] {
     min-width: 86px !important;
   }
 }
+
+/* FIX_HTML_404_MESSAGE_OVERLAY */
+.vlxCameraMessage {
+  max-height: 96px !important;
+  overflow: auto !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.vlxCameraMessage::first-line {
+  font-weight: 1000;
+}
