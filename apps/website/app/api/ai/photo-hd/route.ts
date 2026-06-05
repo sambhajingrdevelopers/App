@@ -10,6 +10,15 @@ const BACKEND_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "http://13.206.145.54:8003"
 
+async function safeJson(response: Response) {
+  const text = await response.text()
+  try {
+    return text ? JSON.parse(text) : {}
+  } catch {
+    return { success: false, message: "Backend returned non-JSON response.", raw: text.slice(0, 180) }
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
@@ -20,15 +29,7 @@ export async function POST(request: NextRequest) {
       cache: "no-store"
     })
 
-    const text = await response.text()
-    let data: any = {}
-
-    try {
-      data = text ? JSON.parse(text) : {}
-    } catch {
-      data = { success: false, message: text || "Invalid backend response" }
-    }
-
+    const data = await safeJson(response)
     return NextResponse.json(data, { status: response.status })
   } catch (error: any) {
     return NextResponse.json(
