@@ -340,7 +340,9 @@ export default function CameraPage() {
           facingMode: { ideal: nextFacing },
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-          frameRate: { ideal: 30 },},
+          frameRate: { ideal: 30 },
+          resizeMode: 'none' as any
+        },
         audio: isVideoMode(nextMode)
       })
 

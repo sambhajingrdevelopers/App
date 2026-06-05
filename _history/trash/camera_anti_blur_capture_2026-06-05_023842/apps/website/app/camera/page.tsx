@@ -47,101 +47,6 @@ function clampByte(value: number) {
   return Math.max(0, Math.min(255, value))
 }
 
-// VIBELOOP_ANTI_BLUR_CAPTURE_ENGINE
-function waitAntiBlur(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-function drawVideoCoverFrame(video: HTMLVideoElement, ctx: CanvasRenderingContext2D, width: number, height: number, filter: string) {
-  ctx.fillStyle = '#05050a'
-  ctx.fillRect(0, 0, width, height)
-  ctx.filter = filter || 'none'
-
-  const vw = video.videoWidth || 1080
-  const vh = video.videoHeight || 1920
-  const scale = Math.max(width / vw, height / vh)
-  const drawW = vw * scale
-  const drawH = vh * scale
-
-  ctx.drawImage(video, (width - drawW) / 2, (height - drawH) / 2, drawW, drawH)
-}
-
-function frameSharpnessScore(canvas: HTMLCanvasElement) {
-  const small = document.createElement('canvas')
-  const w = 180
-  const h = Math.max(120, Math.round((canvas.height / canvas.width) * w))
-  small.width = w
-  small.height = h
-
-  const c = small.getContext('2d')
-  if (!c) return 0
-
-  c.drawImage(canvas, 0, 0, w, h)
-  const img = c.getImageData(0, 0, w, h).data
-
-  let score = 0
-  let count = 0
-
-  for (let y = 1; y < h - 1; y += 2) {
-    for (let x = 1; x < w - 1; x += 2) {
-      const i = (y * w + x) * 4
-      const l = (img[i] + img[i + 1] + img[i + 2]) / 3
-
-      const ir = (y * w + (x + 1)) * 4
-      const ib = ((y + 1) * w + x) * 4
-
-      const lr = (img[ir] + img[ir + 1] + img[ir + 2]) / 3
-      const lb = (img[ib] + img[ib + 1] + img[ib + 2]) / 3
-
-      score += Math.abs(l - lr) + Math.abs(l - lb)
-      count++
-    }
-  }
-
-  return count ? score / count : 0
-}
-
-async function drawBestAntiBlurFrame(
-  video: HTMLVideoElement,
-  targetCtx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  filter: string,
-  enabled: boolean
-) {
-  const frames = enabled ? 5 : 1
-  let bestCanvas: HTMLCanvasElement | null = null
-  let bestScore = -1
-
-  for (let i = 0; i < frames; i++) {
-    if (i > 0) await waitAntiBlur(90)
-
-    const temp = document.createElement('canvas')
-    temp.width = width
-    temp.height = height
-
-    const tempCtx = temp.getContext('2d')
-    if (!tempCtx) continue
-
-    drawVideoCoverFrame(video, tempCtx, width, height, filter)
-
-    const score = frameSharpnessScore(temp)
-    if (score > bestScore) {
-      bestScore = score
-      bestCanvas = temp
-    }
-  }
-
-  if (bestCanvas) {
-    targetCtx.filter = 'none'
-    targetCtx.drawImage(bestCanvas, 0, 0, width, height)
-  } else {
-    drawVideoCoverFrame(video, targetCtx, width, height, filter)
-  }
-}
-
-
-
 function applySharpen(data: ImageData, strength: number) {
   if (strength <= 0) return data
 
@@ -260,7 +165,6 @@ export default function CameraPage() {
   const [voiceRecording, setVoiceRecording] = useState(false)
   const [flash, setFlash] = useState(false)
   const [grid, setGrid] = useState(true)
-  const [antiBlurMode, setAntiBlurMode] = useState(true)
   const [timerSec, setTimerSec] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const [busy, setBusy] = useState(false)
@@ -336,33 +240,11 @@ export default function CameraPage() {
       setMessage('')
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: { ideal: nextFacing },
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-          frameRate: { ideal: 30 },},
+        video: { facingMode: nextFacing },
         audio: isVideoMode(nextMode)
       })
 
       streamRef.current = stream
-
-      // VIBELOOP_AUTO_FOCUS_EXPOSURE
-      try {
-        const track = stream.getVideoTracks()[0]
-        if (track?.applyConstraints) {
-          await track.applyConstraints({
-            advanced: [
-              {
-                focusMode: 'continuous',
-                exposureMode: 'continuous',
-                whiteBalanceMode: 'continuous'
-              } as any
-            ]
-          } as MediaTrackConstraints)
-        }
-      } catch {
-        // Some mobile browsers do not expose focus/exposure controls.
-      }
 
       setTimeout(() => {
         if (videoRef.current) {
@@ -542,7 +424,7 @@ export default function CameraPage() {
       const scale = Math.max(canvas.width / (video.videoWidth || 1080), canvas.height / (video.videoHeight || 1920))
       const drawW = (video.videoWidth || 1080) * scale
       const drawH = (video.videoHeight || 1920) * scale
-      await drawBestAntiBlurFrame(video, ctx, canvas.width, canvas.height, liveFilter, antiBlurMode)
+      ctx.drawImage(video, (canvas.width - drawW) / 2, (canvas.height - drawH) / 2, drawW, drawH)
 
       enhanceCanvas(ctx, canvas.width, canvas.height, {
         hd: hdEnhance,
@@ -899,7 +781,6 @@ export default function CameraPage() {
         <aside className="vlxCameraRightTools">
           <button type="button" onClick={toggleFlash}><b>{flash ? '⚡' : '⚡︎'}</b><span>Flash</span></button>
           <button type="button" onClick={() => setGrid(!grid)}><b>▦</b><span>Grid</span></button>
-          <button type="button" onClick={() => setAntiBlurMode(!antiBlurMode)}><b>{antiBlurMode ? 'AB' : 'OFF'}</b><span>AntiBlur</span></button>
           <button type="button" onClick={() => setTimerSec(timerSec === 0 ? 3 : timerSec === 3 ? 5 : timerSec === 5 ? 10 : 0)}><b>{timerSec || 'Off'}</b><span>Timer</span></button>
           <button type="button" onClick={() => setActivePanel('tools')}><b>{hdEnhance ? 'HD' : 'SD'}</b><span>HD</span></button>
         </aside>
@@ -954,7 +835,6 @@ export default function CameraPage() {
                   <div>
                     <b>VibeLoop HD Enhance</b>
                     <span>Blur fix + noise clean + sharp detail</span>
-                    <small>Capture-time blur reduction: {antiBlurMode ? 'ON' : 'OFF'}</small>
                   </div>
                   <button type="button" className={hdEnhance ? 'active' : ''} onClick={() => setHdEnhance(!hdEnhance)}>
                     {hdEnhance ? 'ON' : 'OFF'}
