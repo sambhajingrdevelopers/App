@@ -264,7 +264,6 @@ export default function CameraPage() {
   const [timerSec, setTimerSec] = useState(0)
   const [countdown, setCountdown] = useState(0)
   const [busy, setBusy] = useState(false)
-  const [aiHdLoading, setAiHdLoading] = useState(false)
   const [processingVideo, setProcessingVideo] = useState(false)
   const [trimStart, setTrimStart] = useState(0)
   const [trimEnd, setTrimEnd] = useState(0)
@@ -764,63 +763,6 @@ export default function CameraPage() {
       setMessage(error?.message || 'Video processing failed.')
     } finally {
       setProcessingVideo(false)
-    }
-  }
-
-
-  async function aiPhotoHdEnhance() {
-    if (!capturedBlob || capturedType !== 'image') {
-      setMessage('AI HD is for photos only. Use normal HD/video process for video.')
-      return
-    }
-
-    try {
-      setAiHdLoading(true)
-      setMessage('AI HD processing with Real-ESRGAN + GFPGAN... CPU server may take time.')
-
-      const photoFile = new File(
-        [capturedBlob],
-        `vibeloop-ai-photo-${Date.now()}.jpg`,
-        { type: capturedBlob.type || 'image/jpeg' }
-      )
-
-      const formData = new FormData()
-      formData.append('file', photoFile)
-      formData.append('scale', '2')
-      formData.append('faceRestore', 'true')
-
-      const response = await fetch('/api/ai/photo-hd', {
-        method: 'POST',
-        body: formData
-      })
-
-      const rawText = await response.text()
-      let data: any = {}
-
-      try {
-        data = rawText ? JSON.parse(rawText) : {}
-      } catch {
-        throw new Error(rawText || 'AI HD returned empty response.')
-      }
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || data.error || 'AI HD failed.')
-      }
-
-      const aiUrl = data.mediaUrl || data.url || ''
-      const proxyUrl = `/api/media/proxy?url=${encodeURIComponent(aiUrl)}`
-
-      const aiResponse = await fetch(proxyUrl, { cache: 'no-store' })
-      const aiBlob = await aiResponse.blob()
-
-      setCapturedBlob(aiBlob)
-      setCapturedUrl(URL.createObjectURL(aiBlob))
-      setCapturedType('image')
-      setMessage('AI HD completed. Now Save or Edit.')
-    } catch (error: any) {
-      setMessage(error?.message || 'AI HD failed.')
-    } finally {
-      setAiHdLoading(false)
     }
   }
 

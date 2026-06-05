@@ -32118,21 +32118,3 @@ body.vlxCameraStudioBody [class*="bottomNav"] {
     max-height: 38dvh !important;
   }
 }
-
-/* FRONTEND_AI_PHOTO_HD_BUTTON */
-.capturedActions .aiHdBtn {
-  background:
-    radial-gradient(circle at 25% 20%, rgba(255,255,255,.42), transparent 35%),
-    linear-gradient(135deg, #ffec4a, #ff00b8 48%, #00c8ff) !important;
-  color: #fff !important;
-  font-weight: 1000 !important;
-  box-shadow:
-    0 18px 46px rgba(255,236,74,.22),
-    0 18px 46px rgba(255,0,184,.24) !important;
-}
-
-@media (max-width: 720px) {
-  .capturedActions .aiHdBtn {
-    min-width: 86px !important;
-  }
-}
