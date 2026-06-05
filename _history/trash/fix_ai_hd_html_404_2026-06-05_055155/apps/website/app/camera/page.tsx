@@ -1,13 +1,5 @@
 'use client'
 
-function cleanCameraError(value: any) {
-  const text = String(value || '').trim()
-  if (!text) return 'Something went wrong.'
-  if (text.includes('<!DOCTYPE') || text.includes('<html') || text.includes('__next_f.push') || text.length > 220) {
-    return 'Server route returned HTML/404 instead of JSON. Please redeploy and check backend route.'
-  }
-  return text
-}
 import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -689,12 +681,6 @@ export default function CameraPage() {
       const proxyUrl = `/api/media/proxy?url=${encodeURIComponent(enhancedMediaUrl)}`
 
       const enhancedResponse = await fetch(proxyUrl, { cache: 'no-store' })
-      const enhancedType = enhancedResponse.headers.get('content-type') || ''
-
-      if (!enhancedResponse.ok || enhancedType.includes('text/html') || enhancedType.includes('application/json')) {
-        throw new Error('HD output media not found. Backend media URL/proxy issue.')
-      }
-
       const enhancedBlob = await enhancedResponse.blob()
 
       setCapturedBlob(enhancedBlob)
@@ -703,7 +689,7 @@ export default function CameraPage() {
 
       setMessage('HD Enhance completed. Now save or continue edit.')
     } catch (error: any) {
-      setMessage(cleanCameraError(error?.message || 'HD Enhance failed.'))
+      setMessage(error?.message || 'HD Enhance failed.')
     } finally {
       setEnhancing(false)
     }
@@ -775,7 +761,7 @@ export default function CameraPage() {
 
       setMessage('Video processed successfully. Now Save or Edit.')
     } catch (error: any) {
-      setMessage(cleanCameraError(error?.message || 'Video processing failed.'))
+      setMessage(error?.message || 'Video processing failed.')
     } finally {
       setProcessingVideo(false)
     }
@@ -814,7 +800,7 @@ export default function CameraPage() {
       try {
         data = rawText ? JSON.parse(rawText) : {}
       } catch {
-        throw new Error('AI HD route returned HTML/404 instead of JSON.')
+        throw new Error(rawText || 'AI HD returned empty response.')
       }
 
       if (!response.ok || !data.success) {
@@ -825,12 +811,6 @@ export default function CameraPage() {
       const proxyUrl = `/api/media/proxy?url=${encodeURIComponent(aiUrl)}`
 
       const aiResponse = await fetch(proxyUrl, { cache: 'no-store' })
-      const aiType = aiResponse.headers.get('content-type') || ''
-
-      if (!aiResponse.ok || aiType.includes('text/html') || aiType.includes('application/json')) {
-        throw new Error('AI HD output media not found. Backend media URL/proxy issue.')
-      }
-
       const aiBlob = await aiResponse.blob()
 
       setCapturedBlob(aiBlob)
@@ -838,7 +818,7 @@ export default function CameraPage() {
       setCapturedType('image')
       setMessage('AI HD completed. Now Save or Edit.')
     } catch (error: any) {
-      setMessage(cleanCameraError(error?.message || 'AI HD failed.'))
+      setMessage(error?.message || 'AI HD failed.')
     } finally {
       setAiHdLoading(false)
     }
@@ -903,7 +883,7 @@ export default function CameraPage() {
 
       router.push(url)
     } catch (error: any) {
-      setMessage(cleanCameraError(error?.message || 'Could not continue.'))
+      setMessage(error?.message || 'Could not continue.')
     } finally {
       setBusy(false)
     }

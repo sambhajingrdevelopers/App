@@ -1,4 +1,3 @@
-'use client'
 
 function cleanCameraError(value: any) {
   const text = String(value || '').trim()
@@ -8,6 +7,9 @@ function cleanCameraError(value: any) {
   }
   return text
 }
+
+'use client'
+
 import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
