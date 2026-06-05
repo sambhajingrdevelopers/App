@@ -545,14 +545,7 @@ export default function CameraPage() {
         body: formData
       })
 
-      const rawText = await response.text()
-      let data: any = {}
-
-      try {
-        data = rawText ? JSON.parse(rawText) : {}
-      } catch {
-        throw new Error(rawText || 'HD enhance backend returned empty response.')
-      }
+      const data = await response.json()
 
       if (!response.ok || !data.success) {
         throw new Error(data.message || data.error || 'HD enhance failed.')
@@ -791,10 +784,6 @@ export default function CameraPage() {
               <b>{activePanel === 'music' ? 'Music library' : activePanel === 'stickers' ? 'Stickers' : activePanel === 'crop' ? 'Crop & frame' : activePanel === 'pen' ? 'Drawing pen' : 'Edit tools'}</b>
               <button type="button" onClick={() => setActivePanel('none')}>Done</button>
             </div>
-
-            <button type="button" className="vlxQuickCloseTools" onClick={() => setActivePanel('none')}>
-              Close editor
-            </button>
 
             {activePanel === 'music' && (
               <div className="vlxMusicGrid">
