@@ -1,0 +1,52 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://13.206.145.54:8003';
+const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'CHANGE_ME_ADMIN_KEY';
+
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const params = await context.params;
+    const body = await request.json();
+
+    const response = await fetch(
+      `${BACKEND_URL}/api/v1/admin/reports/${params.id}/status`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 'X-Admin-Api-Key': ADMIN_API_KEY },
+        body: JSON.stringify({
+          status: body.status
+        }),
+        cache: 'no-store'
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: data?.detail || data?.message || 'Report update failed'
+        },
+        { status: response.status }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error?.message || 'Report update server error'
+      },
+      { status: 500 }
+    );
+  }
+}

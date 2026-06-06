@@ -10,7 +10,7 @@ export async function POST(
   try {
     const params = await context.params;
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/admin/users/${encodeURIComponent(params.id)}/archive`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/admin/users/${encodeURIComponent(params?.id)}/archive`, {
       headers: { 'X-Admin-Api-Key': ADMIN_API_KEY },
       method: 'POST',
       cache: 'no-store'

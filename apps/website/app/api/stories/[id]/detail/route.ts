@@ -9,7 +9,7 @@ export async function GET(
   try {
     const params = await context.params;
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/stories/${encodeURIComponent(params.id)}/detail`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/stories/${encodeURIComponent(params?.id)}/detail`, {
       cache: 'no-store'
     });
 

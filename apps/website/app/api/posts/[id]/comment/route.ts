@@ -10,7 +10,7 @@ export async function POST(
     const params = await context.params;
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/posts/${encodeURIComponent(params.id)}/comment`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/posts/${encodeURIComponent(params?.id)}/comment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: body.text, user: body.user || '@you' }),

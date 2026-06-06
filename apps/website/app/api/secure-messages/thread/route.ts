@@ -23,11 +23,11 @@ async function readJson(res: Response) {
 }
 
 export async function GET(request: NextRequest) {
-  const user = request.nextUrl.searchParams.get("user") || "@pradip"
+  const user = request.nextUrl.searchParams?.get("user") || "@pradip"
   const withUser =
-    request.nextUrl.searchParams.get("with_user") ||
-    request.nextUrl.searchParams.get("withUser") ||
-    request.nextUrl.searchParams.get("with") ||
+    request.nextUrl.searchParams?.get("with_user") ||
+    request.nextUrl.searchParams?.get("withUser") ||
+    request.nextUrl.searchParams?.get("with") ||
     "@creator"
 
   const qs = `user=${encodeURIComponent(user)}&with_user=${encodeURIComponent(withUser)}&withUser=${encodeURIComponent(withUser)}`

@@ -4,8 +4,8 @@ const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://13.206.145.54:8003';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'CHANGE_ME_ADMIN_KEY';
 
 export async function GET(request: NextRequest) {
-  const q = request.nextUrl.searchParams.get('q') || '';
-  const includeArchived = request.nextUrl.searchParams.get('includeArchived') || 'false';
+  const q = request.nextUrl.searchParams?.get('q') || '';
+  const includeArchived = request.nextUrl.searchParams?.get('includeArchived') || 'false';
 
   try {
     const response = await fetch(

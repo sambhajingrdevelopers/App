@@ -132,7 +132,7 @@ export default function SearchPage() {
       setMe(cleanUsername(session.username))
 
       const params = new URLSearchParams(window.location.search)
-      const q = params.get('q') || ''
+      const q = params?.get('q') || ''
       setQuery(q)
 
       await loadSearch(q)

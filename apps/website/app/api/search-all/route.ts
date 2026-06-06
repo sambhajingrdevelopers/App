@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://13.206.145.54:8003';
 
 export async function GET(request: NextRequest) {
-  const q = request.nextUrl.searchParams.get('q') || '';
+  const q = request.nextUrl.searchParams?.get('q') || '';
 
   try {
     const response = await fetch(

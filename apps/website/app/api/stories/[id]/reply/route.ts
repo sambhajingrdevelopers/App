@@ -10,7 +10,7 @@ export async function POST(
     const params = await context.params;
     const body = await request.json();
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/stories/${encodeURIComponent(params.id)}/reply`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/stories/${encodeURIComponent(params?.id)}/reply`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

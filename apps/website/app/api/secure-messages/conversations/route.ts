@@ -24,7 +24,7 @@ async function readJson(res: Response) {
 }
 
 export async function GET(request: NextRequest) {
-  const user = request.nextUrl.searchParams.get("user") || "@pradip"
+  const user = request.nextUrl.searchParams?.get("user") || "@pradip"
   const errors: string[] = []
 
   for (const path of PATHS) {

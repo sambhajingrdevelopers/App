@@ -12,7 +12,7 @@ export async function POST(
     const body = await request.json();
 
     const response = await fetch(
-      `${BACKEND_URL}/api/v1/admin/reports/${params.id}/status`,
+      `${BACKEND_URL}/api/v1/admin/reports/${params?.id}/status`,
       {
         method: 'POST',
         headers: {

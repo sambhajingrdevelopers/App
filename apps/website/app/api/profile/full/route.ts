@@ -38,8 +38,8 @@ function normalizeContent(item: any, fallbackKind: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const username = cleanUsername(request.nextUrl.searchParams.get("username") || "@creator")
-  const viewer = cleanUsername(request.nextUrl.searchParams.get("viewer") || "@guest")
+  const username = cleanUsername(request.nextUrl.searchParams?.get("username") || "@creator")
+  const viewer = cleanUsername(request.nextUrl.searchParams?.get("viewer") || "@guest")
 
   try {
     const [usersResult, contentResult, followResult] = await Promise.allSettled([

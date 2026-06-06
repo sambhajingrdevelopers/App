@@ -1,0 +1,306 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
+import { useSearchParams } from 'next/navigation'
+
+
+function AuthGuard({ children }: { children: ReactNode }) {
+  return <>{children}</>
+}
+
+function SocialAppShell({ children }: { children: ReactNode; active?: string; hideSearch?: boolean }) {
+  return <>{children}</>
+}
+
+async function getSessionUser() {
+  const fallback = process.env.NEXT_PUBLIC_DEFAULT_USER || '@pradip'
+
+  if (typeof window === 'undefined') {
+    return {
+      id: fallback,
+      userId: fallback,
+      username: fallback,
+      name: fallback.replace('@', '') || 'User',
+    }
+  }
+
+  const saved =
+    window.localStorage.getItem('vibeloop_user') ||
+    window.localStorage.getItem('sessionUser') ||
+    window.localStorage.getItem('username') ||
+    window.localStorage.getItem('currentUser') ||
+    fallback
+
+  let username = String(saved || fallback).trim()
+  let name = ''
+
+  try {
+    const parsed = JSON.parse(username)
+    username = parsed.username || parsed.user || parsed.handle || parsed.name || fallback
+    name = parsed.name || parsed.displayName || ''
+  } catch {
+    name = username.replace('@', '')
+  }
+
+  if (!username.startsWith('@')) username = `@${username}`
+
+  return {
+    id: username,
+    userId: username,
+    username,
+    name: name || username.replace('@', '') || 'User',
+  }
+}
+
+type Item = {
+  id: string
+  kind?: string
+  title?: string
+  caption?: string
+  mediaUrl?: string
+  videoUrl?: string
+  mediaType?: string
+  likes?: number
+  comments?: number
+}
+
+type Profile = {
+  name: string
+  username: string
+  bio?: string
+  location?: string
+  avatarUrl?: string
+  coverUrl?: string
+  verified?: boolean
+  followers: number
+  following: number
+  isFollowing: boolean
+  isOwner: boolean
+  counts: {
+    posts: number
+    reels: number
+    stories: number
+  }
+}
+
+function cleanUsername(value?: string | null) {
+  const text = String(value || '').trim()
+  if (!text) return '@creator'
+  return text.startsWith('@') ? text : `@${text}`
+}
+
+function firstLetter(value?: string) {
+  return String(value || 'U').replace('@', '').slice(0, 1).toUpperCase()
+}
+
+function goodUrl(value?: string) {
+  const text = String(value || '').trim()
+  return text.startsWith('http') || text.startsWith('/media/') || text.startsWith('data:')
+}
+
+function count(value: number) {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`
+  return String(value || 0)
+}
+
+export default function ProfileClient() {
+  const params = useSearchParams()
+
+  const [viewer, setViewer] = useState('@guest')
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [posts, setPosts] = useState<Item[]>([])
+  const [reels, setReels] = useState<Item[]>([])
+  const [stories, setStories] = useState<Item[]>([])
+  const [tab, setTab] = useState<'posts' | 'reels' | 'stories'>('posts')
+  const [loading, setLoading] = useState(true)
+  const [notice, setNotice] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  const targetUsername = useMemo(() => {
+    return cleanUsername(params?.get('username') || viewer)
+  }, [params, viewer])
+
+  async function loadProfile() {
+    setLoading(true)
+    setNotice('')
+
+    const session = await getSessionUser()
+    const currentViewer = cleanUsername(session.username || '@guest')
+    setViewer(currentViewer)
+
+    const target = cleanUsername(params?.get('username') || currentViewer)
+
+    const data = await fetch(
+      `/api/profile/full?username=${encodeURIComponent(target)}&viewer=${encodeURIComponent(currentViewer)}`,
+      { cache: 'no-store' }
+    )
+      .then((res) => res.json())
+      .catch(() => ({ success: false, message: 'Profile backend failed.' }))
+
+    if (!data.success || !data.profile) {
+      setProfile(null)
+      setPosts([])
+      setReels([])
+      setStories([])
+      setNotice(data.message || 'Profile not found.')
+      setLoading(false)
+      return
+    }
+
+    setProfile(data.profile)
+    setPosts(Array.isArray(data.posts) ? data.posts : [])
+    setReels(Array.isArray(data.reels) ? data.reels : [])
+    setStories(Array.isArray(data.stories) ? data.stories : [])
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    loadProfile()
+  }, [params])
+
+  async function toggleFollow() {
+    if (!profile || profile.isOwner || busy) return
+
+    setBusy(true)
+
+    const data = await fetch('/api/follow/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ follower: viewer, following: profile.username }),
+    })
+      .then((res) => res.json())
+      .catch(() => ({ success: false, message: 'Follow failed.' }))
+
+    setNotice(data.message || 'Updated.')
+
+    if (data.success) {
+      setProfile((old) =>
+        old
+          ? {
+              ...old,
+              isFollowing: Boolean(data.isFollowing),
+              followers: Number(data.followers ?? old.followers),
+            }
+          : old
+      )
+    }
+
+    setBusy(false)
+  }
+
+  const activeItems = tab === 'posts' ? posts : tab === 'reels' ? reels : stories
+
+  return (
+    <AuthGuard>
+      <SocialAppShell active="profile" hideSearch>
+        <main className="dynProfilePage">
+          {loading ? (
+            <section className="dynProfileState">Loading profile...</section>
+          ) : !profile ? (
+            <section className="dynProfileState">
+              <b>Profile not found</b>
+              <span>{notice}</span>
+            </section>
+          ) : (
+            <>
+              <section className="dynProfileHero">
+                <div className="dynProfileCover">
+                  {goodUrl(profile.coverUrl) ? <img src={profile.coverUrl} alt="cover" /> : <span />}
+                </div>
+
+                <div className="dynProfileTop">
+                  <div className="dynProfileAvatar">
+                    {goodUrl(profile.avatarUrl) ? (
+                      <img src={profile.avatarUrl} alt={profile.name} />
+                    ) : (
+                      <b>{firstLetter(profile.name)}</b>
+                    )}
+                    <i />
+                  </div>
+
+                  <div className="dynProfileIdentity">
+                    <h1>
+                      {profile.name}
+                      {profile.verified && <em>✓</em>}
+                    </h1>
+                    <strong>{profile.username}</strong>
+                    <p>{profile.bio || 'Digital Creator'}</p>
+                    <small>📍 {profile.location || 'India'}</small>
+                  </div>
+                </div>
+
+                <div className="dynProfileStats">
+                  <div><b>{count(profile.counts.posts)}</b><span>Posts</span></div>
+                  <div><b>{count(profile.counts.reels)}</b><span>Reels</span></div>
+                  <div><b>{count(profile.followers)}</b><span>Followers</span></div>
+                  <div><b>{count(profile.following)}</b><span>Following</span></div>
+                </div>
+
+                <div className="dynProfileActions">
+                  {profile.isOwner ? (
+                    <>
+                      <a href="/settings">Edit Profile</a>
+                      <a href="/camera?type=post">Camera</a>
+                      <a href="/trash">Trash</a>
+                    </>
+                  ) : (
+                    <>
+                      <button type="button" onClick={toggleFollow} disabled={busy} className={profile.isFollowing ? 'active' : ''}>
+                        {profile.isFollowing ? 'Following' : 'Follow'}
+                      </button>
+                      <a href={`/messages?to=${encodeURIComponent(profile.username)}`}>Message</a>
+                      <button type="button" onClick={() => navigator.clipboard?.writeText(`${window.location.origin}/profile?username=${profile.username}`)}>
+                        Share
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {notice && <div className="dynProfileNotice">{notice}</div>}
+              </section>
+
+              <section className="dynProfileTabs">
+                <button type="button" onClick={() => setTab('posts')} className={tab === 'posts' ? 'active' : ''}>Posts</button>
+                <button type="button" onClick={() => setTab('reels')} className={tab === 'reels' ? 'active' : ''}>Reels</button>
+                <button type="button" onClick={() => setTab('stories')} className={tab === 'stories' ? 'active' : ''}>Stories</button>
+              </section>
+
+              <section className="dynProfileGrid">
+                {activeItems.length === 0 ? (
+                  <div className="dynProfileEmpty">
+                    <b>No {tab} yet</b>
+                    <span>{profile.isOwner ? 'Create your first content.' : `${profile.name} has not added ${tab} yet.`}</span>
+                    {profile.isOwner && <a href="/camera?type=post">Create now</a>}
+                  </div>
+                ) : (
+                  activeItems.map((item) => {
+                    const src = item.videoUrl || item.mediaUrl || ''
+                    const isVideo = item.kind === 'reel' || item.mediaType === 'video'
+
+                    return (
+                      <a className="dynProfileCard" href={`/post/${encodeURIComponent(item.id)}`} key={item.id}>
+                        <div className="dynProfileMedia">
+                          {goodUrl(src) ? (
+                            isVideo ? <video src={src} muted playsInline preload="metadata" /> : <img src={src} alt={item.title || 'content'} />
+                          ) : (
+                            <span>{isVideo ? '▶' : '✦'}</span>
+                          )}
+                        </div>
+                        <div className="dynProfileCardText">
+                          <b>{item.title || item.kind || 'Content'}</b>
+                          <small>♥ {count(Number(item.likes || 0))} · 💬 {count(Number(item.comments || 0))}</small>
+                        </div>
+                      </a>
+                    )
+                  })
+                )}
+              </section>
+            </>
+          )}
+        </main>
+      </SocialAppShell>
+    </AuthGuard>
+  )
+}

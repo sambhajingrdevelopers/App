@@ -36,10 +36,10 @@ export async function GET(request: NextRequest) {
   try {
     const follower =
       request.cookies.get("vibeloop_username")?.value ||
-      request.nextUrl.searchParams.get("follower") ||
+      request.nextUrl.searchParams?.get("follower") ||
       "@you"
 
-    const following = request.nextUrl.searchParams.get("following") || "@you"
+    const following = request.nextUrl.searchParams?.get("following") || "@you"
 
     const response = await fetch(
       `${BACKEND_URL}/api/v1/follow/status?follower=${encodeURIComponent(follower)}&following=${encodeURIComponent(following)}`,

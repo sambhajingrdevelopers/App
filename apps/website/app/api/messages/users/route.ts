@@ -97,7 +97,7 @@ function fallbackUsers(currentUser: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const currentUser = cleanUsername(request.nextUrl.searchParams.get("user") || "@guest")
+  const currentUser = cleanUsername(request.nextUrl.searchParams?.get("user") || "@guest")
 
   try {
     const [usersResult, conversationsResult] = await Promise.allSettled([

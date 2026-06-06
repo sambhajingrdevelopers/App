@@ -230,7 +230,7 @@ export default function ProfileClient() {
                   {profile.isOwner ? (
                     <>
                       <a href="/settings">Edit Profile</a>
-                      <a href="/create">Create</a>
+                      <a href="/camera?type=post">Camera</a>
                       <a href="/trash">Trash</a>
                     </>
                   ) : (
@@ -260,7 +260,7 @@ export default function ProfileClient() {
                   <div className="dynProfileEmpty">
                     <b>No {tab} yet</b>
                     <span>{profile.isOwner ? 'Create your first content.' : `${profile.name} has not added ${tab} yet.`}</span>
-                    {profile.isOwner && <a href="/create">Create now</a>}
+                    {profile.isOwner && <a href="/camera?type=post">Create now</a>}
                   </div>
                 ) : (
                   activeItems.map((item) => {

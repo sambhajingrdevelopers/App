@@ -22,7 +22,7 @@ async function getJson(path: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const q = String(request.nextUrl.searchParams.get("q") || "").trim()
+  const q = String(request.nextUrl.searchParams?.get("q") || "").trim()
 
   if (!q) {
     return NextResponse.json({

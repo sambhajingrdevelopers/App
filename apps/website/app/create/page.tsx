@@ -140,7 +140,7 @@ export default function CreatePage() {
       })
 
       const params = new URLSearchParams(window.location.search)
-      const requestedType = params.get('type')
+      const requestedType = params?.get('type')
 
       if (requestedType === 'post' || requestedType === 'reel' || requestedType === 'story') {
         setType(requestedType)
@@ -193,8 +193,8 @@ export default function CreatePage() {
   // PHASE_AUTO_OPEN_CAMERA_QUERY
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('web') === '1') {
-      const shouldRecord = params.get('record') === '1' || params.get('type') === 'reel'
+    if (params?.get('web') === '1') {
+      const shouldRecord = params?.get('record') === '1' || params?.get('type') === 'reel'
       setTimeout(() => startCamera(shouldRecord), 450)
     }
   }, [])
@@ -202,10 +202,10 @@ export default function CreatePage() {
   // PHASE_NATIVE_CAMERA_QUERY_AUTO_OPEN
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const shouldOpenCamera = params.get('native') === '1'
+    const shouldOpenCamera = params?.get('native') === '1'
     if (!shouldOpenCamera) return
 
-    const requestedType = params.get('type')
+    const requestedType = params?.get('type')
     if (requestedType === 'reel') {
       setType('reel')
       setMediaType('video')
@@ -213,7 +213,7 @@ export default function CreatePage() {
 
     // Browser may block auto-open on some phones. Button remains visible if blocked.
     setTimeout(() => {
-      if (requestedType === 'reel' || params.get('record') === '1') {
+      if (requestedType === 'reel' || params?.get('record') === '1') {
         nativeVideoInputRef.current?.click()
       } else {
         nativePhotoInputRef.current?.click()
@@ -224,10 +224,10 @@ export default function CreatePage() {
   // PHASE_NATIVE_ONLY_QUERY_OPEN
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('native') !== '1') return
+    if (params?.get('native') !== '1') return
 
-    const requestedType = params.get('type')
-    const record = params.get('record') === '1' || requestedType === 'reel'
+    const requestedType = params?.get('type')
+    const record = params?.get('record') === '1' || requestedType === 'reel'
 
     if (record) {
       setType('reel')
@@ -246,10 +246,10 @@ export default function CreatePage() {
   // PHASE_CAMERA_REDIRECT_MEDIA_QUERY
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const incomingMedia = params.get('mediaUrl') || ''
-    const incomingVideo = params.get('videoUrl') || ''
-    const incomingType = params.get('mediaType') || ''
-    const incomingCreateType = params.get('type')
+    const incomingMedia = params?.get('mediaUrl') || ''
+    const incomingVideo = params?.get('videoUrl') || ''
+    const incomingType = params?.get('mediaType') || ''
+    const incomingCreateType = params?.get('type')
 
     if (!incomingMedia && !incomingVideo) return
 
@@ -263,9 +263,9 @@ export default function CreatePage() {
     setCreateStep('edit')
     setMessage('Camera media ready. Edit it, then continue to publish.')
 
-    const qLocation = params.get('location') || ''
-    const qMusicTitle = params.get('musicTitle') || ''
-    const qAudioUrl = params.get('audioUrl') || ''
+    const qLocation = params?.get('location') || ''
+    const qMusicTitle = params?.get('musicTitle') || ''
+    const qAudioUrl = params?.get('audioUrl') || ''
 
     if (qLocation && typeof setLocation === 'function') setLocation(qLocation)
     if (qMusicTitle && typeof setMusicTitle === 'function') setMusicTitle(qMusicTitle)

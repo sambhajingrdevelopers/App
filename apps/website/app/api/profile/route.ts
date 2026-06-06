@@ -46,13 +46,13 @@ function publicUserFromSearch(user: any, target: string, isOwner: boolean) {
 
 export async function GET(request: NextRequest) {
   const target = cleanUsername(
-    request.nextUrl.searchParams.get("username") ||
+    request.nextUrl.searchParams?.get("username") ||
     request.cookies.get("vibeloop_username")?.value ||
     "@you"
   )
 
   const viewer = cleanUsername(
-    request.nextUrl.searchParams.get("viewer") ||
+    request.nextUrl.searchParams?.get("viewer") ||
     request.cookies.get("vibeloop_username")?.value ||
     "@guest"
   )

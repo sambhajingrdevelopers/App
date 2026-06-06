@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      const next = params.get('next');
+      const next = params?.get('next');
 
       if (next && next.startsWith('/')) {
         setNextPath(next);

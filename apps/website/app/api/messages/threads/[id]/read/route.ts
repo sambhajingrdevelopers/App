@@ -9,7 +9,7 @@ export async function POST(
   try {
     const params = await context.params;
 
-    const response = await fetch(`${BACKEND_URL}/api/v1/messages/threads/${encodeURIComponent(params.id)}/read`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/messages/threads/${encodeURIComponent(params?.id)}/read`, {
       method: 'POST',
       cache: 'no-store'
     });

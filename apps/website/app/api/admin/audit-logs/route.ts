@@ -4,8 +4,8 @@ const BACKEND_URL = process.env.EC2_BACKEND_URL || 'http://13.206.145.54:8003';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'CHANGE_ME_ADMIN_KEY';
 
 export async function GET(request: NextRequest) {
-  const q = request.nextUrl.searchParams.get('q') || '';
-  const limit = request.nextUrl.searchParams.get('limit') || '100';
+  const q = request.nextUrl.searchParams?.get('q') || '';
+  const limit = request.nextUrl.searchParams?.get('limit') || '100';
 
   try {
     const response = await fetch(
