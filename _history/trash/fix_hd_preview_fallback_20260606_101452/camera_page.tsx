@@ -701,10 +701,7 @@ export default function CameraPage() {
       const enhancedType = enhancedResponse.headers.get('content-type') || ''
 
       if (!enhancedResponse.ok || enhancedType.includes('text/html') || enhancedType.includes('application/json')) {
-        setCapturedUrl(proxyUrl)
-        setCapturedType('image')
-        setMessage('HD completed. Preview loaded from enhanced media URL.')
-        return
+        throw new Error('HD image created but preview fetch failed. Save/Edit may still work after deploy refresh.')
       }
 
       const enhancedBlob = await enhancedResponse.blob()
