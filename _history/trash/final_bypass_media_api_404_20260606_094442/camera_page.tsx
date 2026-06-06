@@ -4,7 +4,7 @@ function cleanCameraError(value: any) {
   const text = String(value || '').trim()
   if (!text) return 'Something went wrong.'
   if (text.includes('<!DOCTYPE') || text.includes('<html') || text.includes('__next_f.push') || text.length > 220) {
-    return 'HD route not deployed yet. Wait for Vercel deploy, then retry.'
+    return 'Server route returned HTML/404 instead of JSON. Please redeploy and check backend route.'
   }
   return text
 }
@@ -667,7 +667,7 @@ export default function CameraPage() {
       formData.append('faceGlow', String(typeof faceGlow !== 'undefined' ? faceGlow : 18))
       formData.append('lowLightBoost', String(typeof lowLightBoost !== 'undefined' ? lowLightBoost : 0))
 
-      const response = await fetch('/api/v1/media/enhance', {
+      const response = await fetch('/api/media/enhance', {
         method: 'POST',
         body: formData
       })
@@ -822,7 +822,7 @@ export default function CameraPage() {
       }
 
       const aiUrl = data.mediaUrl || data.url || ''
-      const proxyUrl = aiUrl
+      const proxyUrl = `/api/media/proxy?url=${encodeURIComponent(aiUrl)}`
 
       const aiResponse = await fetch(proxyUrl, { cache: 'no-store' })
       const aiType = aiResponse.headers.get('content-type') || ''
