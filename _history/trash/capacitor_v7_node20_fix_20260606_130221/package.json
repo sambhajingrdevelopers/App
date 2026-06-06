@@ -8,9 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@capacitor/android": "^7.6.6",
-    "@capacitor/cli": "^7.6.6",
-    "@capacitor/core": "^7.6.6",
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"

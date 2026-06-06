@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">VibeLoop</string>
+    <string name="title_activity_main">VibeLoop</string>
+    <string name="package_name">com.vibeloop.app</string>
+    <string name="custom_url_scheme">com.vibeloop.app</string>
+</resources>
