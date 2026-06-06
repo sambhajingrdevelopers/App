@@ -1,0 +1,20 @@
+{
+  "name": "VibeLoop",
+  "short_name": "VibeLoop",
+  "description": "Creator social app with camera, posts, reels, stories and HD editing.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070711",
+  "theme_color": "#0b0b16",
+  "categories": ["social", "photo", "video", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

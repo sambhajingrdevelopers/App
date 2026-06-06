@@ -1,71 +1,43 @@
-const CACHE_NAME = 'vibeloop-pwa-v1';
+const CACHE_NAME = "vibeloop-pwa-v1"
 
-const STATIC_ROUTES = [
-  '/home',
-  '/search',
-  '/create',
-  '/reels',
-  '/profile',
-  '/messages',
-  '/notifications',
-  '/offline',
-  '/icons/icon.svg'
-];
-
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-
+self.addEventListener("install", (event) => {
+  self.skipWaiting()
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ROUTES))
-  );
-});
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([
+      "/",
+      "/manifest.webmanifest",
+      "/icons/icon.svg"
+    ]).catch(() => null))
+  )
+})
 
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      )
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
     )
-  );
+  )
+  self.clients.claim()
+})
 
-  self.clients.claim();
-});
+self.addEventListener("fetch", (event) => {
+  const req = event.request
+  const url = new URL(req.url)
 
-self.addEventListener('fetch', (event) => {
-  const request = event.request;
-  const url = new URL(request.url);
+  if (req.method !== "GET") return
 
-  if (request.method !== 'GET') return;
-
-  if (url.pathname.startsWith('/api/')) return;
-
-  if (url.pathname.startsWith('/_next/')) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        return cached || fetch(request).then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return response;
-        });
-      })
-    );
-    return;
+  if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/media/")) {
+    event.respondWith(fetch(req).catch(() => caches.match(req)))
+    return
   }
 
   event.respondWith(
-    fetch(request)
-      .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        return response;
+    fetch(req)
+      .then((res) => {
+        const copy = res.clone()
+        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy)).catch(() => null)
+        return res
       })
-      .catch(() => {
-        return caches.match(request).then((cached) => {
-          return cached || caches.match('/offline');
-        });
-      })
-  );
-});
+      .catch(() => caches.match(req).then((cached) => cached || caches.match("/")))
+  )
+})
