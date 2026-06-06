@@ -1,14 +1,5 @@
 'use client'
 
-
-function backendMediaUrl(url: string) {
-  if (!url) return ""
-  if (url.startsWith("http")) return url
-  if (url.startsWith("/media/")) return `http://13.206.145.54:8003${url}`
-  return url
-}
-
-
 function cleanCameraError(value: any) {
   const text = String(value || '').trim()
   if (!text) return 'Something went wrong.'
@@ -701,7 +692,7 @@ export default function CameraPage() {
       const enhancedType = enhancedResponse.headers.get('content-type') || ''
 
       if (!enhancedResponse.ok || enhancedType.includes('text/html') || enhancedType.includes('application/json')) {
-        throw new Error('HD image created but media fetch failed. Backend /media serving issue.')
+        throw new Error('HD output media not found. Backend media URL/proxy issue.')
       }
 
       const enhancedBlob = await enhancedResponse.blob()
@@ -831,13 +822,13 @@ export default function CameraPage() {
       }
 
       const aiUrl = data.mediaUrl || data.url || ''
-      const proxyUrl = backendMediaUrl(aiUrl)
+      const proxyUrl = aiUrl
 
       const aiResponse = await fetch(proxyUrl, { cache: 'no-store' })
       const aiType = aiResponse.headers.get('content-type') || ''
 
       if (!aiResponse.ok || aiType.includes('text/html') || aiType.includes('application/json')) {
-        throw new Error('AI HD image created but media fetch failed. Backend /media serving issue.')
+        throw new Error('AI HD output media not found. Backend media URL/proxy issue.')
       }
 
       const aiBlob = await aiResponse.blob()
