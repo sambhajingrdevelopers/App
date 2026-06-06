@@ -1,40 +1,5 @@
 'use client'
 
-
-function normalizePreviewUrl(url: any) {
-  const raw = String(url || "").trim()
-  if (!raw) return ""
-
-  if (raw.startsWith("blob:")) return raw
-  if (raw.startsWith("data:")) return raw
-  if (raw.startsWith("/media/")) return raw
-
-  if (raw.startsWith("http://13.206.145.54:8003/media/")) {
-    return raw.replace("http://13.206.145.54:8003", "")
-  }
-
-  if (raw.startsWith("https://13.206.145.54:8003/media/")) {
-    return raw.replace("https://13.206.145.54:8003", "")
-  }
-
-  if (raw.startsWith("http")) return raw
-  return raw
-}
-
-function isValidPreviewUrl(url: any) {
-  const normalized = normalizePreviewUrl(url)
-  return Boolean(
-    normalized &&
-    (
-      normalized.startsWith("blob:") ||
-      normalized.startsWith("data:") ||
-      normalized.startsWith("/media/") ||
-      normalized.startsWith("http")
-    )
-  )
-}
-
-
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
@@ -64,7 +29,7 @@ function displayMediaUrl(url: string) {
   const clean = String(url || '').trim()
   if (!clean) return ''
   if (clean.startsWith('data:')) return clean
-  if (clean.startsWith('/media/')) return clean
+  if (clean.startsWith('/api/media/proxy')) return clean
   if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('/media/')) {
     return `/api/media/proxy?url=${encodeURIComponent(clean)}`
   }
@@ -683,11 +648,11 @@ export default function CreatePage() {
 
                     <div className={`vlxPhase3Preview ${cropClass}`}>
                       {mediaType === 'video' ? (
-                        <video src={normalizePreviewUrl(previewDisplayUrl)} controls playsInline loop muted style={{ filter: editFilter }} />
+                        <video src={previewDisplayUrl} controls playsInline loop muted style={{ filter: editFilter }} />
                       ) : validPreview(previewDisplayUrl) ? (
-                        <img src={normalizePreviewUrl(previewDisplayUrl)} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
+                        <img src={previewDisplayUrl} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
                       ) : (
-                        <span>Preview media loading...</span>
+                        <span>Invalid preview URL</span>
                       )}
                     </div>
                     <section className="vlxPhase3Tools">
