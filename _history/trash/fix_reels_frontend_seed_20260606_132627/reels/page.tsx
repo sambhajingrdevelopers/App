@@ -194,7 +194,7 @@ export default function ReelsPage() {
               {filteredReels.map((reel) => {
                 const username = cleanUsername(reel.username || reel.user)
                 const name = reel.name || username.replace('@', '') || 'Creator'
-                const videoSrc = (reel.videoUrl || (reel.video_url || reel.videoUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || (reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || reel.url || reel.src) || (reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.url || reel.src) || (reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || ''
+                const videoSrc = reel.videoUrl || reel.mediaUrl || ''
                 const isOwner = username.toLowerCase() === me.toLowerCase()
 
                 return (
@@ -211,7 +211,7 @@ export default function ReelsPage() {
                           loop
                           playsInline
                           preload="metadata"
-                          poster={(reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || ''}
+                          poster={reel.mediaUrl || ''}
                         />
                       ) : (
                         <div className="vlxRealReelFallback">
