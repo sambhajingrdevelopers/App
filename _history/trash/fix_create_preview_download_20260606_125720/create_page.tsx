@@ -1,81 +1,6 @@
 'use client'
 
 
-function vlxNormalizeMediaUrl(url: any) {
-  const raw = String(url || "").trim()
-  if (!raw) return ""
-  if (raw.startsWith("blob:")) return raw
-  if (raw.startsWith("data:")) return raw
-  if (raw.startsWith("/media/")) return raw
-
-  if (raw.startsWith("http://13.206.145.54:8003/media/")) {
-    return raw.replace("http://13.206.145.54:8003", "")
-  }
-
-  if (raw.startsWith("https://13.206.145.54:8003/media/")) {
-    return raw.replace("https://13.206.145.54:8003", "")
-  }
-
-  if (raw.startsWith("http")) return raw
-  return raw
-}
-
-function vlxGetDraftMedia() {
-  if (typeof window === "undefined") return { url: "", type: "image" }
-
-  const qs = new URLSearchParams(window.location.search)
-  const url =
-    qs.get("mediaUrl") ||
-    qs.get("url") ||
-    qs.get("preview") ||
-    sessionStorage.getItem("vlx_create_media_url") ||
-    ""
-
-  const type =
-    qs.get("type") ||
-    sessionStorage.getItem("vlx_create_media_type") ||
-    "image"
-
-  return {
-    url: vlxNormalizeMediaUrl(url),
-    type: String(type || "image")
-  }
-}
-
-function VlxDraftPreview() {
-  const [draft, setDraft] = React.useState<{ url: string; type: string }>({ url: "", type: "image" })
-
-  React.useEffect(() => {
-    setDraft(vlxGetDraftMedia())
-  }, [])
-
-  if (!draft.url) {
-    return <div className="vlxPreviewFallback"><VlxDraftPreview /></div>
-  }
-
-  if (draft.type.includes("video") || draft.url.match(/\.(mp4|webm|mov)(\?|$)/i)) {
-    return (
-      <video
-        src={draft.url}
-        controls
-        playsInline
-        muted
-        className="vlxDraftPreviewMedia"
-      />
-    )
-  }
-
-  return (
-    <img
-      src={draft.url}
-      alt="Preview"
-      className="vlxDraftPreviewMedia"
-    />
-  )
-}
-
-
-
 function normalizePreviewUrl(url: any) {
   const raw = String(url || "").trim()
   if (!raw) return ""
@@ -114,7 +39,6 @@ import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 're
 import AuthGuard from '../../components/AuthGuard'
 import SocialAppShell from '../../components/SocialAppShell'
 import { getSessionUser } from '../../lib/sessionUser'
-import * as React from "react"
 
 type CreateType = 'post' | 'reel' | 'story'
 type MediaType = 'image' | 'video'
@@ -763,7 +687,7 @@ export default function CreatePage() {
                       ) : validPreview(previewDisplayUrl) ? (
                         <img src={normalizePreviewUrl(previewDisplayUrl)} alt="Preview" style={{ filter: editFilter, transform: editTransform }} />
                       ) : (
-                        <span><VlxDraftPreview /></span>
+                        <span>Preview media loading...</span>
                       )}
                     </div>
                     <section className="vlxPhase3Tools">

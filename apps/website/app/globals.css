@@ -32206,3 +32206,22 @@ body.vlxCameraStudioBody [class*="bottomNav"] {
   font-size: 22px;
   line-height: 1;
 }
+
+/* CREATE_PREVIEW_SAFE_FIX */
+.vlxPreviewFallback {
+  width: 100%;
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,.66);
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.vlxDraftPreviewMedia {
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  border-radius: 24px;
+  background: #05050d;
+}

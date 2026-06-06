@@ -1,18 +1,6 @@
 'use client'
 
 
-function vlxRememberMedia(url: any, type: any = "image") {
-  try {
-    const clean = String(url || "").trim()
-    if (!clean) return
-    sessionStorage.setItem("vlx_create_media_url", clean)
-    sessionStorage.setItem("vlx_create_media_type", String(type || "image"))
-    sessionStorage.setItem("vlx_create_media_time", String(Date.now()))
-  } catch {}
-}
-
-
-
 function backendMediaUrl(url: string) {
   if (!url) return ""
   if (url.startsWith("http")) return url
@@ -589,9 +577,7 @@ export default function CameraPage() {
       })
 
       setCapturedBlob(blob)
-      const vlxObjectUrl = URL.createObjectURL(blob)
-      setCapturedUrl(vlxObjectUrl)
-      vlxRememberMedia(vlxObjectUrl, capturedType || 'image')
+      setCapturedUrl(URL.createObjectURL(blob))
       setCapturedType('image')
       setMessage('Photo captured. Save or continue to edit.')
     } catch (error: any) {
@@ -620,9 +606,7 @@ export default function CameraPage() {
     recorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: 'video/webm' })
       setCapturedBlob(blob)
-      const vlxObjectUrl = URL.createObjectURL(blob)
-      setCapturedUrl(vlxObjectUrl)
-      vlxRememberMedia(vlxObjectUrl, capturedType || 'image')
+      setCapturedUrl(URL.createObjectURL(blob))
       setCapturedType('video')
       setRecording(false)
       setMessage('Video recorded. Save or continue to edit.')
@@ -718,7 +702,6 @@ export default function CameraPage() {
 
       if (!enhancedResponse.ok || enhancedType.includes('text/html') || enhancedType.includes('application/json')) {
         setCapturedUrl(proxyUrl)
-        vlxRememberMedia(proxyUrl, 'image')
         setCapturedType('image')
         setMessage('HD completed. Preview loaded from enhanced media URL.')
         return
@@ -727,9 +710,7 @@ export default function CameraPage() {
       const enhancedBlob = await enhancedResponse.blob()
 
       setCapturedBlob(enhancedBlob)
-      const vlxObjectUrl = URL.createObjectURL(enhancedBlob)
-      setCapturedUrl(vlxObjectUrl)
-      vlxRememberMedia(vlxObjectUrl, capturedType || 'image')
+      setCapturedUrl(URL.createObjectURL(enhancedBlob))
       setCapturedType(data.mediaType === 'video' ? 'video' : capturedType)
 
       setMessage('HD Enhance completed. Now save or continue edit.')
@@ -801,9 +782,7 @@ export default function CameraPage() {
       const processedBlob = await processedResponse.blob()
 
       setCapturedBlob(processedBlob)
-      const vlxObjectUrl = URL.createObjectURL(processedBlob)
-      setCapturedUrl(vlxObjectUrl)
-      vlxRememberMedia(vlxObjectUrl, capturedType || 'image')
+      setCapturedUrl(URL.createObjectURL(processedBlob))
       setCapturedType('video')
 
       setMessage('Video processed successfully. Now Save or Edit.')
@@ -867,9 +846,7 @@ export default function CameraPage() {
       const aiBlob = await aiResponse.blob()
 
       setCapturedBlob(aiBlob)
-      const vlxObjectUrl = URL.createObjectURL(aiBlob)
-      setCapturedUrl(vlxObjectUrl)
-      vlxRememberMedia(vlxObjectUrl, capturedType || 'image')
+      setCapturedUrl(URL.createObjectURL(aiBlob))
       setCapturedType('image')
       setMessage('AI HD completed. Now Save or Edit.')
     } catch (error: any) {
@@ -950,9 +927,7 @@ export default function CameraPage() {
 
     const video = file.type.startsWith('video/')
     setCapturedBlob(file)
-    const vlxObjectUrl = URL.createObjectURL(file)
-      setCapturedUrl(vlxObjectUrl)
-      vlxRememberMedia(vlxObjectUrl, capturedType || 'image')
+    setCapturedUrl(URL.createObjectURL(file))
     setCapturedType(video ? 'video' : 'image')
     if (video) setMode('reel')
     setMessage('Gallery media ready. Save or continue to edit.')
