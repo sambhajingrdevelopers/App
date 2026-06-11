@@ -32240,3 +32240,103 @@ body.vlxCameraStudioBody [class*="bottomNav"] {
 .vlxReels{padding:0 0 120px;overflow:hidden}.vlxReelVideo{width:100%;height:100svh;object-fit:cover;background:#000}.vlxLeftTap,.vlxRightTap{position:fixed;top:0;bottom:0;width:45%;border:0;background:transparent;z-index:3}.vlxLeftTap{left:0}.vlxRightTap{right:0}
 .vlxReelInfo{position:fixed;left:22px;right:110px;bottom:145px;z-index:10;display:flex;gap:14px;align-items:center;text-shadow:0 4px 20px #000}.vlxReelInfo h2{margin:0;font-size:22px}.vlxReelInfo h2 span{color:#00eaff}.vlxReelInfo p{margin:5px 0;color:#fff;font-weight:800}.vlxReelInfo small{color:rgba(255,255,255,.7)}
 .vlxReelActions{position:fixed;right:22px;bottom:185px;z-index:10;display:grid;gap:16px}.vlxReelActions button{width:68px;height:68px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(20,20,33,.75);color:#fff;font-size:24px}.vlxReelActions small{display:block;font-size:12px;font-weight:900}.vlxToast{position:fixed;left:20px;right:20px;top:90px;z-index:20;background:#241133;color:#fff;padding:16px;border-radius:20px;text-align:center;font-weight:900}
+
+/* REAL_SOCIAL_ALL_PAGES */
+.rsPage,.rsReels{min-height:100svh;background:#070711;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.rsPage{padding:28px 18px 120px}
+.rsHeader{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.rsHeader h1{font-size:42px;margin:0;font-weight:1000}
+.rsHeader p{margin:6px 0 0;color:rgba(255,255,255,.55);font-size:18px}
+.rsHeader button{width:68px;height:68px;border-radius:26px;border:0;background:#171725;color:#fff;font-size:25px}
+.rsSearch{width:100%;box-sizing:border-box;margin:24px 0;padding:22px 25px;border-radius:32px;background:#151522;border:1px solid rgba(255,255,255,.1);color:#fff;font-size:20px;font-weight:800;outline:none}
+.rsCreators{border:1px solid rgba(255,255,255,.1);border-radius:34px;padding:22px;background:#11111d;margin-bottom:24px}
+.rsTitle{display:flex;justify-content:space-between;align-items:center}
+.rsTitle h2{font-size:30px;margin:0}
+.rsTitle span{color:#00eaff;font-weight:1000}
+.rsCreatorRow{display:flex;gap:18px;overflow:auto;padding-top:20px}
+.rsCreator,.rsCreatorAdd{min-width:110px;text-align:center;text-decoration:none;color:#fff}
+.rsCreator div,.rsCreatorAdd{width:90px;height:90px;border-radius:999px;margin:auto;display:grid;place-items:center;background:linear-gradient(135deg,#ff00b8,#6b2cff);font-size:38px;font-weight:1000;box-shadow:0 0 35px rgba(255,0,184,.25)}
+.rsCreator b{display:block;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsCreator small{display:block;color:rgba(255,255,255,.5);font-size:12px}
+.rsFeed{display:grid;gap:24px}
+.rsCard{overflow:hidden;border-radius:34px;background:#11111d;border:1px solid rgba(255,255,255,.1)}
+.rsCardTop{display:flex;align-items:center;gap:14px;padding:20px}
+.rsAvatar{width:66px;height:66px;border-radius:999px;background:linear-gradient(135deg,#ff00b8,#6b2cff);display:grid;place-items:center;font-size:28px;font-weight:1000;flex:0 0 auto}
+.rsCardTop h3{margin:0;font-size:22px}
+.rsCardTop h3 span,.rsReelInfo h2 span{color:#00eaff}
+.rsCardTop p{margin:3px 0 0;color:#8d8d99;font-weight:800}
+.rsCardTop a{margin-left:auto;color:#fff;text-decoration:none;font-size:24px}
+.rsMedia{background:#030308;min-height:360px;display:grid;place-items:center}
+.rsMedia img,.rsMedia video{width:100%;max-height:650px;object-fit:cover}
+.rsCaption{padding:18px 20px;color:#ddd;font-size:18px}
+.rsActions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 20px 20px}
+.rsActions button{border:0;border-radius:22px;padding:14px;color:#fff;background:#222232;font-weight:900}
+.rsEmpty,.rsCenter{min-height:360px;display:grid;place-items:center;text-align:center;color:rgba(255,255,255,.65);font-size:22px;font-weight:900}
+.rsBottom{position:fixed;left:12px;right:12px;bottom:18px;height:86px;border-radius:30px;background:rgba(16,16,28,.9);backdrop-filter:blur(22px);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;z-index:999;border:1px solid rgba(255,255,255,.1)}
+.rsBottom a{text-decoration:none;color:#bdbdc8;display:grid;place-items:center;font-size:26px;font-weight:900}
+.rsBottom span{font-size:12px}
+.rsBottom .on{color:#fff;background:rgba(255,255,255,.1);height:68px;border-radius:24px}
+.rsBottom .cam{color:#fff;width:76px;height:76px;justify-self:center;border-radius:26px;background:linear-gradient(135deg,#ff00b8,#00c8ff);box-shadow:0 0 40px rgba(255,0,184,.35)}
+.rsReels{padding:0 0 120px;overflow:hidden}
+.rsReelVideo{width:100%;height:100svh;object-fit:cover;background:#000}
+.rsLeftTap,.rsRightTap{position:fixed;top:0;bottom:0;width:45%;border:0;background:transparent;z-index:3}
+.rsLeftTap{left:0}
+.rsRightTap{right:0}
+.rsReelInfo{position:fixed;left:22px;right:110px;bottom:145px;z-index:10;display:flex;gap:14px;align-items:center;text-shadow:0 4px 20px #000}
+.rsReelInfo h2{margin:0;font-size:22px}
+.rsReelInfo p{margin:5px 0;color:#fff;font-weight:800}
+.rsReelInfo small{color:rgba(255,255,255,.7)}
+.rsReelActions{position:fixed;right:22px;bottom:185px;z-index:10;display:grid;gap:16px}
+.rsReelActions button{width:68px;height:68px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(20,20,33,.75);color:#fff;font-size:24px}
+.rsReelActions small{display:block;font-size:12px;font-weight:900}
+.rsToast{position:fixed;left:20px;right:20px;top:90px;z-index:20;background:#241133;color:#fff;padding:16px;border-radius:20px;text-align:center;font-weight:900}
+
+/* REAL_SOCIAL_ALL_PAGES */
+.rsPage,.rsReels{min-height:100svh;background:#070711;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.rsPage{padding:28px 18px 120px}
+.rsHeader{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.rsHeader h1{font-size:42px;margin:0;font-weight:1000}
+.rsHeader p{margin:6px 0 0;color:rgba(255,255,255,.55);font-size:18px}
+.rsHeader button{width:68px;height:68px;border-radius:26px;border:0;background:#171725;color:#fff;font-size:25px}
+.rsSearch{width:100%;box-sizing:border-box;margin:24px 0;padding:22px 25px;border-radius:32px;background:#151522;border:1px solid rgba(255,255,255,.1);color:#fff;font-size:20px;font-weight:800;outline:none}
+.rsCreators{border:1px solid rgba(255,255,255,.1);border-radius:34px;padding:22px;background:#11111d;margin-bottom:24px}
+.rsTitle{display:flex;justify-content:space-between;align-items:center}
+.rsTitle h2{font-size:30px;margin:0}
+.rsTitle span{color:#00eaff;font-weight:1000}
+.rsCreatorRow{display:flex;gap:18px;overflow:auto;padding-top:20px}
+.rsCreator,.rsCreatorAdd{min-width:110px;text-align:center;text-decoration:none;color:#fff}
+.rsCreator div,.rsCreatorAdd{width:90px;height:90px;border-radius:999px;margin:auto;display:grid;place-items:center;background:linear-gradient(135deg,#ff00b8,#6b2cff);font-size:38px;font-weight:1000;box-shadow:0 0 35px rgba(255,0,184,.25)}
+.rsCreator b{display:block;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsCreator small{display:block;color:rgba(255,255,255,.5);font-size:12px}
+.rsFeed{display:grid;gap:24px}
+.rsCard{overflow:hidden;border-radius:34px;background:#11111d;border:1px solid rgba(255,255,255,.1)}
+.rsCardTop{display:flex;align-items:center;gap:14px;padding:20px}
+.rsAvatar{width:66px;height:66px;border-radius:999px;background:linear-gradient(135deg,#ff00b8,#6b2cff);display:grid;place-items:center;font-size:28px;font-weight:1000;flex:0 0 auto}
+.rsCardTop h3{margin:0;font-size:22px}
+.rsCardTop h3 span,.rsReelInfo h2 span{color:#00eaff}
+.rsCardTop p{margin:3px 0 0;color:#8d8d99;font-weight:800}
+.rsCardTop a{margin-left:auto;color:#fff;text-decoration:none;font-size:24px}
+.rsMedia{background:#030308;min-height:360px;display:grid;place-items:center}
+.rsMedia img,.rsMedia video{width:100%;max-height:650px;object-fit:cover}
+.rsCaption{padding:18px 20px;color:#ddd;font-size:18px}
+.rsActions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 20px 20px}
+.rsActions button{border:0;border-radius:22px;padding:14px;color:#fff;background:#222232;font-weight:900}
+.rsEmpty,.rsCenter{min-height:360px;display:grid;place-items:center;text-align:center;color:rgba(255,255,255,.65);font-size:22px;font-weight:900}
+.rsBottom{position:fixed;left:12px;right:12px;bottom:18px;height:86px;border-radius:30px;background:rgba(16,16,28,.9);backdrop-filter:blur(22px);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;z-index:999;border:1px solid rgba(255,255,255,.1)}
+.rsBottom a{text-decoration:none;color:#bdbdc8;display:grid;place-items:center;font-size:26px;font-weight:900}
+.rsBottom span{font-size:12px}
+.rsBottom .on{color:#fff;background:rgba(255,255,255,.1);height:68px;border-radius:24px}
+.rsBottom .cam{color:#fff;width:76px;height:76px;justify-self:center;border-radius:26px;background:linear-gradient(135deg,#ff00b8,#00c8ff);box-shadow:0 0 40px rgba(255,0,184,.35)}
+.rsReels{padding:0 0 120px;overflow:hidden}
+.rsReelVideo{width:100%;height:100svh;object-fit:cover;background:#000}
+.rsLeftTap,.rsRightTap{position:fixed;top:0;bottom:0;width:45%;border:0;background:transparent;z-index:3}
+.rsLeftTap{left:0}
+.rsRightTap{right:0}
+.rsReelInfo{position:fixed;left:22px;right:110px;bottom:145px;z-index:10;display:flex;gap:14px;align-items:center;text-shadow:0 4px 20px #000}
+.rsReelInfo h2{margin:0;font-size:22px}
+.rsReelInfo p{margin:5px 0;color:#fff;font-weight:800}
+.rsReelInfo small{color:rgba(255,255,255,.7)}
+.rsReelActions{position:fixed;right:22px;bottom:185px;z-index:10;display:grid;gap:16px}
+.rsReelActions button{width:68px;height:68px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(20,20,33,.75);color:#fff;font-size:24px}
+.rsReelActions small{display:block;font-size:12px;font-weight:900}
+.rsToast{position:fixed;left:20px;right:20px;top:90px;z-index:20;background:#241133;color:#fff;padding:16px;border-radius:20px;text-align:center;font-weight:900}

@@ -1,5 +1,4 @@
-import ContentDetailClient from '../../../components/ContentDetailClient'
-
+import RealSocialFeed from "../../../components/RealSocialFeed"
 export default function Page() {
-  return <ContentDetailClient kind="reel" />
+  return <RealSocialFeed mode="reel" />
 }
