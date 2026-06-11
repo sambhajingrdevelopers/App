@@ -32873,3 +32873,50 @@ body.vlxCameraStudioBody [class*="bottomNav"] {
 .rsProfileButtons button:nth-child(2){
   background:#222232!important;
 }
+
+/* DYNAMIC_OWNER_PUBLIC_PROFILE_FIX */
+.rsProfileButtons.owner{
+  grid-template-columns:1fr 1fr 1fr!important;
+}
+
+.rsProfileButtons.public{
+  grid-template-columns:1fr 1fr 1fr!important;
+}
+
+.rsProfileButtons.owner button:first-child{
+  background:linear-gradient(135deg,#ff00b8,#00c8ff)!important;
+}
+
+.rsProfileButtons.public button:first-child{
+  background:linear-gradient(135deg,#ff00b8,#00c8ff)!important;
+}
+
+.rsProfileButtons button{
+  min-width:0!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.rsProfileModeNote{
+  margin-top:14px!important;
+  padding:12px 14px!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.06)!important;
+  color:rgba(255,255,255,.68)!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+}
+
+@media(max-width:420px){
+  .rsProfileButtons.owner,
+  .rsProfileButtons.public{
+    grid-template-columns:1fr!important;
+  }
+
+  .rsProfileButtons button{
+    width:100%!important;
+    font-size:15px!important;
+  }
+}
