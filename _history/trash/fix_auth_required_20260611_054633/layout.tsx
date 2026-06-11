@@ -1,4 +1,3 @@
-import AuthGate from "./AuthGate"
 
 export const viewport = {
   width: 'device-width',
@@ -25,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body><AuthGate>{children}</AuthGate>        <MobileBottomNav />
+      <body>{children}        <MobileBottomNav />
               <PWARegister />
         <PWAInstallPrompt />
       </body>
