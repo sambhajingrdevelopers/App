@@ -20,19 +20,6 @@ function isPublicPath(pathname: string) {
   return false
 }
 
-function getNextPath() {
-  if (typeof window === "undefined") return "/home"
-  const params = new URLSearchParams(window.location.search)
-  const next = params.get("next")
-  if (next && next.startsWith("/") && !next.startsWith("/login")) return next
-  return "/home"
-}
-
-function ensureAuthCookie() {
-  if (typeof document === "undefined") return
-  document.cookie = "vibeloop_auth=1; path=/; max-age=2592000; SameSite=Lax"
-}
-
 function hasLogin() {
   if (typeof window === "undefined") return false
 
@@ -71,44 +58,18 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [allowed, setAllowed] = useState(false)
 
   useEffect(() => {
-    let timer: any = null
-
-    function check() {
-      const loggedIn = hasLogin()
-
-      if (isPublicPath(pathname)) {
-        setAllowed(true)
-
-        // Login/Register page pe login success detect hote hi home pe bhejo
-        if (loggedIn && (pathname === "/login" || pathname === "/register" || pathname === "/signup" || pathname === "/")) {
-          ensureAuthCookie()
-          router.replace(getNextPath())
-        }
-
-        return
-      }
-
-      if (!loggedIn) {
-        setAllowed(false)
-        router.replace(`/login?next=${encodeURIComponent(pathname)}`)
-        return
-      }
-
-      ensureAuthCookie()
+    if (isPublicPath(pathname)) {
       setAllowed(true)
+      return
     }
 
-    check()
-
-    // Login success ke baad localStorage set hota hai, pathname change nahi hota.
-    // Isliye login page pe short polling rakha.
-    if (pathname === "/login" || pathname === "/register" || pathname === "/signup") {
-      timer = setInterval(check, 500)
+    if (!hasLogin()) {
+      setAllowed(false)
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`)
+      return
     }
 
-    return () => {
-      if (timer) clearInterval(timer)
-    }
+    setAllowed(true)
   }, [pathname, router])
 
   if (!allowed && !isPublicPath(pathname)) {
