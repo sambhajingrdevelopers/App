@@ -341,8 +341,8 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
           <p>{profileUser.bio}</p>
 
           <div className="rsProfileButtons">
-            <button onClick={() => { window.location.href = "/profile/edit" }}>Edit Profile</button>
-            <button onClick={() => { window.location.href = `/messages?to=${profileUser.username}` }}>Message</button>
+            <button onClick={() => alert("Profile edit screen connect karna hai")}>Edit Profile</button>
+            <button onClick={() => alert("Message screen open hoga")}>Message</button>
           </div>
 
           <div className="rsProfileTabs">
