@@ -3,13 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 
 type MediaType = "post" | "reel" | "story"
+type CropType = "original" | "square" | "portrait" | "story"
+type HdTool = "auto" | "face" | "blur" | "noise" | "color" | "light" | "document" | "background"
 
-function getType(): MediaType {
+function getInitialType(): MediaType {
   if (typeof window === "undefined") return "post"
   const q = new URLSearchParams(window.location.search)
-  const type = (q.get("type") || q.get("mode") || "post").toLowerCase()
-  if (type === "reel") return "reel"
-  if (type === "story") return "story"
+  const t = String(q.get("type") || q.get("mode") || "post").toLowerCase()
+  if (t === "reel") return "reel"
+  if (t === "story") return "story"
   return "post"
 }
 
@@ -18,12 +20,17 @@ function getViewer() {
     const raw = localStorage.getItem("user") || localStorage.getItem("currentUser") || ""
     if (raw.startsWith("{")) {
       const obj = JSON.parse(raw)
-      return obj.username || obj.user?.username || "pradip"
+      return obj?.username || obj?.user?.username || obj?.profile?.username || "pradip"
     }
     return localStorage.getItem("username") || "pradip"
   } catch {
     return "pradip"
   }
+}
+
+function isVideoFile(file: File | null, type: MediaType) {
+  if (file?.type?.startsWith("video/")) return true
+  return type === "reel"
 }
 
 export default function CreateCameraPreview() {
@@ -32,14 +39,18 @@ export default function CreateCameraPreview() {
   const [previewUrl, setPreviewUrl] = useState("")
   const [caption, setCaption] = useState("")
   const [filter, setFilter] = useState("normal")
-  const [busy, setBusy] = useState(false)
+  const [crop, setCrop] = useState<CropType>("original")
+  const [hdOpen, setHdOpen] = useState(false)
+  const [hdTool, setHdTool] = useState<HdTool>("auto")
+  const [hdDone, setHdDone] = useState(false)
   const [status, setStatus] = useState("")
+  const [busy, setBusy] = useState(false)
 
-  const attachRef = useRef<HTMLInputElement | null>(null)
-  const captureRef = useRef<HTMLInputElement | null>(null)
+  const attachInputRef = useRef<HTMLInputElement | null>(null)
+  const captureInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    setType(getType())
+    setType(getInitialType())
   }, [])
 
   useEffect(() => {
@@ -54,52 +65,69 @@ export default function CreateCameraPreview() {
     return () => URL.revokeObjectURL(url)
   }, [file])
 
-  const isVideo = useMemo(() => {
-    if (file?.type?.startsWith("video/")) return true
-    if (type === "reel") return true
-    return false
-  }, [file, type])
+  const isVideo = useMemo(() => isVideoFile(file, type), [file, type])
 
-  function openAttach(nextType?: MediaType) {
-    const t = nextType || type
-    setType(t)
+  function switchType(next: MediaType) {
+    setType(next)
     setStatus("")
-    setTimeout(() => attachRef.current?.click(), 50)
+    if (next === "reel" && file && !file.type.startsWith("video/")) {
+      setFile(null)
+      setStatus("Reel mode me only video allowed. Please select/capture video.")
+    }
   }
 
-  function openCamera(nextType?: MediaType) {
-    const t = nextType || type
-    setType(t)
+  function openAttach() {
     setStatus("")
-    setTimeout(() => captureRef.current?.click(), 50)
+    attachInputRef.current?.click()
   }
 
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
+  function openCamera() {
+    setStatus("")
+    captureInputRef.current?.click()
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = e.target.files?.[0]
     e.target.value = ""
 
-    if (!f) return
+    if (!selected) return
 
-    const video = f.type.startsWith("video/")
-    const image = f.type.startsWith("image/")
+    const image = selected.type.startsWith("image/")
+    const video = selected.type.startsWith("video/")
 
-    if (!video && !image) {
-      setStatus("Only image/video supported")
+    if (!image && !video) {
+      setStatus("Only image/video supported.")
       return
     }
 
     if (type === "reel" && !video) {
-      setStatus("Reel ke liye video select karo")
+      setStatus("Reel ke liye video select/capture karo.")
       return
     }
 
-    setFile(f)
-    setStatus("Media ready. Ab Upload ya Save to Mobile choose karo.")
+    setFile(selected)
+    setHdDone(false)
+    setStatus("Preview ready. Ab edit, HD, Save Mobile ya Upload choose karo.")
+  }
+
+  function removeMedia() {
+    setFile(null)
+    setPreviewUrl("")
+    setHdDone(false)
+    setStatus("Media removed.")
+  }
+
+  function retake() {
+    setFile(null)
+    setPreviewUrl("")
+    setHdDone(false)
+    setStatus("")
+    setTimeout(openCamera, 100)
   }
 
   async function saveToMobile() {
     if (!file || !previewUrl) {
-      setStatus("Pehle photo/video capture ya attach karo")
+      setStatus("Pehle photo/video capture ya attach karo.")
       return
     }
 
@@ -107,14 +135,14 @@ export default function CreateCameraPreview() {
     const name = `vibeloop_${type}_${Date.now()}.${ext}`
 
     try {
-      // Android Chrome me share sheet open ho sakta hai.
-      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
-        await navigator.share({
+      const nav: any = navigator
+      if (nav.canShare && nav.canShare({ files: [file] }) && nav.share) {
+        await nav.share({
           title: "VibeLoop Media",
           text: "Save or share your media",
           files: [file],
         })
-        setStatus("Mobile share/save opened")
+        setStatus("Mobile share/save sheet opened.")
         return
       }
     } catch {}
@@ -126,140 +154,117 @@ export default function CreateCameraPreview() {
       document.body.appendChild(a)
       a.click()
       a.remove()
-      setStatus("Saved to downloads. Gallery direct save ke liye Android app required.")
+      setStatus("Saved to downloads. Direct gallery save Android app me hoga.")
     } catch {
-      setStatus("Save failed. Long press preview and save manually.")
+      setStatus("Save failed. Preview pe long press karke save try karo.")
     }
   }
 
-  async function uploadMedia() {
+  function runHdDemo(tool: HdTool) {
     if (!file) {
-      setStatus("Pehle photo/video capture ya attach karo")
+      setStatus("HD Studio ke liye pehle media select karo.")
       return
     }
 
     setBusy(true)
-    setStatus("Uploading...")
+    setHdTool(tool)
+    setStatus("VibeLoop HD Studio processing...")
 
-    const viewer = getViewer()
-    const fd = new FormData()
-    fd.append("file", file)
-    fd.append("type", type)
-    fd.append("media_type", isVideo ? "video" : "image")
-    fd.append("caption", caption || `${type} by ${viewer}`)
-    fd.append("username", viewer)
-    fd.append("viewer", viewer)
+    setTimeout(() => {
+      setHdDone(true)
+      setBusy(false)
+      setStatus("HD preview ready. Backend HD API next phase me connect hoga.")
+    }, 900)
+  }
 
-    const endpoints = [
-      "/api/v1/media/upload",
-      "/api/v1/content/upload",
-      type === "reel" ? "/api/v1/reels" : "/api/v1/posts",
-      "/api/v1/social/publish",
-    ]
-
-    let lastError = ""
-
-    for (const url of endpoints) {
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          body: fd,
-        })
-
-        const text = await res.text()
-        let data: any = {}
-
-        try {
-          data = JSON.parse(text)
-        } catch {
-          lastError = `${url} returned non JSON`
-          continue
-        }
-
-        if (res.ok && data.success !== false) {
-          setStatus("Uploaded successfully")
-          setTimeout(() => {
-            window.location.href = type === "reel" ? "/reels" : "/home"
-          }, 700)
-          return
-        }
-
-        lastError = data.message || data.detail || `${url} failed`
-      } catch (e: any) {
-        lastError = e?.message || "Upload failed"
-      }
+  function uploadPlaceholder() {
+    if (!file) {
+      setStatus("Upload ke liye pehle media select karo.")
+      return
     }
 
-    setStatus(`Backend upload route issue: ${lastError}`)
-    setBusy(false)
+    try {
+      localStorage.setItem("vlx_upload_draft", JSON.stringify({
+        type,
+        caption,
+        fileName: file.name,
+        filter,
+        crop,
+        hdTool,
+        hdDone,
+        createdAt: Date.now(),
+      }))
+    } catch {}
+
+    setStatus("Draft ready. Backend upload API next part me connect karenge.")
   }
 
-  function retake() {
-    setFile(null)
-    setPreviewUrl("")
-    setStatus("")
-    openCamera(type)
-  }
+  const cropClass = `crop-${crop}`
+  const filterClass = `filter-${filter}`
 
   return (
-    <main className="ccPage">
+    <main className="vlCamPage">
       <input
-        ref={attachRef}
+        ref={attachInputRef}
         type="file"
         accept={type === "reel" ? "video/*" : "image/*,video/*"}
-        onChange={onFileChange}
+        onChange={handleFileChange}
         style={{ display: "none" }}
       />
 
       <input
-        ref={captureRef}
+        ref={captureInputRef}
         type="file"
         accept={type === "reel" ? "video/*" : "image/*,video/*"}
         capture="environment"
-        onChange={onFileChange}
+        onChange={handleFileChange}
         style={{ display: "none" }}
       />
 
-      <header className="ccHeader">
-        <a href="/home">×</a>
+      <header className="vlCamHeader">
+        <a href="/home" className="vlCamClose">×</a>
         <div>
           <h1>Camera</h1>
-          <p>{type === "reel" ? "Capture or upload reel" : type === "story" ? "Capture story" : "Capture or upload post"}</p>
+          <p>Capture, enhance, save or upload</p>
         </div>
-        <button className="ccPlusTop" onClick={() => openAttach(type)}>＋</button>
+        <button className="vlCamTopPlus" onClick={openAttach}>＋</button>
       </header>
 
-      <section className="ccTypeTabs">
-        <button className={type === "post" ? "on" : ""} onClick={() => setType("post")}>🖼️ Post</button>
-        <button className={type === "reel" ? "on" : ""} onClick={() => setType("reel")}>▶️ Reel</button>
-        <button className={type === "story" ? "on" : ""} onClick={() => setType("story")}>⚡ Story</button>
+      <section className="vlCamModes">
+        <button className={type === "post" ? "on" : ""} onClick={() => switchType("post")}>🖼️ Post</button>
+        <button className={type === "reel" ? "on" : ""} onClick={() => switchType("reel")}>▶️ Reel</button>
+        <button className={type === "story" ? "on" : ""} onClick={() => switchType("story")}>⚡ Story</button>
       </section>
 
-      <section className="ccCreator">
+      <section className="vlCamCreator">
         <div>{getViewer().slice(0, 1).toUpperCase()}</div>
-        <span>@{getViewer()}</span>
-        <small>real backend creator</small>
+        <strong>@{getViewer()}</strong>
+        <span>real backend creator</span>
       </section>
 
-      <section className="ccSteps">
+      <section className="vlCamSteps">
         <span className={file ? "done" : "on"}>1 Capture</span>
         <span className={file ? "on" : ""}>2 Preview</span>
-        <span>3 Upload / Save</span>
+        <span>3 Save / Upload</span>
       </section>
 
-      <h2 className="ccTitle">Live Preview</h2>
+      <div className="vlCamTitleRow">
+        <h2>Live Preview</h2>
+        {file && <button onClick={removeMedia}>Remove</button>}
+      </div>
 
-      <section className={`ccPreview ${filter}`}>
-        <button className="ccAttachPlus" onClick={() => openAttach(type)} title="Attach from mobile">
+      <section className={`vlCamPreview ${cropClass} ${filterClass} ${hdDone ? "hd-on" : ""}`}>
+        <button className="vlCamAttachFloating" onClick={openAttach}>
           ＋
           <small>Upload</small>
         </button>
 
         {!previewUrl && (
-          <div className="ccEmpty">
-            <b onClick={() => openCamera(type)}>📷</b>
-            <p>Camera se photo/video lo</p>
-            <button onClick={() => openAttach(type)}>＋ Attach from Mobile</button>
+          <div className="vlCamEmpty">
+            <button className="vlBigCamera" onClick={openCamera}>📷</button>
+            <h3>Camera se photo/video lo</h3>
+            <p>Ya plus icon se mobile gallery se media attach karo.</p>
+            <button className="vlAttachButton" onClick={openAttach}>＋ Attach from Mobile</button>
           </div>
         )}
 
@@ -268,19 +273,21 @@ export default function CreateCameraPreview() {
             key={previewUrl}
             src={previewUrl}
             controls
-            autoPlay
             muted
             loop
             playsInline
+            preload="metadata"
           />
         )}
 
         {previewUrl && !isVideo && (
           <img src={previewUrl} alt="preview" />
         )}
+
+        {hdDone && <div className="vlHdBadge">HD</div>}
       </section>
 
-      <section className="ccEditor">
+      <section className="vlCamEditor">
         <label>Caption</label>
         <textarea
           value={caption}
@@ -288,24 +295,61 @@ export default function CreateCameraPreview() {
           placeholder="Write caption..."
         />
 
-        <label>Filter</label>
-        <div className="ccFilters">
-          {["normal", "dream", "warm", "cool", "moody", "vivid"].map((x) => (
-            <button key={x} className={filter === x ? "on" : ""} onClick={() => setFilter(x)}>{x}</button>
+        <label>Crop Ratio</label>
+        <div className="vlCamScrollBtns">
+          {[
+            ["original", "Original"],
+            ["square", "Square 1:1"],
+            ["portrait", "Portrait 4:5"],
+            ["story", "Story/Reel 9:16"],
+          ].map(([key, label]) => (
+            <button key={key} className={crop === key ? "on" : ""} onClick={() => setCrop(key as CropType)}>
+              {label}
+            </button>
           ))}
         </div>
 
-        <div className="ccActionButtons four">
-          <button onClick={() => openCamera(type)}>Camera</button>
-          <button onClick={retake}>Retake</button>
-          <button onClick={saveToMobile}>Save Mobile</button>
-          <button onClick={uploadMedia} disabled={busy}>{busy ? "Uploading..." : "Upload"}</button>
+        <label>Filter</label>
+        <div className="vlCamScrollBtns">
+          {["normal", "dream", "warm", "cool", "moody", "vivid", "cinema", "bw"].map((x) => (
+            <button key={x} className={filter === x ? "on" : ""} onClick={() => setFilter(x)}>
+              {x}
+            </button>
+          ))}
         </div>
 
-        {status && <p className="ccStatus">{status}</p>}
+        <div className="vlHdStudioHead">
+          <div>
+            <h3>VibeLoop HD Studio</h3>
+            <p>Remini-type enhance tools, backend next phase.</p>
+          </div>
+          <button onClick={() => setHdOpen(!hdOpen)}>{hdOpen ? "Close" : "Open"}</button>
+        </div>
+
+        {hdOpen && (
+          <div className="vlHdTools">
+            <button onClick={() => runHdDemo("auto")}>✨ One Tap HD</button>
+            <button onClick={() => runHdDemo("face")}>🙂 Face Enhance</button>
+            <button onClick={() => runHdDemo("blur")}>🔎 Blur Fix</button>
+            <button onClick={() => runHdDemo("noise")}>🌙 Noise Remove</button>
+            <button onClick={() => runHdDemo("color")}>🎨 Color Fix</button>
+            <button onClick={() => runHdDemo("light")}>💡 Light Fix</button>
+            <button onClick={() => runHdDemo("document")}>📄 Text/Doc</button>
+            <button onClick={() => runHdDemo("background")}>🖼️ BG Tools</button>
+          </div>
+        )}
+
+        <div className="vlCamActions">
+          <button onClick={openCamera}>Camera</button>
+          <button onClick={retake}>Retake</button>
+          <button onClick={saveToMobile}>Save Mobile</button>
+          <button onClick={uploadPlaceholder} disabled={busy}>{busy ? "Wait..." : "Upload"}</button>
+        </div>
+
+        {status && <p className="vlCamStatus">{status}</p>}
       </section>
 
-      <nav className="ccBottom">
+      <nav className="vlCamBottom">
         <a href="/home">⌂<span>Home</span></a>
         <a href="/search">⌕<span>Search</span></a>
         <a className="cam" href="/camera?type=post">📷<span>Camera</span></a>
