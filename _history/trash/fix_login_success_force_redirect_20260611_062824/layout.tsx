@@ -1,4 +1,3 @@
-import LoginSuccessRedirect from "./LoginSuccessRedirect"
 import AuthGate from "./AuthGate"
 
 export const viewport = {
@@ -26,8 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body><AuthGate><LoginSuccessRedirect />
-{children}</AuthGate>        <MobileBottomNav />
+      <body><AuthGate>{children}</AuthGate>        <MobileBottomNav />
               <PWARegister />
         <PWAInstallPrompt />
       </body>
