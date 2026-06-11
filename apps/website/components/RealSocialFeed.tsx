@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 
 type Mode = "home" | "profile" | "search" | "reels" | "post" | "reel" | "user"
+type Tab = "all" | "posts" | "reels"
 
 function getPathId() {
   if (typeof window === "undefined") return ""
@@ -49,6 +50,7 @@ function isVideo(item: any) {
   const url = mediaUrl(item)
   return (
     item?.type === "reel" ||
+    item?.kind === "reel" ||
     item?.media_type === "video" ||
     item?.mediaType === "video" ||
     /\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)
@@ -57,7 +59,7 @@ function isVideo(item: any) {
 
 function sameUser(item: any, username: string) {
   if (!username) return true
-  const a = String(item?.username || item?.author || "").replace("@", "").toLowerCase()
+  const a = String(item?.username || item?.author || item?.user || "").replace("@", "").toLowerCase()
   const b = String(username || "").replace("@", "").toLowerCase()
   return a === b
 }
@@ -68,6 +70,10 @@ function sameId(item: any, id: string) {
   return keys.map((x) => String(x || "")).includes(String(id))
 }
 
+function itemId(item: any) {
+  return String(item?.id || item?.post_id || item?.reel_id || mediaUrl(item) || Math.random())
+}
+
 export default function RealSocialFeed({ mode }: { mode: Mode }) {
   const [users, setUsers] = useState<any[]>([])
   const [posts, setPosts] = useState<any[]>([])
@@ -75,7 +81,13 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
   const [feed, setFeed] = useState<any[]>([])
   const [active, setActive] = useState(0)
   const [q, setQ] = useState("")
+  const [tab, setTab] = useState<Tab>("all")
   const [status, setStatus] = useState("Loading real content...")
+  const [likes, setLikes] = useState<Record<string, boolean>>({})
+  const [saves, setSaves] = useState<Record<string, boolean>>({})
+  const [comments, setComments] = useState<Record<string, number>>({})
+  const [commentFor, setCommentFor] = useState<any>(null)
+  const [commentText, setCommentText] = useState("")
 
   async function load() {
     try {
@@ -96,15 +108,14 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
       }
 
       const nextUsers = json.users || json.creators || []
-      const nextPosts = json.posts || []
-      const nextReels = json.reels || []
-      const nextFeed = json.feed || json.items || [...nextPosts, ...nextReels]
+      const nextPosts = (json.posts || []).filter((x: any) => mediaUrl(x))
+      const nextReels = (json.reels || []).filter((x: any) => mediaUrl(x))
+      const nextFeed = (json.feed || json.items || [...nextPosts, ...nextReels]).filter((x: any) => mediaUrl(x))
 
       setUsers(nextUsers)
-      setPosts(nextPosts.filter((x: any) => mediaUrl(x)))
-      setReels(nextReels.filter((x: any) => mediaUrl(x)))
-      setFeed(nextFeed.filter((x: any) => mediaUrl(x)))
-
+      setPosts(nextPosts)
+      setReels(nextReels)
+      setFeed(nextFeed)
       setStatus("")
     } catch (e: any) {
       setStatus(e?.message || "Content loading failed")
@@ -113,11 +124,73 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
 
   useEffect(() => {
     load()
+    try {
+      setLikes(JSON.parse(localStorage.getItem("vlx_likes") || "{}"))
+      setSaves(JSON.parse(localStorage.getItem("vlx_saves") || "{}"))
+      setComments(JSON.parse(localStorage.getItem("vlx_comments") || "{}"))
+    } catch {}
   }, [])
 
-  const username = useMemo(() => {
+  function saveLocal(nextLikes = likes, nextSaves = saves, nextComments = comments) {
+    try {
+      localStorage.setItem("vlx_likes", JSON.stringify(nextLikes))
+      localStorage.setItem("vlx_saves", JSON.stringify(nextSaves))
+      localStorage.setItem("vlx_comments", JSON.stringify(nextComments))
+    } catch {}
+  }
+
+  function toggleLike(item: any) {
+    const id = itemId(item)
+    const next = { ...likes, [id]: !likes[id] }
+    setLikes(next)
+    saveLocal(next, saves, comments)
+  }
+
+  function toggleSave(item: any) {
+    const id = itemId(item)
+    const next = { ...saves, [id]: !saves[id] }
+    setSaves(next)
+    saveLocal(likes, next, comments)
+  }
+
+  function openComment(item: any) {
+    setCommentFor(item)
+    setCommentText("")
+  }
+
+  function submitComment() {
+    if (!commentFor) return
+    const id = itemId(commentFor)
+    const next = { ...comments, [id]: (comments[id] || 0) + 1 }
+    setComments(next)
+    saveLocal(likes, saves, next)
+    setCommentFor(null)
+    setCommentText("")
+  }
+
+  async function shareItem(item: any) {
+    const url = typeof window !== "undefined" ? window.location.origin + (isVideo(item) ? `/reel/${itemId(item)}` : `/post/${itemId(item)}`) : ""
+    const title = item?.caption || item?.title || "VibeLoop"
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url })
+      } else {
+        await navigator.clipboard.writeText(url)
+        alert("Link copied")
+      }
+    } catch {}
+  }
+
+  const queryUsername = useMemo(() => {
     return getQuery("u") || getQuery("username") || (mode === "user" ? getPathId() : "")
   }, [mode])
+
+  const selectedUsername = useMemo(() => {
+    if (queryUsername) return queryUsername.replace("@", "")
+    const firstWithContent = users.find((u) => Number(u.posts_count || 0) + Number(u.reels_count || 0) > 0)
+    return String(firstWithContent?.username || users[0]?.username || "").replace("@", "")
+  }, [queryUsername, users])
 
   const id = useMemo(() => {
     return mode === "post" || mode === "reel" ? getPathId() : ""
@@ -138,7 +211,10 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
     else if (mode === "post") list = posts.filter((x) => sameId(x, id))
     else if (mode === "reel") list = reels.filter((x) => sameId(x, id))
     else if (mode === "profile" || mode === "user") {
-      list = [...posts, ...reels].filter((x) => sameUser(x, username))
+      const allUserItems = [...posts, ...reels].filter((x) => sameUser(x, selectedUsername))
+      if (tab === "posts") list = allUserItems.filter((x) => !isVideo(x))
+      else if (tab === "reels") list = allUserItems.filter((x) => isVideo(x))
+      else list = allUserItems
     } else {
       list = feed
     }
@@ -152,7 +228,23 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
     }
 
     return list
-  }, [mode, posts, reels, feed, username, id, q])
+  }, [mode, posts, reels, feed, selectedUsername, id, q, tab])
+
+  const profileUser = useMemo(() => {
+    const user = users.find((u) => String(u.username || "").replace("@", "").toLowerCase() === selectedUsername.toLowerCase())
+    const userPosts = posts.filter((x) => sameUser(x, selectedUsername))
+    const userReels = reels.filter((x) => sameUser(x, selectedUsername))
+
+    return {
+      username: selectedUsername || "profile",
+      name: user?.name || user?.display_name || selectedUsername || "Profile",
+      bio: user?.bio || "Real connected VibeLoop creator",
+      avatar: user?.avatar || user?.avatar_url || "",
+      posts_count: userPosts.length,
+      reels_count: userReels.length,
+      total: userPosts.length + userReels.length,
+    }
+  }, [users, posts, reels, selectedUsername])
 
   if (mode === "reels") {
     const item = visibleItems[active]
@@ -198,11 +290,19 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
             </div>
 
             <div className="rsReelActions">
-              <button>♡<small>{item.likes || 0}</small></button>
-              <button>💬<small>{item.comments || 0}</small></button>
-              <button onClick={() => setActive((active + 1) % visibleItems.length)}>▶<small>Next</small></button>
-              <button>🔖<small>Save</small></button>
+              <button onClick={() => toggleLike(item)}>{likes[itemId(item)] ? "♥" : "♡"}<small>{Number(item.likes || 0) + (likes[itemId(item)] ? 1 : 0)}</small></button>
+              <button onClick={() => openComment(item)}>💬<small>{Number(item.comments || 0) + (comments[itemId(item)] || 0)}</small></button>
+              <button onClick={() => shareItem(item)}>↗<small>Share</small></button>
+              <button onClick={() => toggleSave(item)}>{saves[itemId(item)] ? "✅" : "🔖"}<small>Save</small></button>
             </div>
+
+            <CommentBox
+              item={commentFor}
+              text={commentText}
+              setText={setCommentText}
+              close={() => setCommentFor(null)}
+              submit={submitComment}
+            />
           </>
         )}
 
@@ -211,22 +311,56 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
     )
   }
 
+  const isProfile = mode === "profile" || mode === "user"
+
   return (
-    <main className="rsPage">
+    <main className={isProfile ? "rsPage rsProfilePage" : "rsPage"}>
       <header className="rsHeader">
         <div>
-          <h1>{mode === "profile" || mode === "user" ? username || "Profile" : "VibeLoop"}</h1>
-          <p>Real connected posts, reels and creators</p>
+          <h1>{isProfile ? "Profile" : "VibeLoop"}</h1>
+          <p>{isProfile ? "Creator profile with posts and reels" : "Real connected posts, reels and creators"}</p>
         </div>
         <button onClick={load}>↻</button>
       </header>
 
-      <input
-        className="rsSearch"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search creators, posts, reels..."
-      />
+      {isProfile && (
+        <section className="rsProfileHero">
+          <div className="rsProfileTop">
+            <div className="rsProfileAvatar">
+              {String(profileUser.username || "U").slice(0, 1).toUpperCase()}
+            </div>
+
+            <div className="rsProfileStats">
+              <div><b>{profileUser.posts_count}</b><span>Posts</span></div>
+              <div><b>{profileUser.reels_count}</b><span>Reels</span></div>
+              <div><b>{profileUser.total}</b><span>Media</span></div>
+            </div>
+          </div>
+
+          <h2>@{profileUser.username} <span>✓</span></h2>
+          <p>{profileUser.bio}</p>
+
+          <div className="rsProfileButtons">
+            <button onClick={() => alert("Profile edit screen connect karna hai")}>Edit Profile</button>
+            <button onClick={() => alert("Message screen open hoga")}>Message</button>
+          </div>
+
+          <div className="rsProfileTabs">
+            <button className={tab === "all" ? "on" : ""} onClick={() => setTab("all")}>All</button>
+            <button className={tab === "posts" ? "on" : ""} onClick={() => setTab("posts")}>Posts</button>
+            <button className={tab === "reels" ? "on" : ""} onClick={() => setTab("reels")}>Reels</button>
+          </div>
+        </section>
+      )}
+
+      {!isProfile && (
+        <input
+          className="rsSearch"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search creators, posts, reels..."
+        />
+      )}
 
       {(mode === "home" || mode === "search") && (
         <section className="rsCreators">
@@ -255,10 +389,19 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
         <div className="rsEmpty">No playable posts/reels found</div>
       )}
 
-      <section className="rsFeed">
+      <section className={isProfile ? "rsProfileGrid" : "rsFeed"}>
         {visibleItems.map((item: any) => {
           const url = mediaUrl(item)
           const video = isVideo(item)
+
+          if (isProfile) {
+            return (
+              <a key={`${item.type}_${item.id}_${url}`} className="rsGridItem" href={video ? `/reel/${itemId(item)}` : `/post/${itemId(item)}`}>
+                {video ? <video src={url} muted playsInline preload="metadata" /> : <img src={url} alt={item.caption || "post"} />}
+                {video && <span>▶</span>}
+              </a>
+            )
+          }
 
           return (
             <article key={`${item.type}_${item.id}_${url}`} className="rsCard">
@@ -268,7 +411,7 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
                   <h3>@{item.username} <span>✓</span></h3>
                   <p>{video ? "reel" : "post"} · {item.source || "real"}</p>
                 </div>
-                <a href={video ? `/reel/${item.id}` : `/post/${item.id}`}>•••</a>
+                <a href={video ? `/reel/${itemId(item)}` : `/post/${itemId(item)}`}>•••</a>
               </div>
 
               <div className="rsMedia">
@@ -284,25 +427,61 @@ export default function RealSocialFeed({ mode }: { mode: Mode }) {
               </div>
 
               <div className="rsActions">
-                <button>♡ {item.likes || 0}</button>
-                <button>💬 {item.comments || 0}</button>
-                <button>↗ {item.shares || 0}</button>
-                <button>🔖 Save</button>
+                <button onClick={() => toggleLike(item)}>{likes[itemId(item)] ? "♥" : "♡"} {Number(item.likes || 0) + (likes[itemId(item)] ? 1 : 0)}</button>
+                <button onClick={() => openComment(item)}>💬 {Number(item.comments || 0) + (comments[itemId(item)] || 0)}</button>
+                <button onClick={() => shareItem(item)}>↗ Share</button>
+                <button onClick={() => toggleSave(item)}>{saves[itemId(item)] ? "✅ Saved" : "🔖 Save"}</button>
               </div>
             </article>
           )
         })}
       </section>
 
-      <BottomNav active={mode === "search" ? "search" : mode === "profile" || mode === "user" ? "profile" : "home"} />
+      <CommentBox
+        item={commentFor}
+        text={commentText}
+        setText={setCommentText}
+        close={() => setCommentFor(null)}
+        submit={submitComment}
+      />
+
+      <BottomNav active={mode === "search" ? "search" : isProfile ? "profile" : "home"} />
     </main>
+  )
+}
+
+function CommentBox({
+  item,
+  text,
+  setText,
+  close,
+  submit,
+}: {
+  item: any
+  text: string
+  setText: (v: string) => void
+  close: () => void
+  submit: () => void
+}) {
+  if (!item) return null
+
+  return (
+    <div className="rsCommentOverlay">
+      <div className="rsCommentBox">
+        <button className="rsClose" onClick={close}>×</button>
+        <h3>Comment</h3>
+        <p>@{item.username}</p>
+        <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Write comment..." />
+        <button className="rsSubmit" onClick={submit} disabled={!text.trim()}>Post Comment</button>
+      </div>
+    </div>
   )
 }
 
 function BottomNav({ active }: { active: string }) {
   return (
     <nav className="rsBottom">
-      <a className={active === "home" ? "on" : ""} href="/">⌂<span>Home</span></a>
+      <a className={active === "home" ? "on" : ""} href="/home">⌂<span>Home</span></a>
       <a className={active === "search" ? "on" : ""} href="/search">⌕<span>Search</span></a>
       <a className="cam" href="/camera?type=post">📷<span>Camera</span></a>
       <a className={active === "reels" ? "on" : ""} href="/reels">▶<span>Reels</span></a>
