@@ -1,267 +1,93 @@
-'use client'
+"use client"
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import AuthGuard from '../../components/AuthGuard'
-import SocialAppShell from '../../components/SocialAppShell'
-import { getSessionUser } from '../../lib/sessionUser'
+import { useEffect, useState } from "react"
 
-type ReelItem = {
-  id: string
-  title?: string
-  caption?: string
-  username?: string
-  user?: string
-  name?: string
-  avatarUrl?: string
-  mediaUrl?: string
-  videoUrl?: string
-  likes?: number | string
-  comments?: number | string
-  views?: number | string
-  createdAt?: string
-}
-
-function cleanUsername(value?: string) {
-  const clean = String(value || '').trim()
-  if (!clean) return '@creator'
-  return clean.startsWith('@') ? clean : `@${clean}`
-}
-
-function firstLetter(value?: string) {
-  return String(value || 'V').replace('@', '').trim().slice(0, 1).toUpperCase()
-}
-
-function validMedia(url?: string) {
-  const clean = String(url || '').trim()
-  return clean.startsWith('http') || clean.startsWith('/media/') || clean.startsWith('data:')
-}
-
-function timeLabel(value?: string) {
-  if (!value) return 'now'
-  const time = new Date(value).getTime()
-  if (Number.isNaN(time)) return 'now'
-
-  const diff = Date.now() - time
-  const min = Math.max(1, Math.floor(diff / 60000))
-  if (min < 60) return `${min}m ago`
-  const hr = Math.floor(min / 60)
-  if (hr < 24) return `${hr}h ago`
-  return `${Math.floor(hr / 24)}d ago`
+function mediaUrl(item: any) {
+  const raw = item?.videoUrl || item?.video_url || item?.mediaUrl || item?.media_url || item?.url || item?.src || ""
+  const url = String(raw || "").trim()
+  if (!url) return ""
+  if (url.startsWith("http://13.206.145.54:8003/media/")) return url.replace("http://13.206.145.54:8003", "")
+  if (url.startsWith("https://13.206.145.54:8003/media/")) return url.replace("https://13.206.145.54:8003", "")
+  if (url.startsWith("media/")) return `/${url}`
+  return url
 }
 
 export default function ReelsPage() {
-  const [me, setMe] = useState('@you')
-  const [reels, setReels] = useState<ReelItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [notice, setNotice] = useState('')
-  const [query, setQuery] = useState('')
-  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({})
+  const [reels, setReels] = useState<any[]>([])
+  const [active, setActive] = useState(0)
+  const [msg, setMsg] = useState("Loading reels...")
 
-  async function loadReels() {
-    setLoading(true)
-    setNotice('')
-
+  async function load() {
     try {
-      const data = await fetch('/api/content/reels', {
-        cache: 'no-store'
-      }).then((res) => res.json())
-
-      setReels(Array.isArray(data.reels) ? data.reels : [])
-
-      if (!data.success) {
-        setNotice(data.message || 'Reels backend failed.')
-      }
+      setMsg("Loading reels...")
+      const res = await fetch(`/api/v1/reels?t=${Date.now()}`, { cache: "no-store" })
+      const json = await res.json()
+      const list = json.reels || json.items || json.data || []
+      const clean = list.filter((x: any) => mediaUrl(x))
+      setReels(clean)
+      setActive(0)
+      setMsg(clean.length ? "" : "No playable reels found")
     } catch {
-      setReels([])
-      setNotice('Backend reels connection failed.')
-    } finally {
-      setLoading(false)
+      setMsg("Reels loading failed")
     }
   }
 
   useEffect(() => {
-    async function boot() {
-      const session = await getSessionUser()
-      setMe(cleanUsername(session.username))
-      await loadReels()
-    }
-
-    boot()
+    load()
   }, [])
 
-  const filteredReels = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return reels
-
-    return reels.filter((reel) => {
-      return (
-        String(reel.title || '').toLowerCase().includes(q) ||
-        String(reel.caption || '').toLowerCase().includes(q) ||
-        String(reel.username || '').toLowerCase().includes(q) ||
-        String(reel.name || '').toLowerCase().includes(q)
-      )
-    })
-  }, [reels, query])
-
-
-  useEffect(() => {
-    const videos = Object.values(videoRefs.current).filter(Boolean) as HTMLVideoElement[]
-    if (!videos.length) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement
-
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.72) {
-            video.play().catch(() => undefined)
-          } else {
-            video.pause()
-          }
-        })
-      },
-      { threshold: [0, 0.5, 0.72, 0.95] }
-    )
-
-    videos.forEach((video) => observer.observe(video))
-    return () => observer.disconnect()
-  }, [filteredReels])
-
-  async function saveReel(reel: ReelItem) {
-    const data = await fetch('/api/saved/toggle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: me, contentId: reel.id, kind: 'reel' })
-    }).then((res) => res.json()).catch(() => ({
-      success: false,
-      message: 'Save failed.'
-    }))
-
-    setNotice(data.message || 'Updated.')
-  }
-
-  async function moveToTrash(reel: ReelItem) {
-    const data = await fetch('/api/trash/move', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: me, contentId: reel.id })
-    }).then((res) => res.json()).catch(() => ({
-      success: false,
-      message: 'Move to trash failed.'
-    }))
-
-    setNotice(data.message || 'Updated.')
-
-    if (data.success) {
-      setReels((old) => old.filter((item) => item.id !== reel.id))
-    }
-  }
+  const item = reels[active]
+  const url = item ? mediaUrl(item) : ""
 
   return (
-    <AuthGuard>
-      <SocialAppShell active="reels" title="" subtitle="" hideSearch>
-        <main className="vlxRealReelsPage">
-          <header className="vlxRealReelsHeader">
+    <main className="vlxReels">
+      {!item && <div className="vlxCenter">{msg}</div>}
+
+      {item && (
+        <>
+          <video
+            key={item.id}
+            className="vlxReelVideo"
+            src={url}
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onError={() => setMsg("Video file not loading. Backend /media path check karo.")}
+          />
+
+          {msg && <div className="vlxToast">{msg}</div>}
+
+          <button className="vlxLeftTap" onClick={() => setActive((active - 1 + reels.length) % reels.length)} />
+          <button className="vlxRightTap" onClick={() => setActive((active + 1) % reels.length)} />
+
+          <div className="vlxReelInfo">
+            <div className="vlxAvatar">{String(item.username || "U").slice(0, 1).toUpperCase()}</div>
             <div>
-              <h1>Reels</h1>
-              <p>Watch real backend reels from all creators.</p>
+              <h2>@{item.username} <span>✓</span></h2>
+              <p>{item.caption || item.title}</p>
+              <small>{active + 1} / {reels.length} · {item.source || "real"}</small>
             </div>
+          </div>
 
-            <button type="button" onClick={loadReels}>Refresh</button>
-          </header>
+          <div className="vlxReelActions">
+            <button>♡<small>{item.likes || 0}</small></button>
+            <button>💬<small>{item.comments || 0}</small></button>
+            <button onClick={() => setActive((active + 1) % reels.length)}>▶<small>Next</small></button>
+            <button>��<small>Save</small></button>
+          </div>
+        </>
+      )}
 
-          <label className="vlxRealReelsSearch">
-            <span>⌕</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search reels, creators..."
-            />
-          </label>
-
-          {notice && <section className="vlxRealReelsNotice">{notice}</section>}
-
-          {loading ? (
-            <section className="vlxRealReelsState">Loading reels...</section>
-          ) : filteredReels.length === 0 ? (
-            <section className="vlxRealReelsState">
-              <b>No reels found</b>
-              <span>Seed backend reels or create new reels.</span>
-              <a href="/create">Create Reel</a>
-            </section>
-          ) : (
-            <section className="vlxRealReelsFeed">
-              {filteredReels.map((reel) => {
-                const username = cleanUsername(reel.username || reel.user)
-                const name = reel.name || username.replace('@', '') || 'Creator'
-                const videoSrc = (reel.videoUrl || (reel.video_url || reel.videoUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || (reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || reel.url || reel.src) || (reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.url || reel.src) || (reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || ''
-                const isOwner = username.toLowerCase() === me.toLowerCase()
-
-                return (
-                  <article className="vlxRealReelCard" key={reel.id}>
-                    <div className="vlxRealReelVideoBox">
-                      {validMedia(videoSrc) ? (
-                        <video
-                          ref={(node) => {
-                            videoRefs.current[reel.id] = node
-                          }}
-                          src={videoSrc}
-                          controls
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                          poster={(reel.mediaUrl || (reel.media_url || reel.mediaUrl || reel.video_url || reel.videoUrl || reel.url || reel.src) || reel.videoUrl || reel.video_url || reel.url || reel.src) || ''}
-                        />
-                      ) : (
-                        <div className="vlxRealReelFallback">
-                          <b>▶</b>
-                          <span>Video loading failed</span>
-                        </div>
-                      )}
-
-                      <div className="vlxRealReelSideActions">
-                        <button type="button">♡<small>{reel.likes || 0}</small></button>
-                        <button type="button">💬<small>{reel.comments || 0}</small></button>
-                        <button type="button">▶<small>{reel.views || 0}</small></button>
-                        <button type="button" onClick={() => saveReel(reel)}>🔖<small>Save</small></button>
-                      </div>
-                    </div>
-
-                    <footer className="vlxRealReelFooter">
-                      <a href={`/profile?username=${encodeURIComponent(username)}`} className="vlxRealReelAvatar">
-                        {validMedia(reel.avatarUrl) ? (
-                          <img src={reel.avatarUrl} alt={name} />
-                        ) : (
-                          <b>{firstLetter(name)}</b>
-                        )}
-                      </a>
-
-                      <div>
-                        <a href={`/profile?username=${encodeURIComponent(username)}`}>
-                          {name} <em>✓</em>
-                        </a>
-                        <p>{reel.caption || reel.title || 'Backend connected reel'}</p>
-                        <small>{username} · {timeLabel(reel.createdAt)}</small>
-
-                        <div className="vlxRealReelButtons">
-                          <a href={`/messages?to=${encodeURIComponent(username)}`}>Message</a>
-                          <a href={`/post/${encodeURIComponent(reel.id)}`}>Open</a>
-                          {isOwner && (
-                            <button type="button" onClick={() => moveToTrash(reel)}>
-                              Trash
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </footer>
-                  </article>
-                )
-              })}
-            </section>
-          )}
-        </main>
-      </SocialAppShell>
-    </AuthGuard>
+      <nav className="vlxBottom">
+        <a href="/">⌂<span>Home</span></a>
+        <a href="/search">⌕<span>Search</span></a>
+        <a className="cam" href="/camera?type=post">��<span>Camera</span></a>
+        <a className="on" href="/reels">▶<span>Reels</span></a>
+        <a href="/profile">◉<span>Profile</span></a>
+      </nav>
+    </main>
   )
 }
